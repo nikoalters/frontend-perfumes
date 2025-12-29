@@ -49,7 +49,7 @@ const HomePage = () => {
     }
 
     // 3. Cargar Perfumes
-    fetch('https://api-perfumes-chile.onrender.com/perfumes')
+    fetch('https://api-perfumes-chile.onrender.com/api/perfumes')
       .then(res => res.json())
       .then(data => setPerfumes(data))
       .catch(err => console.error("Error:", err));
