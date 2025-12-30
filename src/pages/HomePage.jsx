@@ -12,7 +12,7 @@ const HomePage = () => {
   const [busqueda, setBusqueda] = useState("");
   const [precioMax, setPrecioMax] = useState(150000);
   const [marcaSeleccionada, setMarcaSeleccionada] = useState("todas");
-  const [mlSeleccionado, setMlSeleccionado] = useState("todos");
+  const [mlSeleccionado, setMlSeleccionado] = use State("todos");
   const [filtrosGenero, setFiltrosGenero] = useState({ hombre: false, mujer: false, unisex: false });
   
   // Paginación
@@ -49,11 +49,20 @@ const HomePage = () => {
     }
 
     // 3. Cargar Perfumes
-    fetch('https://api-perfumes-chile.onrender.com/api/perfumes')
-      .then(res => res.json())
-      .then(data => setPerfumes(data))
-      .catch(err => console.error("Error:", err));
-  }, []);
+    // Cambia tu fetch actual por este para ver qué pasa exactamente:
+fetch('https://api-perfumes-chile.onrender.com/api/perfumes')
+  .then(res => {
+    if (!res.ok) throw new Error('Error en la respuesta del servidor');
+    return res.json();
+  })
+  .then(data => {
+    console.log("Perfumes recibidos:", data); // Esto aparecerá en la consola (F12)
+    setPerfumes(data);
+  })
+  .catch(err => {
+    console.error("Error al cargar perfumes:", err);
+    Swal.fire('Error', 'No se pudieron cargar los perfumes', 'error');
+  });
 
   useEffect(() => {
     localStorage.setItem('carrito_compras', JSON.stringify(carrito));
