@@ -6,25 +6,24 @@ const HomePage = () => {
   const [perfumes, setPerfumes] = useState([]);
   const [carrito, setCarrito] = useState([]);
   const [user, setUser] = useState(null); 
-  const [wishlist, setWishlist] = useState([]);
   
-  // Filtros
+  // Estados para Favoritos (Wishlist)
+  const [wishlist, setWishlist] = useState([]);
+  const [mostrarFavoritos, setMostrarFavoritos] = useState(false); // Filtro activado/desactivado
+
+  // Filtros Generales
   const [busqueda, setBusqueda] = useState("");
   const [precioMax, setPrecioMax] = useState(150000);
   const [marcaSeleccionada, setMarcaSeleccionada] = useState("todas");
   const [mlSeleccionado, setMlSeleccionado] = useState("todos");
   
-  // Estado para los Checkboxes de Género
   const [filtrosGenero, setFiltrosGenero] = useState({ 
     hombre: false, 
     mujer: false, 
     unisex: false 
   });
   
-  // Paginación (Mantenemos 20 para velocidad en móvil)
   const [limiteProductos, setLimiteProductos] = useState(20);
-  
-  // UI
   const [mostrarModal, setMostrarModal] = useState(false);
   const [clienteNombre, setClienteNombre] = useState("");
 
@@ -33,26 +32,28 @@ const HomePage = () => {
 
   // --- CARGAR DATOS ---
   useEffect(() => {
+    // Carrito
     const carritoGuardado = localStorage.getItem('carrito_compras');
     if (carritoGuardado) setCarrito(JSON.parse(carritoGuardado));
+
+    // Wishlist (Solo cargamos si existe, la seguridad real depende del login)
     const wishlistGuardada = localStorage.getItem('wishlist_perfumes');
     if (wishlistGuardada) setWishlist(JSON.parse(wishlistGuardada));
 
+    // Usuario
     const userInfo = localStorage.getItem('userInfo');
     if (userInfo) setUser(JSON.parse(userInfo));
 
+    // Perfumes
     fetch('https://api-perfumes-chile.onrender.com/api/perfumes')
       .then(res => res.json())
       .then(data => setPerfumes(data))
       .catch(err => console.error("Error:", err));
   }, []);
 
-  useEffect(() => {
-    localStorage.setItem('carrito_compras', JSON.stringify(carrito));
-  }, [carrito]);
-  useEffect(() => {
-    localStorage.setItem('wishlist_perfumes', JSON.stringify(wishlist));
-  }, [wishlist]);
+  // Guardar cambios automáticamente
+  useEffect(() => { localStorage.setItem('carrito_compras', JSON.stringify(carrito)); }, [carrito]);
+  useEffect(() => { localStorage.setItem('wishlist_perfumes', JSON.stringify(wishlist)); }, [wishlist]);
 
   // --- LÓGICA AUXILIAR ---
   const extraerML = (texto) => {
@@ -61,10 +62,7 @@ const HomePage = () => {
   };
 
   const handleGeneroChange = (e) => {
-    setFiltrosGenero({
-        ...filtrosGenero,
-        [e.target.name]: e.target.checked
-    });
+    setFiltrosGenero({ ...filtrosGenero, [e.target.name]: e.target.checked });
   };
 
   const filtrarPorGeneroRapido = (genero) => {
@@ -75,8 +73,43 @@ const HomePage = () => {
       window.scrollTo(0, 400);
   };
 
-  // --- FILTRADO ---
+  // --- LÓGICA WISHLIST (FAVORITOS) ---
+  const toggleWishlist = (prod) => {
+    // 1. VALIDACIÓN DE SEGURIDAD
+    if (!user) {
+        Swal.fire({
+            title: '🔒 Requiere acceso',
+            text: 'Debes iniciar sesión para guardar tus favoritos.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#009970',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ir a Iniciar Sesión',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) window.location.href = '/login';
+        });
+        return;
+    }
+
+    // 2. AGREGAR O QUITAR
+    const existe = wishlist.some(item => item._id === prod._id);
+    if (existe) {
+      setWishlist(wishlist.filter(item => item._id !== prod._id));
+      Swal.fire({ title: 'Eliminado de favoritos', icon: 'info', toast: true, position: 'top-end', timer: 1000, showConfirmButton: false });
+    } else {
+      setWishlist([...wishlist, prod]);
+      Swal.fire({ title: '¡Añadido a favoritos! ❤️', icon: 'success', toast: true, position: 'top-end', timer: 1000, showConfirmButton: false });
+    }
+  };
+
+  // --- FILTRADO PRINCIPAL ---
   const perfumesFiltrados = perfumes.filter(prod => {
+    // 1. Filtro de Favoritos (Prioridad)
+    if (mostrarFavoritos) {
+        if (!wishlist.some(item => item._id === prod._id)) return false;
+    }
+
     const nombre = (prod.nombre || "").toLowerCase();
     const categoria = (prod.categoria || "").toLowerCase();
 
@@ -110,7 +143,10 @@ const HomePage = () => {
 
   const logoutHandler = () => {
     localStorage.removeItem('userInfo');
+    localStorage.removeItem('wishlist_perfumes'); // Borrar favoritos de memoria
     setUser(null);
+    setWishlist([]); // Reset visual favoritos
+    setMostrarFavoritos(false); // Quitar filtro
     Swal.fire('¡Adiós!', 'Sesión cerrada', 'success');
   };
 
@@ -126,37 +162,7 @@ const HomePage = () => {
   const limpiarFiltros = () => {
     setBusqueda(""); setPrecioMax(150000); setMarcaSeleccionada("todas"); setMlSeleccionado("todos");
     setFiltrosGenero({ hombre: false, mujer: false, unisex: false });
-    };
-// --- FUNCIÓN WISHLIST PROTEGIDA ---
-  const toggleWishlist = (prod) => {
-    // 1. VALIDACIÓN DE SEGURIDAD
-    if (!user) {
-        Swal.fire({
-            title: '🔒 Requiere acceso',
-            text: 'Debes iniciar sesión para guardar tus favoritos.',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#009970',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Ir a Iniciar Sesión',
-            cancelButtonText: 'Cancelar'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                window.location.href = '/login'; // Redirige al login
-            }
-        });
-        return; // Detiene la función aquí si no hay usuario
-    }
-
-    // 2. LÓGICA NORMAL (Si ya está logueado)
-    const existe = wishlist.some(item => item._id === prod._id);
-    if (existe) {
-      setWishlist(wishlist.filter(item => item._id !== prod._id));
-      Swal.fire({ title: 'Eliminado de favoritos', icon: 'info', toast: true, position: 'top-end', timer: 1000, showConfirmButton: false });
-    } else {
-      setWishlist([...wishlist, prod]);
-      Swal.fire({ title: '¡Añadido a favoritos! ❤️', icon: 'success', toast: true, position: 'top-end', timer: 1000, showConfirmButton: false });
-    }
+    setMostrarFavoritos(false);
   };
 
   return (
@@ -164,9 +170,7 @@ const HomePage = () => {
       {/* === NAVBAR === */}
       <nav className="navbar navbar-expand-lg fixed-top shadow-sm bg-white py-3">
         <div className="container-fluid px-4">
-          {/* Logo (Imagen Placeholder) y Texto */}
           <a className="navbar-brand fw-bold d-flex align-items-center text-success" href="/">
-            {/* RECUERDA: Cambiar '/vite.svg' por tu logo real si lo tienes */}
             <img src="/vite.svg" alt="Logo" style={{height: '35px', marginRight: '10px'}} />
             Perfumes Chile
           </a>
@@ -176,29 +180,19 @@ const HomePage = () => {
           </button>
 
           <div className="collapse navbar-collapse" id="navbarContent">
-             {/* Barra de Búsqueda */}
              <form className="d-flex me-auto ms-lg-4 my-2 my-lg-0" style={{maxWidth: '400px', width: '100%'}} onSubmit={e => e.preventDefault()}>
                 <div className="input-group">
                     <span className="input-group-text bg-light border-end-0 text-muted">🔍</span>
-                    <input 
-                        className="form-control bg-light border-start-0" 
-                        type="search" 
-                        placeholder="Buscar perfume..." 
-                        value={busqueda}
-                        onChange={e => setBusqueda(e.target.value)}
-                    />
+                    <input className="form-control bg-light border-start-0" type="search" placeholder="Buscar perfume..." value={busqueda} onChange={e => setBusqueda(e.target.value)}/>
                 </div>
             </form>
 
-            {/* Enlaces y Botones Derechos */}
             <ul className="navbar-nav align-items-center gap-3 mb-2 mb-lg-0">
-                {/* Filtros Rápidos */}
                 <li className="nav-item"><button onClick={() => filtrarPorGeneroRapido('hombre')} className="btn nav-link small text-secondary fw-semibold">Hombres</button></li>
                 <li className="nav-item"><button onClick={() => filtrarPorGeneroRapido('mujer')} className="btn nav-link small text-secondary fw-semibold">Mujeres</button></li>
                 <li className="nav-item"><button onClick={() => filtrarPorGeneroRapido('unisex')} className="btn nav-link small text-secondary fw-semibold">Unisex</button></li>
                 <li className="nav-item"><button onClick={() => filtrarPorGeneroRapido('todos')} className="btn nav-link small text-secondary fw-semibold">Nosotros</button></li>
                 
-                {/* Carrito */}
                 <li className="nav-item position-relative">
                     <button className="btn btn-outline-secondary d-flex align-items-center gap-2 rounded-pill px-3" onClick={() => setMostrarModal(true)}>
                         🛒 Carrito
@@ -206,40 +200,28 @@ const HomePage = () => {
                     </button>
                 </li>
 
-                {/* Usuario / Login / Cerrar Sesión */}
                 {user ? (
                 <li className="nav-item d-flex align-items-center gap-3 ms-2">
                     <span className="fw-bold text-success small">Hola, {user.name.split(' ')[0]}</span>
-                    <button className="btn btn-outline-danger btn-sm rounded-pill px-3" onClick={logoutHandler}>
-                        Cerrar Sesión
-                    </button>
+                    <button className="btn btn-outline-danger btn-sm rounded-pill px-3" onClick={logoutHandler}>Cerrar Sesión</button>
                 </li>
                 ) : (
-                <li className="nav-item">
-                     <a href="/login" className="btn-login fw-bold small px-4 rounded-pill">Ingresar</a>
-                </li>
+                <li className="nav-item"><a href="/login" className="btn-login fw-bold small px-4 rounded-pill">Ingresar</a></li>
                 )}
             </ul>
           </div>
         </div>
       </nav>
 
-      {/* Contenedor principal */}
+      {/* CONTENEDOR PRINCIPAL */}
       <div className="fade-in" style={{marginTop: '80px'}}>
         
         {/* HERO BANNER */}
-        <header className="hero-banner mb-5" style={{
-            background: 'linear-gradient(135deg, #009970 0%, #006349 100%)',
-            color: 'white',
-            borderRadius: '0 0 20px 20px',
-            padding: '4rem 1rem'
-        }}>
+        <header className="hero-banner mb-5" style={{background: 'linear-gradient(135deg, #009970 0%, #006349 100%)', color: 'white', borderRadius: '0 0 20px 20px', padding: '4rem 1rem'}}>
           <div className="container text-center">
             <h1>✨ Oferta Especial</h1>
             <p className="lead">Descubre las fragancias más exclusivas con hasta un 50% de descuento</p>
-            <button onClick={limpiarFiltros} className="btn btn-warning fw-bold px-4 py-2 mt-3 rounded-pill shadow-sm">
-                Ver Catálogo Completo
-            </button>
+            <button onClick={limpiarFiltros} className="btn btn-warning fw-bold px-4 py-2 mt-3 rounded-pill shadow-sm">Ver Catálogo Completo</button>
           </div>
         </header>
 
@@ -251,29 +233,28 @@ const HomePage = () => {
               <div className="sidebar-filtros bg-white p-3 rounded shadow-sm sticky-top" style={{top: '100px', zIndex: 1}}>
                 <h5 className="fw-bold mb-3 text-secondary">⚡ Filtros</h5>
                 
+                {/* BOTÓN FAVORITOS (NUEVO) */}
+                <button 
+                    className={`btn w-100 mb-4 fw-bold shadow-sm ${mostrarFavoritos ? 'btn-danger text-white' : 'btn-outline-danger'}`}
+                    onClick={() => {
+                        if (!user) { Swal.fire('🔒 Acceso denegado', 'Debes iniciar sesión para ver tus favoritos', 'warning'); return; }
+                        setMostrarFavoritos(!mostrarFavoritos);
+                    }}
+                >
+                    {mostrarFavoritos ? '❌ Ver Todos' : '❤️ Ver Mis Favoritos'}
+                </button>
+
                 {/* Checkboxes Género */}
                 <div className="mb-4">
                     <label className="fw-bold mb-2 small text-muted">Género</label>
-                    <div className="form-check">
-                        <input className="form-check-input" type="checkbox" name="hombre" checked={filtrosGenero.hombre} onChange={handleGeneroChange} id="checkHombre"/>
-                        <label className="form-check-label" htmlFor="checkHombre">Hombre</label>
-                    </div>
-                    <div className="form-check">
-                        <input className="form-check-input" type="checkbox" name="mujer" checked={filtrosGenero.mujer} onChange={handleGeneroChange} id="checkMujer"/>
-                        <label className="form-check-label" htmlFor="checkMujer">Mujer</label>
-                    </div>
-                    <div className="form-check">
-                        <input className="form-check-input" type="checkbox" name="unisex" checked={filtrosGenero.unisex} onChange={handleGeneroChange} id="checkUnisex"/>
-                        <label className="form-check-label" htmlFor="checkUnisex">Unisex</label>
-                    </div>
+                    <div className="form-check"><input className="form-check-input" type="checkbox" name="hombre" checked={filtrosGenero.hombre} onChange={handleGeneroChange} id="checkHombre"/><label className="form-check-label" htmlFor="checkHombre">Hombre</label></div>
+                    <div className="form-check"><input className="form-check-input" type="checkbox" name="mujer" checked={filtrosGenero.mujer} onChange={handleGeneroChange} id="checkMujer"/><label className="form-check-label" htmlFor="checkMujer">Mujer</label></div>
+                    <div className="form-check"><input className="form-check-input" type="checkbox" name="unisex" checked={filtrosGenero.unisex} onChange={handleGeneroChange} id="checkUnisex"/><label className="form-check-label" htmlFor="checkUnisex">Unisex</label></div>
                 </div>
 
                 {/* Precio */}
                 <div className="mb-4">
-                    <div className="d-flex justify-content-between align-items-center mb-2">
-                        <label className="fw-bold small text-muted">Precio Máximo</label>
-                        <span className="text-success fw-bold">${precioMax.toLocaleString()}</span>
-                    </div>
+                    <div className="d-flex justify-content-between align-items-center mb-2"><label className="fw-bold small text-muted">Precio Máximo</label><span className="text-success fw-bold">${precioMax.toLocaleString()}</span></div>
                     <input type="range" className="form-range" min="0" max="150000" step="5000" value={precioMax} onChange={e => setPrecioMax(Number(e.target.value))} />
                 </div>
 
@@ -299,10 +280,7 @@ const HomePage = () => {
                     </select>
                 </div>
 
-                {/* Botón Borrar */}
-                <button onClick={limpiarFiltros} className="btn btn-outline-danger w-100 py-2">
-                    🗑️ Borrar Filtros
-                </button>
+                <button onClick={limpiarFiltros} className="btn btn-outline-danger w-100 py-2">🗑️ Borrar Filtros</button>
               </div>
             </aside>
 
@@ -315,12 +293,12 @@ const HomePage = () => {
                   <div className="col-md-4 mb-4" key={prod._id}>
                     <div className="card h-100 shadow-sm border-0">
                       <div className="position-relative">
-                        {/* Badge ML (Derecha) */}
+                        {/* Badge ML */}
                         <span className="badge bg-dark position-absolute top-0 end-0 m-2 opacity-75">
                             {extraerML(prod.nombre) > 0 ? `${extraerML(prod.nombre)}ml` : 'Perfume'}
                         </span>
                         
-                        {/* NUEVO: Botón Corazón (Izquierda) */}
+                        {/* Botón Corazón */}
                         <button 
                             className="position-absolute top-0 start-0 m-2 btn p-0 border-0 bg-transparent shadow-none"
                             onClick={() => toggleWishlist(prod)}
@@ -344,12 +322,9 @@ const HomePage = () => {
                 ))}
               </div>
 
-              {/* LÓGICA VER MÁS */}
               {productosVisibles.length < perfumesFiltrados.length && (
                 <div className="text-center mt-4 mb-5">
-                    <button className="btn-login px-5 py-2 shadow-sm" onClick={() => setLimiteProductos(prev => prev + 20)}>
-                        Ver más productos 👇
-                    </button>
+                    <button className="btn-login px-5 py-2 shadow-sm" onClick={() => setLimiteProductos(prev => prev + 20)}>Ver más productos 👇</button>
                     <p className="text-muted small mt-2">Mostrando {productosVisibles.length} de {perfumesFiltrados.length}</p>
                 </div>
               )}
@@ -370,19 +345,11 @@ const HomePage = () => {
                 <h2 className="text-success fw-bold mb-3">¿Quiénes Somos?</h2>
                 <p className="lead text-muted mb-5">Somos una empresa dedicada a la venta de perfumes 100% originales, entregando confianza y calidad en todo Chile.</p>
                 <div className="card p-4 shadow-sm border-0" style={{maxWidth: '500px'}}>
-                    <div className="d-flex align-items-center gap-2 mb-3">
-                        <span style={{fontSize: '1.5rem'}}>📱</span>
-                        <h4 className="mb-0">¡Hablemos!</h4>
-                    </div>
+                    <div className="d-flex align-items-center gap-2 mb-3"><span style={{fontSize: '1.5rem'}}>📱</span><h4 className="mb-0">¡Hablemos!</h4></div>
                     <p className="fw-bold mb-3">WhatsApp: <span className="text-success">+56 9 5854 7236</span></p>
                     <div className="d-flex gap-2">
-                        {/* ENLACES REALES A REDES */}
-                        <a href="https://www.instagram.com/perfumeschile" target="_blank" rel="noopener noreferrer" className="btn btn-outline-danger btn-sm d-flex align-items-center gap-1 text-decoration-none">
-                            📷 @perfumeschile
-                        </a>
-                        <a href="https://www.facebook.com/perfumeschile" target="_blank" rel="noopener noreferrer" className="btn btn-outline-primary btn-sm d-flex align-items-center gap-1 text-decoration-none">
-                            👍 Facebook
-                        </a>
+                        <a href="https://www.instagram.com/perfumeschile" target="_blank" rel="noopener noreferrer" className="btn btn-outline-danger btn-sm d-flex align-items-center gap-1 text-decoration-none">📷 @perfumeschile</a>
+                        <a href="https://www.facebook.com/perfumeschile" target="_blank" rel="noopener noreferrer" className="btn btn-outline-primary btn-sm d-flex align-items-center gap-1 text-decoration-none">👍 Facebook</a>
                     </div>
                 </div>
             </div>
@@ -393,19 +360,11 @@ const HomePage = () => {
           <div className="container pb-4">
             <div className="row">
               <div className="col-md-4 mb-4">
-                <h5 className="mb-3 text-uppercase fw-bold d-flex align-items-center">
-                    <img src="/vite.svg" alt="Logo" style={{height: '25px', marginRight: '10px'}} />
-                    PERFUMES CHILE
-                </h5>
+                <h5 className="mb-3 text-uppercase fw-bold d-flex align-items-center"><img src="/vite.svg" alt="Logo" style={{height: '25px', marginRight: '10px'}} />PERFUMES CHILE</h5>
                 <p className="small text-white-50">Tu tienda de confianza para fragancias 100% originales en Chile.</p>
                 <div className="d-flex gap-3 mt-3">
-                    {/* ENLACES REALES A REDES (FOOTER) */}
-                    <a href="https://www.instagram.com/perfumeschile" target="_blank" rel="noopener noreferrer" className="text-white-50 d-flex align-items-center gap-1 small text-decoration-none">
-                        <span className="text-danger">📷</span> Instagram
-                    </a>
-                    <a href="https://www.facebook.com/perfumeschile" target="_blank" rel="noopener noreferrer" className="text-white-50 d-flex align-items-center gap-1 small text-decoration-none">
-                        <span className="text-primary">👍</span> Facebook
-                    </a>
+                    <a href="https://www.instagram.com/perfumeschile" target="_blank" rel="noopener noreferrer" className="text-white-50 d-flex align-items-center gap-1 small text-decoration-none"><span className="text-danger">📷</span> Instagram</a>
+                    <a href="https://www.facebook.com/perfumeschile" target="_blank" rel="noopener noreferrer" className="text-white-50 d-flex align-items-center gap-1 small text-decoration-none"><span className="text-primary">👍</span> Facebook</a>
                 </div>
               </div>
               <div className="col-md-4 mb-4">
@@ -428,10 +387,7 @@ const HomePage = () => {
             </div>
           </div>
           <div className="footer-bottom text-center py-3 border-top border-secondary">
-            <div className="container d-flex justify-content-between small text-white-50">
-              <p className="m-0">&copy; 2025 <strong>Perfumes Chile</strong>.</p>
-              <p className="m-0">Desarrollado con ❤️ en Chile</p>
-            </div>
+            <div className="container d-flex justify-content-between small text-white-50"><p className="m-0">&copy; 2025 <strong>Perfumes Chile</strong>.</p><p className="m-0">Desarrollado con ❤️ en Chile</p></div>
           </div>
         </footer>
       </div>
@@ -441,10 +397,7 @@ const HomePage = () => {
         <div className="modal d-block" style={{background: 'rgba(0,0,0,0.5)', zIndex: 1050}}>
           <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">Tu Carrito 🛍️</h5>
-                <button className="btn-close" onClick={() => setMostrarModal(false)}></button>
-              </div>
+              <div className="modal-header"><h5 className="modal-title">Tu Carrito 🛍️</h5><button className="btn-close" onClick={() => setMostrarModal(false)}></button></div>
               <div className="modal-body">
                 {carrito.map((item, idx) => (
                   <div key={idx} className="d-flex justify-content-between align-items-center mb-2 border-bottom pb-2">
