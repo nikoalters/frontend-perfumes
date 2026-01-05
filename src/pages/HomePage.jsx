@@ -20,7 +20,7 @@ const HomePage = () => {
     unisex: false 
   });
   
-  // Paginación (Mantenemos 20 para velocidad)
+  // Paginación (Mantenemos 20 para velocidad en móvil)
   const [limiteProductos, setLimiteProductos] = useState(20);
   
   // UI
@@ -61,12 +61,21 @@ const HomePage = () => {
     });
   };
 
-  // --- FILTRADO ---
+  // Función para los enlaces rápidos del Navbar (Hombres, Mujeres...)
+  const filtrarPorGeneroRapido = (genero) => {
+      limpiarFiltros(); // Resetea otros filtros primero
+      if (genero !== 'todos') {
+          setFiltrosGenero({ ...{ hombre: false, mujer: false, unisex: false }, [genero]: true });
+      }
+      window.scrollTo(0, 400); // Baja un poco la pantalla hacia los productos
+  };
+
+  // --- FILTRADO PRINCIPAL ---
   const perfumesFiltrados = perfumes.filter(prod => {
     const nombre = (prod.nombre || "").toLowerCase();
     const categoria = (prod.categoria || "").toLowerCase();
 
-    // Filtro Texto
+    // Filtro Texto (Barra de búsqueda del navbar)
     if (!nombre.includes(busqueda.toLowerCase())) return false;
     // Filtro Precio
     if (prod.precio > precioMax) return false;
@@ -76,8 +85,6 @@ const HomePage = () => {
     // Filtro Género (Checkboxes)
     const generosSeleccionados = Object.keys(filtrosGenero).filter(key => filtrosGenero[key]);
     if (generosSeleccionados.length > 0) {
-        // Si hay algún checkbox marcado, el producto debe coincidir con alguno
-        // Ejemplo: Si marco "hombre" y "unisex", muestra ambos.
         if (!generosSeleccionados.includes(categoria)) return false;
     }
 
@@ -123,27 +130,78 @@ const HomePage = () => {
 
   return (
     <>
-      {/* NAVBAR */}
-      <nav className="navbar navbar-expand-lg fixed-top shadow-sm">
-        <div className="container">
-          <a className="navbar-brand" href="/">Perfumes Chile</a>
-          <div className="d-flex align-items-center gap-3">
-            {user ? (
-              <div className="d-flex align-items-center gap-2">
-                <span className="small fw-bold">Hola, {user.name}</span>
-                <button onClick={logoutHandler} className="btn btn-sm btn-outline-danger">Salir</button>
-              </div>
-            ) : (
-              <a href="/login" className="btn-login">Ingresar</a>
-            )}
-            <button className="btn btn-dark btn-sm" onClick={() => setMostrarModal(true)}>🛒 {carrito.length}</button>
+      {/* === NAVBAR COMPLETO (Foto 10) === */}
+      <nav className="navbar navbar-expand-lg fixed-top shadow-sm bg-white" style={{minHeight: '70px'}}>
+        <div className="container-fluid px-4">
+          {/* Logo */}
+          <a className="navbar-brand fw-bold d-flex align-items-center text-success" href="/">
+            <span style={{fontSize: '1.5rem', marginRight: '5px'}}>🧴</span> Perfumes Chile
+          </a>
+          
+          {/* Toggle para móvil */}
+          <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+            <span className="navbar-toggler-icon"></span>
+          </button>
+
+          <div className="collapse navbar-collapse justify-content-between" id="navbarContent">
+             {/* Barra de Búsqueda Central */}
+             <form className="d-flex mx-auto my-2 my-lg-0" style={{maxWidth: '500px', width: '100%'}} onSubmit={e => e.preventDefault()}>
+                <div className="input-group">
+                    <span className="input-group-text bg-light border-end-0">🔍</span>
+                    <input 
+                        className="form-control bg-light border-start-0" 
+                        type="search" 
+                        placeholder="Buscar perfume..." 
+                        value={busqueda}
+                        onChange={e => setBusqueda(e.target.value)}
+                    />
+                </div>
+            </form>
+
+            {/* Enlaces y Botones Derechos */}
+            <ul className="navbar-nav align-items-center gap-3 mb-2 mb-lg-0">
+                {/* Filtros Rápidos */}
+                <li className="nav-item"><button onClick={() => filtrarPorGeneroRapido('hombre')} className="btn nav-link fw-bold small">Hombres</button></li>
+                <li className="nav-item"><button onClick={() => filtrarPorGeneroRapido('mujer')} className="btn nav-link fw-bold small">Mujeres</button></li>
+                <li className="nav-item"><button onClick={() => filtrarPorGeneroRapido('unisex')} className="btn nav-link fw-bold small">Unisex</button></li>
+                <li className="nav-item"><button onClick={() => filtrarPorGeneroRapido('todos')} className="btn nav-link fw-bold small">Nosotros</button></li>
+                
+                {/* Carrito */}
+                <li className="nav-item position-relative">
+                    <button className="btn btn-outline-secondary d-flex align-items-center gap-2" onClick={() => setMostrarModal(true)}>
+                        🛒 Carrito
+                        <span className="badge bg-danger rounded-pill position-absolute top-0 start-100 translate-middle">{carrito.length}</span>
+                    </button>
+                </li>
+
+                {/* Usuario / Login / Admin */}
+                {user ? (
+                <li className="nav-item dropdown">
+                    <a className="nav-link dropdown-toggle fw-bold text-success" href="#" role="button" data-bs-toggle="dropdown">
+                        Hola, {user.name.split(' ')[0]}
+                    </a>
+                    <ul className="dropdown-menu dropdown-menu-end">
+                        <li><button className="dropdown-item text-danger" onClick={logoutHandler}>Cerrar Sesión</button></li>
+                    </ul>
+                </li>
+                ) : (
+                <li className="nav-item">
+                     <a href="/login" className="btn-login fw-bold small px-3">Ingresar</a>
+                </li>
+                )}
+                 {/* Botón Admin (Visual) */}
+                 <li className="nav-item">
+                    <button className="btn btn-success fw-bold small px-3">Admin</button>
+                </li>
+            </ul>
           </div>
         </div>
       </nav>
 
-      <div className="fade-in mt-5 pt-4">
+      {/* Contenedor principal con margen ajustado para que no quede espacio blanco grande */}
+      <div className="fade-in" style={{marginTop: '85px'}}>
         
-        {/* HERO BANNER (Estilo Verde Oscuro de la Foto) */}
+        {/* HERO BANNER */}
         <header className="hero-banner mb-5" style={{
             background: 'linear-gradient(135deg, #009970 0%, #006349 100%)',
             color: 'white',
@@ -153,8 +211,7 @@ const HomePage = () => {
           <div className="container text-center">
             <h1>✨ Oferta Especial</h1>
             <p className="lead">Descubre las fragancias más exclusivas con hasta un 50% de descuento</p>
-            {/* Botón Amarillo */}
-            <button onClick={limpiarFiltros} className="btn btn-warning fw-bold px-4 py-2 mt-3 rounded-pill">
+            <button onClick={limpiarFiltros} className="btn btn-warning fw-bold px-4 py-2 mt-3 rounded-pill shadow-sm">
                 Ver Catálogo Completo
             </button>
           </div>
@@ -216,7 +273,7 @@ const HomePage = () => {
                     </select>
                 </div>
 
-                {/* Botón Borrar (Estilo Rojo Borde) */}
+                {/* Botón Borrar */}
                 <button onClick={limpiarFiltros} className="btn btn-outline-danger w-100 py-2">
                     🗑️ Borrar Filtros
                 </button>
@@ -225,28 +282,22 @@ const HomePage = () => {
 
             {/* LISTA DE PRODUCTOS */}
             <main className="col-lg-9">
-              {/* Contador de Resultados */}
               <h5 className="text-secondary mb-3">Resultados: <strong>{perfumesFiltrados.length}</strong> perfumes</h5>
 
               <div className="row">
                 {productosVisibles.map(prod => (
                   <div className="col-md-4 mb-4" key={prod._id}>
                     <div className="card h-100 shadow-sm border-0">
-                      
-                      {/* Badge ML en la foto */}
                       <div className="position-relative">
                         <span className="badge bg-dark position-absolute top-0 end-0 m-2 opacity-75">
                             {extraerML(prod.nombre) > 0 ? `${extraerML(prod.nombre)}ml` : 'Perfume'}
                         </span>
                         <img src={prod.imagen} className="card-img-top p-3" alt={prod.nombre} style={{height: '250px', objectFit: 'contain'}} />
                       </div>
-
                       <div className="card-body d-flex flex-column">
                         <h6 className="card-title text-truncate fw-bold">{prod.nombre}</h6>
                         <p className="card-text text-muted small mb-2">{prod.categoria}</p>
                         <h5 className="text-success fw-bold mb-auto">${prod.precio.toLocaleString('es-CL')}</h5>
-                        
-                        {/* Botón Añadir Verde Personalizado */}
                         <button onClick={() => agregarAlCarrito(prod)} className="btn-agregar mt-3">Añadir 🛒</button>
                       </div>
                     </div>
@@ -257,15 +308,10 @@ const HomePage = () => {
               {/* LÓGICA VER MÁS */}
               {productosVisibles.length < perfumesFiltrados.length && (
                 <div className="text-center mt-4 mb-5">
-                    <button 
-                        className="btn-login px-5 py-2 shadow-sm" 
-                        onClick={() => setLimiteProductos(prev => prev + 20)}
-                    >
+                    <button className="btn-login px-5 py-2 shadow-sm" onClick={() => setLimiteProductos(prev => prev + 20)}>
                         Ver más productos 👇
                     </button>
-                    <p className="text-muted small mt-2">
-                        Mostrando {productosVisibles.length} de {perfumesFiltrados.length}
-                    </p>
+                    <p className="text-muted small mt-2">Mostrando {productosVisibles.length} de {perfumesFiltrados.length}</p>
                 </div>
               )}
 
@@ -284,51 +330,74 @@ const HomePage = () => {
             <div className="container">
                 <h2 className="text-success fw-bold mb-3">¿Quiénes Somos?</h2>
                 <p className="lead text-muted mb-5">Somos una empresa dedicada a la venta de perfumes 100% originales, entregando confianza y calidad en todo Chile.</p>
-
-                <div className="card p-4 shadow-sm border-0">
+                <div className="card p-4 shadow-sm border-0" style={{maxWidth: '500px'}}>
                     <div className="d-flex align-items-center gap-2 mb-3">
                         <span style={{fontSize: '1.5rem'}}>📱</span>
                         <h4 className="mb-0">¡Hablemos!</h4>
                     </div>
-                    <p className="fw-bold">WhatsApp: <span className="text-success">+56 9 5854 7236</span></p>
-                    
+                    <p className="fw-bold mb-3">WhatsApp: <span className="text-success">+56 9 5854 7236</span></p>
                     <div className="d-flex gap-2">
-                        <button className="btn btn-outline-danger btn-sm">📷 @perfumeschile</button>
-                        <button className="btn btn-outline-primary btn-sm">👍 Facebook</button>
+                        <button className="btn btn-outline-danger btn-sm d-flex align-items-center gap-1">📷 @perfumeschile</button>
+                        <button className="btn btn-outline-primary btn-sm d-flex align-items-center gap-1">👍 Facebook</button>
                     </div>
                 </div>
             </div>
         </section>
 
-        {/* Footer */}
-        <footer className="footer-pro py-5 mt-0 bg-dark text-white">
-          <div className="container">
+        {/* === FOOTER DETALLADO (Foto 9) === */}
+        <footer className="footer-pro bg-dark text-white pt-5">
+          <div className="container pb-4">
             <div className="row">
+              {/* Columna 1: Marca */}
               <div className="col-md-4 mb-4">
-                <h5 className="text-uppercase mb-3 fw-bold">Perfumes Chile 🇨🇱</h5>
-                <p className="small text-white-50">La mejor tienda de perfumes originales.</p>
+                <h5 className="mb-3 text-uppercase fw-bold d-flex align-items-center">
+                    <span style={{marginRight: '10px'}}>🧴</span> PERFUMES CHILE
+                </h5>
+                <p className="small text-white-50">
+                  Tu tienda de confianza para fragancias 100% originales en Chile.
+                </p>
+                <div className="d-flex gap-3 mt-3">
+                    <span className="text-white-50 d-flex align-items-center gap-1 small"><span className="text-danger">📷</span> Instagram</span>
+                    <span className="text-white-50 d-flex align-items-center gap-1 small"><span className="text-primary">👍</span> Facebook</span>
+                </div>
               </div>
+
+              {/* Columna 2: Navegación */}
               <div className="col-md-4 mb-4">
-                <h5 className="text-uppercase mb-3 fw-bold">Enlaces</h5>
-                <ul className="list-unstyled">
-                    <li><a href="/" className="text-white-50 text-decoration-none">Inicio</a></li>
-                    <li><a href="/login" className="text-white-50 text-decoration-none">Mi Cuenta</a></li>
+                <h5 className="mb-3 text-uppercase fw-bold">NAVEGACIÓN</h5>
+                <ul className="list-unstyled small">
+                  <li className="mb-2"><button onClick={() => filtrarPorGeneroRapido('hombre')} className="btn p-0 text-white-50 text-decoration-none">◆ Perfumes Hombre</button></li>
+                  <li className="mb-2"><button onClick={() => filtrarPorGeneroRapido('mujer')} className="btn p-0 text-white-50 text-decoration-none">◆ Perfumes Mujer</button></li>
+                  <li className="mb-2"><button onClick={() => filtrarPorGeneroRapido('unisex')} className="btn p-0 text-white-50 text-decoration-none">◆ Perfumes Unisex</button></li>
+                  <li className="mb-2"><a href="#" className="text-white-50 text-decoration-none">◆ Sobre Nosotros</a></li>
+                  <li className="mb-2"><a href="/login" className="text-white-50 text-decoration-none">◆ Acceso Admin</a></li>
                 </ul>
               </div>
+
+              {/* Columna 3: Contacto */}
               <div className="col-md-4 mb-4">
-                <h5 className="text-uppercase mb-3 fw-bold">Contacto</h5>
-                <p className="small text-white-50">Santiago, Chile</p>
+                <h5 className="mb-3 text-uppercase fw-bold">CONTÁCTANOS</h5>
+                <ul className="list-unstyled small text-white-50">
+                    <li className="mb-2 d-flex align-items-center gap-2">📍 Santiago, Chile</li>
+                    <li className="mb-2 d-flex align-items-center gap-2">📱 +56 9 5854 7236</li>
+                    <li className="mb-2 d-flex align-items-center gap-2">📧 contacto@perfumeschile.cl</li>
+                </ul>
               </div>
             </div>
-            <div className="border-top border-secondary pt-3 mt-3 text-center small text-white-50">
-                &copy; 2025 Perfumes Chile. Todos los derechos reservados.
+          </div>
+
+          {/* Barra inferior */}
+          <div className="footer-bottom text-center py-3 border-top border-secondary">
+            <div className="container d-flex justify-content-between small text-white-50">
+              <p className="m-0">&copy; 2025 <strong>Perfumes Chile</strong>.</p>
+              <p className="m-0">Desarrollado con ❤️ en Chile</p>
             </div>
           </div>
         </footer>
 
       </div>
 
-      {/* MODAL CARRITO */}
+      {/* MODAL CARRITO (Sin cambios mayores) */}
       {mostrarModal && (
         <div className="modal d-block" style={{background: 'rgba(0,0,0,0.5)', zIndex: 1050}}>
           <div className="modal-dialog modal-dialog-centered">
@@ -340,32 +409,12 @@ const HomePage = () => {
               <div className="modal-body">
                 {carrito.map((item, idx) => (
                   <div key={idx} className="d-flex justify-content-between align-items-center mb-2 border-bottom pb-2">
-                    <div>
-                        <span className="d-block fw-bold small text-truncate" style={{maxWidth: '200px'}}>{item.nombre}</span>
-                        <span className="text-success small">${item.precio.toLocaleString()}</span>
-                    </div>
-                    <button className="btn btn-sm btn-outline-danger" onClick={() => {
-                        const n = [...carrito]; n.splice(idx, 1); setCarrito(n);
-                    }}>Eliminar</button>
+                    <div><span className="d-block fw-bold small text-truncate" style={{maxWidth: '200px'}}>{item.nombre}</span><span className="text-success small">${item.precio.toLocaleString()}</span></div>
+                    <button className="btn btn-sm btn-outline-danger" onClick={() => {const n = [...carrito]; n.splice(idx, 1); setCarrito(n);}}>Eliminar</button>
                   </div>
                 ))}
-                
                 {carrito.length === 0 && <p className="text-center text-muted my-3">El carrito está vacío</p>}
-
-                {carrito.length > 0 && (
-                    <>
-                        <div className="d-flex justify-content-between fw-bold mt-3 fs-5">
-                            <span>Total:</span>
-                            <span>${calcularTotal().toLocaleString()}</span>
-                        </div>
-                        <hr />
-                        <label className="form-label small">Nombre para el pedido:</label>
-                        <input type="text" className="form-control mb-3" placeholder="Tu nombre" value={clienteNombre} onChange={e => setClienteNombre(e.target.value)} />
-                        <button className="btn btn-success w-100 py-2 fw-bold" onClick={finalizarCompraWhatsApp}>
-                            Completar Pedido por WhatsApp 📲
-                        </button>
-                    </>
-                )}
+                {carrito.length > 0 && (<><div className="d-flex justify-content-between fw-bold mt-3 fs-5"><span>Total:</span><span>${calcularTotal().toLocaleString()}</span></div><hr /><input type="text" className="form-control mb-3" placeholder="Tu nombre (Opcional)" value={clienteNombre} onChange={e => setClienteNombre(e.target.value)} /><button className="btn btn-success w-100 py-2 fw-bold" onClick={finalizarCompraWhatsApp}>Completar Pedido por WhatsApp 📲</button></>)}
               </div>
             </div>
           </div>
