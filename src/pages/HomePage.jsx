@@ -61,34 +61,28 @@ const HomePage = () => {
     });
   };
 
-  // Función para los enlaces rápidos del Navbar (Hombres, Mujeres...)
   const filtrarPorGeneroRapido = (genero) => {
-      limpiarFiltros(); // Resetea otros filtros primero
+      limpiarFiltros();
       if (genero !== 'todos') {
           setFiltrosGenero({ ...{ hombre: false, mujer: false, unisex: false }, [genero]: true });
       }
-      window.scrollTo(0, 400); // Baja un poco la pantalla hacia los productos
+      window.scrollTo(0, 400);
   };
 
-  // --- FILTRADO PRINCIPAL ---
+  // --- FILTRADO ---
   const perfumesFiltrados = perfumes.filter(prod => {
     const nombre = (prod.nombre || "").toLowerCase();
     const categoria = (prod.categoria || "").toLowerCase();
 
-    // Filtro Texto (Barra de búsqueda del navbar)
     if (!nombre.includes(busqueda.toLowerCase())) return false;
-    // Filtro Precio
     if (prod.precio > precioMax) return false;
-    // Filtro Marca
     if (marcaSeleccionada !== 'todas' && !nombre.toUpperCase().includes(marcaSeleccionada.toUpperCase())) return false;
     
-    // Filtro Género (Checkboxes)
     const generosSeleccionados = Object.keys(filtrosGenero).filter(key => filtrosGenero[key]);
     if (generosSeleccionados.length > 0) {
         if (!generosSeleccionados.includes(categoria)) return false;
     }
 
-    // Filtro ML (Dropdown)
     if (mlSeleccionado !== 'todos') {
         const ml = extraerML(prod.nombre);
         if (mlSeleccionado === "30" && ml > 35) return false;
@@ -130,24 +124,25 @@ const HomePage = () => {
 
   return (
     <>
-      {/* === NAVBAR COMPLETO (Foto 10) === */}
-      <nav className="navbar navbar-expand-lg fixed-top shadow-sm bg-white" style={{minHeight: '70px'}}>
+      {/* === NAVBAR CORREGIDO === */}
+      <nav className="navbar navbar-expand-lg fixed-top shadow-sm bg-white py-3">
         <div className="container-fluid px-4">
-          {/* Logo */}
+          {/* 1. Logo (Imagen Placeholder) y Texto */}
           <a className="navbar-brand fw-bold d-flex align-items-center text-success" href="/">
-            <span style={{fontSize: '1.5rem', marginRight: '5px'}}>🧴</span> Perfumes Chile
+            {/* IMPORTANTE: Reemplaza '/vite.svg' por la ruta de tu logo real si lo tienes */}
+            <img src="/vite.svg" alt="Logo" style={{height: '35px', marginRight: '10px'}} />
+            Perfumes Chile
           </a>
           
-          {/* Toggle para móvil */}
           <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
             <span className="navbar-toggler-icon"></span>
           </button>
 
-          <div className="collapse navbar-collapse justify-content-between" id="navbarContent">
-             {/* Barra de Búsqueda Central */}
-             <form className="d-flex mx-auto my-2 my-lg-0" style={{maxWidth: '500px', width: '100%'}} onSubmit={e => e.preventDefault()}>
+          <div className="collapse navbar-collapse" id="navbarContent">
+             {/* 2. Barra de Búsqueda Alineada a la Izquierda */}
+             <form className="d-flex me-auto ms-lg-4 my-2 my-lg-0" style={{maxWidth: '400px', width: '100%'}} onSubmit={e => e.preventDefault()}>
                 <div className="input-group">
-                    <span className="input-group-text bg-light border-end-0">🔍</span>
+                    <span className="input-group-text bg-light border-end-0 text-muted">🔍</span>
                     <input 
                         className="form-control bg-light border-start-0" 
                         type="search" 
@@ -160,21 +155,21 @@ const HomePage = () => {
 
             {/* Enlaces y Botones Derechos */}
             <ul className="navbar-nav align-items-center gap-3 mb-2 mb-lg-0">
-                {/* Filtros Rápidos */}
-                <li className="nav-item"><button onClick={() => filtrarPorGeneroRapido('hombre')} className="btn nav-link fw-bold small">Hombres</button></li>
-                <li className="nav-item"><button onClick={() => filtrarPorGeneroRapido('mujer')} className="btn nav-link fw-bold small">Mujeres</button></li>
-                <li className="nav-item"><button onClick={() => filtrarPorGeneroRapido('unisex')} className="btn nav-link fw-bold small">Unisex</button></li>
-                <li className="nav-item"><button onClick={() => filtrarPorGeneroRapido('todos')} className="btn nav-link fw-bold small">Nosotros</button></li>
+                {/* Filtros Rápidos (Texto gris) */}
+                <li className="nav-item"><button onClick={() => filtrarPorGeneroRapido('hombre')} className="btn nav-link small text-secondary fw-semibold">Hombres</button></li>
+                <li className="nav-item"><button onClick={() => filtrarPorGeneroRapido('mujer')} className="btn nav-link small text-secondary fw-semibold">Mujeres</button></li>
+                <li className="nav-item"><button onClick={() => filtrarPorGeneroRapido('unisex')} className="btn nav-link small text-secondary fw-semibold">Unisex</button></li>
+                <li className="nav-item"><button onClick={() => filtrarPorGeneroRapido('todos')} className="btn nav-link small text-secondary fw-semibold">Nosotros</button></li>
                 
-                {/* Carrito */}
+                {/* Carrito Rounded */}
                 <li className="nav-item position-relative">
-                    <button className="btn btn-outline-secondary d-flex align-items-center gap-2" onClick={() => setMostrarModal(true)}>
+                    <button className="btn btn-outline-secondary d-flex align-items-center gap-2 rounded-pill px-3" onClick={() => setMostrarModal(true)}>
                         🛒 Carrito
                         <span className="badge bg-danger rounded-pill position-absolute top-0 start-100 translate-middle">{carrito.length}</span>
                     </button>
                 </li>
 
-                {/* Usuario / Login / Admin */}
+                {/* Usuario / Login */}
                 {user ? (
                 <li className="nav-item dropdown">
                     <a className="nav-link dropdown-toggle fw-bold text-success" href="#" role="button" data-bs-toggle="dropdown">
@@ -186,20 +181,17 @@ const HomePage = () => {
                 </li>
                 ) : (
                 <li className="nav-item">
-                     <a href="/login" className="btn-login fw-bold small px-3">Ingresar</a>
+                     <a href="/login" className="btn-login fw-bold small px-4 rounded-pill">Ingresar</a>
                 </li>
                 )}
-                 {/* Botón Admin (Visual) */}
-                 <li className="nav-item">
-                    <button className="btn btn-success fw-bold small px-3">Admin</button>
-                </li>
+                 {/* 3. Botón Admin ELIMINADO */}
             </ul>
           </div>
         </div>
       </nav>
 
-      {/* Contenedor principal con margen ajustado para que no quede espacio blanco grande */}
-      <div className="fade-in" style={{marginTop: '85px'}}>
+      {/* Contenedor principal */}
+      <div className="fade-in" style={{marginTop: '80px'}}>
         
         {/* HERO BANNER */}
         <header className="hero-banner mb-5" style={{
@@ -344,25 +336,22 @@ const HomePage = () => {
             </div>
         </section>
 
-        {/* === FOOTER DETALLADO (Foto 9) === */}
+        {/* FOOTER DETALLADO */}
         <footer className="footer-pro bg-dark text-white pt-5">
           <div className="container pb-4">
             <div className="row">
-              {/* Columna 1: Marca */}
               <div className="col-md-4 mb-4">
                 <h5 className="mb-3 text-uppercase fw-bold d-flex align-items-center">
-                    <span style={{marginRight: '10px'}}>🧴</span> PERFUMES CHILE
+                    {/* Reemplaza también aquí el logo si quieres */}
+                    <img src="/vite.svg" alt="Logo" style={{height: '25px', marginRight: '10px'}} />
+                    PERFUMES CHILE
                 </h5>
-                <p className="small text-white-50">
-                  Tu tienda de confianza para fragancias 100% originales en Chile.
-                </p>
+                <p className="small text-white-50">Tu tienda de confianza para fragancias 100% originales en Chile.</p>
                 <div className="d-flex gap-3 mt-3">
                     <span className="text-white-50 d-flex align-items-center gap-1 small"><span className="text-danger">📷</span> Instagram</span>
                     <span className="text-white-50 d-flex align-items-center gap-1 small"><span className="text-primary">👍</span> Facebook</span>
                 </div>
               </div>
-
-              {/* Columna 2: Navegación */}
               <div className="col-md-4 mb-4">
                 <h5 className="mb-3 text-uppercase fw-bold">NAVEGACIÓN</h5>
                 <ul className="list-unstyled small">
@@ -373,8 +362,6 @@ const HomePage = () => {
                   <li className="mb-2"><a href="/login" className="text-white-50 text-decoration-none">◆ Acceso Admin</a></li>
                 </ul>
               </div>
-
-              {/* Columna 3: Contacto */}
               <div className="col-md-4 mb-4">
                 <h5 className="mb-3 text-uppercase fw-bold">CONTÁCTANOS</h5>
                 <ul className="list-unstyled small text-white-50">
@@ -385,8 +372,6 @@ const HomePage = () => {
               </div>
             </div>
           </div>
-
-          {/* Barra inferior */}
           <div className="footer-bottom text-center py-3 border-top border-secondary">
             <div className="container d-flex justify-content-between small text-white-50">
               <p className="m-0">&copy; 2025 <strong>Perfumes Chile</strong>.</p>
@@ -394,10 +379,9 @@ const HomePage = () => {
             </div>
           </div>
         </footer>
-
       </div>
 
-      {/* MODAL CARRITO (Sin cambios mayores) */}
+      {/* MODAL CARRITO */}
       {mostrarModal && (
         <div className="modal d-block" style={{background: 'rgba(0,0,0,0.5)', zIndex: 1050}}>
           <div className="modal-dialog modal-dialog-centered">
