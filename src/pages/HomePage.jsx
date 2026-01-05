@@ -211,7 +211,7 @@ const HomePage = () => {
             
             {/* SIDEBAR DE FILTROS */}
             <aside className="col-lg-3 mb-4">
-              <div className="bg-white p-3 rounded shadow-sm sticky-top" style={{top: '100px', zIndex: 1}}>
+              <div className="sidebar-filtros p-3 rounded shadow-sm sticky-top" style={{top: '100px', zIndex: 1}}>
                 <h5 className="fw-bold mb-3 text-secondary">⚡ Filtros</h5>
                 
                 {/* Checkboxes Género */}
