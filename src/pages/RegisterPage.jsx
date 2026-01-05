@@ -108,7 +108,7 @@ const RegisterPage = () => {
                 />
               </div>
 
-              <button type="submit" className="btn btn-success w-100 py-2 fw-bold">
+              <button type="submit" className="btn-login w-100 fw-bold">
                 Registrarme
               </button>
             </form>
