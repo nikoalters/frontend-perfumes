@@ -309,7 +309,17 @@ const HomePage = () => {
                             {wishlist.some(item => item._id === prod._id) ? '❤️' : '🤍'}
                         </button>
 
-                        <img src={prod.imagen} className="card-img-top p-3" alt={prod.nombre} style={{height: '250px', objectFit: 'contain'}} />
+                        {/* IMAGEN CLICKEABLE - Busca en Fragrantica/Google */}
+                        <img 
+                            src={prod.imagen} 
+                            className="card-img-top p-3" 
+                            alt={prod.nombre} 
+                            style={{height: '250px', objectFit: 'contain', cursor: 'pointer', transition: 'transform 0.2s'}}
+                            title="Click para ver info en Google"
+                            onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+                            onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                            onClick={() => window.open(`https://www.google.com/search?q=${encodeURIComponent(prod.nombre + " perfume fragrantica")}`, '_blank')}
+                        />
                       </div>
                       <div className="card-body d-flex flex-column">
                         <h6 className="card-title text-truncate fw-bold">{prod.nombre}</h6>
