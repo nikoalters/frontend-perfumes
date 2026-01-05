@@ -76,62 +76,38 @@ body {
 /* --- SIDEBAR DE FILTROS --- */
 /* En tu archivo src/index.css */
 
+/* --- SIDEBAR ELEGANTE (Fondo blanco, Borde Verde) --- */
 .sidebar-filtros {
-  background-color: #009970;
-  /* Tu verde característico */
-  color: white;
-  /* Cambia el texto a blanco para que sea legible */
-  /* Asegúrate de que las otras propiedades como padding y borderRadius se mantengan si ya las tenías */
-  padding: 20px;
-  border-radius: 10px;
+  background-color: white !important;
+  border: 2px solid var(--color-principal);
+  /* Borde verde de marca */
+  color: #333 !important;
+  /* Texto oscuro para que se lea bien */
 }
 
-/* También puedes necesitar ajustar el color de los títulos y etiquetas dentro del sidebar */
+/* Títulos en Verde para resaltar */
 .sidebar-filtros h5,
-.sidebar-filtros .form-label,
-.sidebar-filtros .form-check-label {
+.sidebar-filtros .filtro-titulo {
+  color: var(--color-principal) !important;
+  font-weight: 800;
+}
+
+/* Etiquetas normales */
+.sidebar-filtros label,
+.sidebar-filtros .form-check-label,
+.sidebar-filtros span {
+  color: #555 !important;
+}
+
+/* Ajuste visual del botón borrar */
+.sidebar-filtros .btn-outline-danger {
+  color: #dc3545;
+  border-color: #dc3545;
+}
+
+.sidebar-filtros .btn-outline-danger:hover {
+  background-color: #dc3545;
   color: white;
-}
-
-/* Scrollbar Sidebar */
-.sidebar-filtros::-webkit-scrollbar {
-  width: 6px;
-}
-
-.sidebar-filtros::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 10px;
-}
-
-.sidebar-filtros::-webkit-scrollbar-thumb {
-  background: #ccc;
-  border-radius: 10px;
-}
-
-.sidebar-filtros::-webkit-scrollbar-thumb:hover {
-  background: var(--color-principal);
-}
-
-.filtro-grupo {
-  margin-bottom: 20px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid var(--color-borde);
-}
-
-.filtro-grupo:last-child {
-  border-bottom: none;
-}
-
-.filtro-titulo {
-  font-weight: 700;
-  margin-bottom: 10px;
-  display: block;
-  color: var(--color-texto);
-}
-
-.form-check-input:checked {
-  background-color: var(--color-principal);
-  border-color: var(--color-principal);
 }
 
 /* --- Cards de Productos --- */
