@@ -319,14 +319,11 @@ const HomePage = () => {
                             onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
                             onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
                             onClick={() => {
-    
-    const nombreLimpio = prod.nombre.replace(/\s*\d+ml\s*/i, "");
-    
-    
-    const query = `!ducky site:fragrantica.es ${nombreLimpio} perfume`;
-    
-    window.open(`https://duckduckgo.com/?q=${encodeURIComponent(query)}`, '_blank');
-}}
+                                const nombreLimpio = prod.nombre.replace(/\s*\d+ml\s*/i, "");
+                                const query = `site:fragrantica.es ${nombreLimpio} perfume`;
+                                
+                                window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, '_blank');
+                            }}
                         />
                       </div>
                       <div className="card-body d-flex flex-column">
