@@ -189,24 +189,37 @@ body {
   letter-spacing: 1px;
 }
 
-.footer-pro a {
-  color: #bbb;
+
+/* Estilos comunes para Enlaces (a) y Botones (button) del Footer */
+.footer-pro a,
+.footer-pro button {
+  color: #bbb !important;
+  /* Color gris base */
   text-decoration: none;
   transition: all 0.3s ease;
+  /* Suavizado de la animación */
   display: block;
+  /* Ocupan su propia línea */
   margin-bottom: 0.5rem;
+  background: none;
+  /* Quitar fondo gris de botones */
+  border: none;
+  /* Quitar bordes de botones */
+  padding: 0;
+  /* Resetear rellenos */
+  text-align: left;
+  /* Alinear texto a la izquierda */
+  cursor: pointer;
+  /* Manito al pasar el mouse */
 }
 
-.footer-pro a:hover {
-  color: var(--color-principal);
-  padding-left: 5px;
-}
-
-.footer-bottom {
-  background-color: #000;
-  padding: 15px 0;
-  font-size: 0.8rem;
-  border-top: 1px solid #333;
+/* Efecto Hover (Color Verde + Desplazamiento) */
+.footer-pro a:hover,
+.footer-pro button:hover {
+  color: var(--color-principal) !important;
+  /* Tu verde #009970 */
+  transform: translateX(10px);
+  /* Se mueve 10px a la derecha */
 }
 
 /* --- ANIMACIONES --- */

@@ -124,12 +124,12 @@ const HomePage = () => {
 
   return (
     <>
-      {/* === NAVBAR CORREGIDO === */}
+      {/* === NAVBAR === */}
       <nav className="navbar navbar-expand-lg fixed-top shadow-sm bg-white py-3">
         <div className="container-fluid px-4">
-          {/* 1. Logo (Imagen Placeholder) y Texto */}
+          {/* Logo (Imagen Placeholder) y Texto */}
           <a className="navbar-brand fw-bold d-flex align-items-center text-success" href="/">
-            {/* IMPORTANTE: Reemplaza '/vite.svg' por la ruta de tu logo real si lo tienes */}
+            {/* RECUERDA: Cambiar '/vite.svg' por tu logo real si lo tienes */}
             <img src="/vite.svg" alt="Logo" style={{height: '35px', marginRight: '10px'}} />
             Perfumes Chile
           </a>
@@ -139,7 +139,7 @@ const HomePage = () => {
           </button>
 
           <div className="collapse navbar-collapse" id="navbarContent">
-             {/* 2. Barra de Búsqueda Alineada a la Izquierda */}
+             {/* Barra de Búsqueda */}
              <form className="d-flex me-auto ms-lg-4 my-2 my-lg-0" style={{maxWidth: '400px', width: '100%'}} onSubmit={e => e.preventDefault()}>
                 <div className="input-group">
                     <span className="input-group-text bg-light border-end-0 text-muted">🔍</span>
@@ -155,13 +155,13 @@ const HomePage = () => {
 
             {/* Enlaces y Botones Derechos */}
             <ul className="navbar-nav align-items-center gap-3 mb-2 mb-lg-0">
-                {/* Filtros Rápidos (Texto gris) */}
+                {/* Filtros Rápidos */}
                 <li className="nav-item"><button onClick={() => filtrarPorGeneroRapido('hombre')} className="btn nav-link small text-secondary fw-semibold">Hombres</button></li>
                 <li className="nav-item"><button onClick={() => filtrarPorGeneroRapido('mujer')} className="btn nav-link small text-secondary fw-semibold">Mujeres</button></li>
                 <li className="nav-item"><button onClick={() => filtrarPorGeneroRapido('unisex')} className="btn nav-link small text-secondary fw-semibold">Unisex</button></li>
                 <li className="nav-item"><button onClick={() => filtrarPorGeneroRapido('todos')} className="btn nav-link small text-secondary fw-semibold">Nosotros</button></li>
                 
-                {/* Carrito Rounded */}
+                {/* Carrito */}
                 <li className="nav-item position-relative">
                     <button className="btn btn-outline-secondary d-flex align-items-center gap-2 rounded-pill px-3" onClick={() => setMostrarModal(true)}>
                         🛒 Carrito
@@ -169,22 +169,19 @@ const HomePage = () => {
                     </button>
                 </li>
 
-                {/* Usuario / Login */}
+                {/* Usuario / Login / Cerrar Sesión */}
                 {user ? (
-                <li className="nav-item dropdown">
-                    <a className="nav-link dropdown-toggle fw-bold text-success" href="#" role="button" data-bs-toggle="dropdown">
-                        Hola, {user.name.split(' ')[0]}
-                    </a>
-                    <ul className="dropdown-menu dropdown-menu-end">
-                        <li><button className="dropdown-item text-danger" onClick={logoutHandler}>Cerrar Sesión</button></li>
-                    </ul>
+                <li className="nav-item d-flex align-items-center gap-3 ms-2">
+                    <span className="fw-bold text-success small">Hola, {user.name.split(' ')[0]}</span>
+                    <button className="btn btn-outline-danger btn-sm rounded-pill px-3" onClick={logoutHandler}>
+                        Cerrar Sesión
+                    </button>
                 </li>
                 ) : (
                 <li className="nav-item">
                      <a href="/login" className="btn-login fw-bold small px-4 rounded-pill">Ingresar</a>
                 </li>
                 )}
-                 {/* 3. Botón Admin ELIMINADO */}
             </ul>
           </div>
         </div>
@@ -329,27 +326,36 @@ const HomePage = () => {
                     </div>
                     <p className="fw-bold mb-3">WhatsApp: <span className="text-success">+56 9 5854 7236</span></p>
                     <div className="d-flex gap-2">
-                        <button className="btn btn-outline-danger btn-sm d-flex align-items-center gap-1">📷 @perfumeschile</button>
-                        <button className="btn btn-outline-primary btn-sm d-flex align-items-center gap-1">👍 Facebook</button>
+                        {/* ENLACES REALES A REDES */}
+                        <a href="https://www.instagram.com/perfumeschile" target="_blank" rel="noopener noreferrer" className="btn btn-outline-danger btn-sm d-flex align-items-center gap-1 text-decoration-none">
+                            📷 @perfumeschile
+                        </a>
+                        <a href="https://www.facebook.com/perfumeschile" target="_blank" rel="noopener noreferrer" className="btn btn-outline-primary btn-sm d-flex align-items-center gap-1 text-decoration-none">
+                            👍 Facebook
+                        </a>
                     </div>
                 </div>
             </div>
         </section>
 
-        {/* FOOTER DETALLADO */}
+        {/* FOOTER */}
         <footer className="footer-pro bg-dark text-white pt-5">
           <div className="container pb-4">
             <div className="row">
               <div className="col-md-4 mb-4">
                 <h5 className="mb-3 text-uppercase fw-bold d-flex align-items-center">
-                    {/* Reemplaza también aquí el logo si quieres */}
                     <img src="/vite.svg" alt="Logo" style={{height: '25px', marginRight: '10px'}} />
                     PERFUMES CHILE
                 </h5>
                 <p className="small text-white-50">Tu tienda de confianza para fragancias 100% originales en Chile.</p>
                 <div className="d-flex gap-3 mt-3">
-                    <span className="text-white-50 d-flex align-items-center gap-1 small"><span className="text-danger">📷</span> Instagram</span>
-                    <span className="text-white-50 d-flex align-items-center gap-1 small"><span className="text-primary">👍</span> Facebook</span>
+                    {/* ENLACES REALES A REDES (FOOTER) */}
+                    <a href="https://www.instagram.com/perfumeschile" target="_blank" rel="noopener noreferrer" className="text-white-50 d-flex align-items-center gap-1 small text-decoration-none">
+                        <span className="text-danger">📷</span> Instagram
+                    </a>
+                    <a href="https://www.facebook.com/perfumeschile" target="_blank" rel="noopener noreferrer" className="text-white-50 d-flex align-items-center gap-1 small text-decoration-none">
+                        <span className="text-primary">👍</span> Facebook
+                    </a>
                 </div>
               </div>
               <div className="col-md-4 mb-4">
@@ -358,8 +364,7 @@ const HomePage = () => {
                   <li className="mb-2"><button onClick={() => filtrarPorGeneroRapido('hombre')} className="btn p-0 text-white-50 text-decoration-none">◆ Perfumes Hombre</button></li>
                   <li className="mb-2"><button onClick={() => filtrarPorGeneroRapido('mujer')} className="btn p-0 text-white-50 text-decoration-none">◆ Perfumes Mujer</button></li>
                   <li className="mb-2"><button onClick={() => filtrarPorGeneroRapido('unisex')} className="btn p-0 text-white-50 text-decoration-none">◆ Perfumes Unisex</button></li>
-                  <li className="mb-2"><a href="#" className="text-white-50 text-decoration-none">◆ Sobre Nosotros</a></li>
-                  <li className="mb-2"><a href="/login" className="text-white-50 text-decoration-none">◆ Acceso Admin</a></li>
+                  <li className="mb-2"><button onClick={() => filtrarPorGeneroRapido('todos')} className="btn p-0 text-white-50 text-decoration-none">◆ Sobre Nosotros</button></li>
                 </ul>
               </div>
               <div className="col-md-4 mb-4">
