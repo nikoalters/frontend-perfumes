@@ -318,7 +318,11 @@ const HomePage = () => {
                             title="Click para ver info en Google"
                             onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
                             onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
-                            onClick={() => window.open(`https://www.google.com/search?q=${encodeURIComponent(prod.nombre + " perfume fragrantica")}`, '_blank')}
+                            onClick={() => {
+                              
+                                const query = `!ducky ${prod.nombre} perfume fragrantica es`; 
+                                window.open(`https://duckduckgo.com/?q=${encodeURIComponent(query)}`, '_blank');
+                            }}
                         />
                       </div>
                       <div className="card-body d-flex flex-column">
