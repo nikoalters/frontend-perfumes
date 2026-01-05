@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import Swal from 'sweetalert2'; 
 
-// Importamos los NUEVOS Componentes
+// Componentes
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import ProductCard from '../components/ProductCard';
@@ -11,7 +11,7 @@ const HomePage = () => {
   const [perfumes, setPerfumes] = useState([]);
   const [carrito, setCarrito] = useState([]);
   const [user, setUser] = useState(null); 
-  const [wishlist, setWishlist] = useState([]);
+  const [wishlist, setWishlist] = useState([]); // Ahora esto vendrá de la BD
   const [mostrarFavoritos, setMostrarFavoritos] = useState(false);
 
   // Filtros
@@ -29,15 +29,30 @@ const HomePage = () => {
 
   // --- CARGAR DATOS ---
   useEffect(() => {
+    // 1. Cargar Carrito (Sigue siendo local por ahora)
     const carritoGuardado = localStorage.getItem('carrito_compras');
     if (carritoGuardado) setCarrito(JSON.parse(carritoGuardado));
 
-    const wishlistGuardada = localStorage.getItem('wishlist_perfumes');
-    if (wishlistGuardada) setWishlist(JSON.parse(wishlistGuardada));
-
+    // 2. Cargar Usuario
     const userInfo = localStorage.getItem('userInfo');
-    if (userInfo) setUser(JSON.parse(userInfo));
+    if (userInfo) {
+      const usuarioParseado = JSON.parse(userInfo);
+      setUser(usuarioParseado);
+      
+      // 🚀 NUEVA LÓGICA BACKEND: Cargar Wishlist desde la Base de Datos
+      fetch('https://api-perfumes-chile.onrender.com/api/users/wishlist', {
+        headers: {
+          'Authorization': `Bearer ${usuarioParseado.token}` // Importante: Enviamos el token
+        }
+      })
+      .then(res => res.json())
+      .then(data => {
+        if(Array.isArray(data)) setWishlist(data); // Si responde un array, lo guardamos
+      })
+      .catch(err => console.error("Error cargando wishlist:", err));
+    }
 
+    // 3. Cargar Perfumes
     fetch('https://api-perfumes-chile.onrender.com/api/perfumes')
       .then(res => res.json())
       .then(data => setPerfumes(data))
@@ -45,7 +60,7 @@ const HomePage = () => {
   }, []);
 
   useEffect(() => { localStorage.setItem('carrito_compras', JSON.stringify(carrito)); }, [carrito]);
-  useEffect(() => { localStorage.setItem('wishlist_perfumes', JSON.stringify(wishlist)); }, [wishlist]);
+  // NOTA: Ya no guardamos 'wishlist' en localStorage, ahora vive en la base de datos.
 
   // --- HELPERS ---
   const extraerML = (texto) => {
@@ -71,8 +86,8 @@ const HomePage = () => {
     setMostrarFavoritos(false);
   };
 
-  // --- LÓGICA WISHLIST ---
-  const toggleWishlist = (prod) => {
+  // --- 🚀 NUEVA LÓGICA WISHLIST (CONECTADA AL BACKEND) ---
+  const toggleWishlist = async (prod) => {
     if (!user) {
         Swal.fire({
             title: '🔒 Requiere acceso',
@@ -88,13 +103,40 @@ const HomePage = () => {
         });
         return;
     }
+
+    // 1. Optimismo UI (Actualizamos visualmente antes de esperar al servidor para que se sienta rápido)
     const existe = wishlist.some(item => item._id === prod._id);
+    let nuevaWishlist;
+    
     if (existe) {
-      setWishlist(wishlist.filter(item => item._id !== prod._id));
+      nuevaWishlist = wishlist.filter(item => item._id !== prod._id);
       Swal.fire({ title: 'Eliminado de favoritos', icon: 'info', toast: true, position: 'top-end', timer: 1000, showConfirmButton: false });
     } else {
-      setWishlist([...wishlist, prod]);
+      nuevaWishlist = [...wishlist, prod];
       Swal.fire({ title: '¡Añadido a favoritos! ❤️', icon: 'success', toast: true, position: 'top-end', timer: 1000, showConfirmButton: false });
+    }
+    setWishlist(nuevaWishlist);
+
+    // 2. Petición al Servidor (En segundo plano)
+    try {
+      const response = await fetch('https://api-perfumes-chile.onrender.com/api/users/wishlist', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${user.token}`
+        },
+        body: JSON.stringify({ productId: prod._id })
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al actualizar wishlist');
+      }
+      // Si todo sale bien, no hacemos nada más porque ya actualizamos la UI arriba.
+    } catch (error) {
+      console.error(error);
+      // Si falla, revertimos el cambio visual (Rollback)
+      setWishlist(wishlist); 
+      Swal.fire('Error', 'No se pudo guardar en el servidor', 'error');
     }
   };
 
@@ -106,7 +148,7 @@ const HomePage = () => {
 
   const logoutHandler = () => {
     localStorage.removeItem('userInfo');
-    localStorage.removeItem('wishlist_perfumes'); 
+    // localStorage.removeItem('wishlist_perfumes'); // YA NO ES NECESARIO BORRAR ESTO, PUES NO EXISTE
     setUser(null);
     setWishlist([]); 
     setMostrarFavoritos(false);
@@ -152,7 +194,7 @@ const HomePage = () => {
   // --- RENDER ---
   return (
     <>
-      {/* 1. NAVBAR COMPONENTE */}
+      {/* NAVBAR */}
       <Navbar 
         busqueda={busqueda} 
         setBusqueda={setBusqueda} 
@@ -177,7 +219,7 @@ const HomePage = () => {
         <div className="container">
           <div className="row">
             
-            {/* SIDEBAR DE FILTROS (Se mantiene aquí porque está muy ligado a la lógica local) */}
+            {/* SIDEBAR FILTROS */}
             <aside className="col-lg-3 mb-4">
               <div className="sidebar-filtros bg-white p-3 rounded shadow-sm sticky-top" style={{top: '100px', zIndex: 1}}>
                 <h5 className="fw-bold mb-3 text-secondary">⚡ Filtros</h5>
@@ -223,12 +265,11 @@ const HomePage = () => {
               </div>
             </aside>
 
-            {/* LISTA DE PRODUCTOS */}
+            {/* MAIN CONTENT */}
             <main className="col-lg-9">
               <h5 className="text-secondary mb-3">Resultados: <strong>{perfumesFiltrados.length}</strong> perfumes</h5>
               <div className="row">
                 {productosVisibles.map(prod => (
-                  // 2. PRODUCTCARD COMPONENTE
                   <ProductCard 
                     key={prod._id} 
                     prod={prod} 
@@ -255,7 +296,7 @@ const HomePage = () => {
           </div>
         </div>
         
-        {/* SECCIÓN QUIÉNES SOMOS */}
+        {/* QUIENES SOMOS */}
         <section className="bg-light py-5 mt-5">
             <div className="container">
                 <h2 className="text-success fw-bold mb-3">¿Quiénes Somos?</h2>
@@ -271,11 +312,11 @@ const HomePage = () => {
             </div>
         </section>
 
-        {/* 3. FOOTER COMPONENTE */}
+        {/* FOOTER */}
         <Footer filtrarPorGeneroRapido={filtrarPorGeneroRapido} />
       </div>
 
-      {/* MODAL CARRITO (Se queda aquí por ser un modal global) */}
+      {/* MODAL CARRITO */}
       {mostrarModal && (
         <div className="modal d-block" style={{background: 'rgba(0,0,0,0.5)', zIndex: 1050}}>
           <div className="modal-dialog modal-dialog-centered">
