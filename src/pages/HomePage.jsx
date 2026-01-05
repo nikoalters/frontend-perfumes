@@ -1,28 +1,25 @@
 import { useEffect, useState } from 'react';
 import Swal from 'sweetalert2'; 
 
+// Importamos los NUEVOS Componentes
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
+import ProductCard from '../components/ProductCard';
+
 const HomePage = () => {
   // --- ESTADOS ---
   const [perfumes, setPerfumes] = useState([]);
   const [carrito, setCarrito] = useState([]);
   const [user, setUser] = useState(null); 
-  
-  // Estados para Favoritos (Wishlist)
   const [wishlist, setWishlist] = useState([]);
-  const [mostrarFavoritos, setMostrarFavoritos] = useState(false); // Filtro activado/desactivado
+  const [mostrarFavoritos, setMostrarFavoritos] = useState(false);
 
-  // Filtros Generales
+  // Filtros
   const [busqueda, setBusqueda] = useState("");
   const [precioMax, setPrecioMax] = useState(150000);
   const [marcaSeleccionada, setMarcaSeleccionada] = useState("todas");
   const [mlSeleccionado, setMlSeleccionado] = useState("todos");
-  
-  const [filtrosGenero, setFiltrosGenero] = useState({ 
-    hombre: false, 
-    mujer: false, 
-    unisex: false 
-  });
-  
+  const [filtrosGenero, setFiltrosGenero] = useState({ hombre: false, mujer: false, unisex: false });
   const [limiteProductos, setLimiteProductos] = useState(20);
   const [mostrarModal, setMostrarModal] = useState(false);
   const [clienteNombre, setClienteNombre] = useState("");
@@ -32,30 +29,25 @@ const HomePage = () => {
 
   // --- CARGAR DATOS ---
   useEffect(() => {
-    // Carrito
     const carritoGuardado = localStorage.getItem('carrito_compras');
     if (carritoGuardado) setCarrito(JSON.parse(carritoGuardado));
 
-    // Wishlist (Solo cargamos si existe, la seguridad real depende del login)
     const wishlistGuardada = localStorage.getItem('wishlist_perfumes');
     if (wishlistGuardada) setWishlist(JSON.parse(wishlistGuardada));
 
-    // Usuario
     const userInfo = localStorage.getItem('userInfo');
     if (userInfo) setUser(JSON.parse(userInfo));
 
-    // Perfumes
     fetch('https://api-perfumes-chile.onrender.com/api/perfumes')
       .then(res => res.json())
       .then(data => setPerfumes(data))
       .catch(err => console.error("Error:", err));
   }, []);
 
-  // Guardar cambios automáticamente
   useEffect(() => { localStorage.setItem('carrito_compras', JSON.stringify(carrito)); }, [carrito]);
   useEffect(() => { localStorage.setItem('wishlist_perfumes', JSON.stringify(wishlist)); }, [wishlist]);
 
-  // --- LÓGICA AUXILIAR ---
+  // --- HELPERS ---
   const extraerML = (texto) => {
     const match = (texto || "").match(/(\d+)\s*ml/i);
     return match ? parseInt(match[1]) : 0;
@@ -73,9 +65,14 @@ const HomePage = () => {
       window.scrollTo(0, 400);
   };
 
-  // --- LÓGICA WISHLIST (FAVORITOS) ---
+  const limpiarFiltros = () => {
+    setBusqueda(""); setPrecioMax(150000); setMarcaSeleccionada("todas"); setMlSeleccionado("todos");
+    setFiltrosGenero({ hombre: false, mujer: false, unisex: false });
+    setMostrarFavoritos(false);
+  };
+
+  // --- LÓGICA WISHLIST ---
   const toggleWishlist = (prod) => {
-    // 1. VALIDACIÓN DE SEGURIDAD
     if (!user) {
         Swal.fire({
             title: '🔒 Requiere acceso',
@@ -91,8 +88,6 @@ const HomePage = () => {
         });
         return;
     }
-
-    // 2. AGREGAR O QUITAR
     const existe = wishlist.some(item => item._id === prod._id);
     if (existe) {
       setWishlist(wishlist.filter(item => item._id !== prod._id));
@@ -103,12 +98,33 @@ const HomePage = () => {
     }
   };
 
-  // --- FILTRADO PRINCIPAL ---
+  // --- CARRITO & LOGOUT ---
+  const agregarAlCarrito = (p) => {
+    setCarrito([...carrito, p]);
+    Swal.fire({ title: '¡Agregado!', text: p.nombre, icon: 'success', timer: 1000, showConfirmButton: false, toast: true, position: 'top-end' });
+  };
+
+  const logoutHandler = () => {
+    localStorage.removeItem('userInfo');
+    localStorage.removeItem('wishlist_perfumes'); 
+    setUser(null);
+    setWishlist([]); 
+    setMostrarFavoritos(false);
+    Swal.fire('¡Adiós!', 'Sesión cerrada', 'success');
+  };
+
+  const calcularTotal = () => carrito.reduce((s, i) => s + i.precio, 0);
+
+  const finalizarCompraWhatsApp = () => {
+    let mensaje = `Hola! Soy *${clienteNombre}* y mi pedido es:%0A%0A`;
+    carrito.forEach(p => mensaje += `▪️ ${p.nombre} - $${p.precio.toLocaleString('es-CL')}%0A`);
+    mensaje += `%0A💰 *TOTAL: $${calcularTotal().toLocaleString('es-CL')}*`;
+    window.open(`https://wa.me/${NUMERO_WHATSAPP}?text=${mensaje}`, '_blank');
+  };
+
+  // --- FILTRADO ---
   const perfumesFiltrados = perfumes.filter(prod => {
-    // 1. Filtro de Favoritos (Prioridad)
-    if (mostrarFavoritos) {
-        if (!wishlist.some(item => item._id === prod._id)) return false;
-    }
+    if (mostrarFavoritos && !wishlist.some(item => item._id === prod._id)) return false;
 
     const nombre = (prod.nombre || "").toLowerCase();
     const categoria = (prod.categoria || "").toLowerCase();
@@ -118,9 +134,7 @@ const HomePage = () => {
     if (marcaSeleccionada !== 'todas' && !nombre.toUpperCase().includes(marcaSeleccionada.toUpperCase())) return false;
     
     const generosSeleccionados = Object.keys(filtrosGenero).filter(key => filtrosGenero[key]);
-    if (generosSeleccionados.length > 0) {
-        if (!generosSeleccionados.includes(categoria)) return false;
-    }
+    if (generosSeleccionados.length > 0 && !generosSeleccionados.includes(categoria)) return false;
 
     if (mlSeleccionado !== 'todos') {
         const ml = extraerML(prod.nombre);
@@ -135,85 +149,20 @@ const HomePage = () => {
 
   const productosVisibles = perfumesFiltrados.slice(0, limiteProductos);
 
-  // --- FUNCIONES CARRITO/LOGIN ---
-  const agregarAlCarrito = (p) => {
-    setCarrito([...carrito, p]);
-    Swal.fire({ title: '¡Agregado!', text: p.nombre, icon: 'success', timer: 1000, showConfirmButton: false, toast: true, position: 'top-end' });
-  };
-
-  const logoutHandler = () => {
-    localStorage.removeItem('userInfo');
-    localStorage.removeItem('wishlist_perfumes'); // Borrar favoritos de memoria
-    setUser(null);
-    setWishlist([]); // Reset visual favoritos
-    setMostrarFavoritos(false); // Quitar filtro
-    Swal.fire('¡Adiós!', 'Sesión cerrada', 'success');
-  };
-
-  const calcularTotal = () => carrito.reduce((s, i) => s + i.precio, 0);
-
-  const finalizarCompraWhatsApp = () => {
-    let mensaje = `Hola! Soy *${clienteNombre}* y mi pedido es:%0A%0A`;
-    carrito.forEach(p => mensaje += `▪️ ${p.nombre} - $${p.precio.toLocaleString('es-CL')}%0A`);
-    mensaje += `%0A💰 *TOTAL: $${calcularTotal().toLocaleString('es-CL')}*`;
-    window.open(`https://wa.me/${NUMERO_WHATSAPP}?text=${mensaje}`, '_blank');
-  };
-
-  const limpiarFiltros = () => {
-    setBusqueda(""); setPrecioMax(150000); setMarcaSeleccionada("todas"); setMlSeleccionado("todos");
-    setFiltrosGenero({ hombre: false, mujer: false, unisex: false });
-    setMostrarFavoritos(false);
-  };
-
+  // --- RENDER ---
   return (
     <>
-      {/* === NAVBAR === */}
-      <nav className="navbar navbar-expand-lg fixed-top shadow-sm bg-white py-3">
-        <div className="container-fluid px-4">
-          <a className="navbar-brand fw-bold d-flex align-items-center text-success" href="/">
-            <img src="/vite.svg" alt="Logo" style={{height: '35px', marginRight: '10px'}} />
-            Perfumes Chile
-          </a>
-          
-          <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
-            <span className="navbar-toggler-icon"></span>
-          </button>
+      {/* 1. NAVBAR COMPONENTE */}
+      <Navbar 
+        busqueda={busqueda} 
+        setBusqueda={setBusqueda} 
+        carritoCount={carrito.length} 
+        user={user} 
+        logoutHandler={logoutHandler} 
+        setMostrarModal={setMostrarModal} 
+        filtrarPorGeneroRapido={filtrarPorGeneroRapido}
+      />
 
-          <div className="collapse navbar-collapse" id="navbarContent">
-             <form className="d-flex me-auto ms-lg-4 my-2 my-lg-0" style={{maxWidth: '400px', width: '100%'}} onSubmit={e => e.preventDefault()}>
-                <div className="input-group">
-                    <span className="input-group-text bg-light border-end-0 text-muted">🔍</span>
-                    <input className="form-control bg-light border-start-0" type="search" placeholder="Buscar perfume..." value={busqueda} onChange={e => setBusqueda(e.target.value)}/>
-                </div>
-            </form>
-
-            <ul className="navbar-nav align-items-center gap-3 mb-2 mb-lg-0">
-                <li className="nav-item"><button onClick={() => filtrarPorGeneroRapido('hombre')} className="btn nav-link small text-secondary fw-semibold">Hombres</button></li>
-                <li className="nav-item"><button onClick={() => filtrarPorGeneroRapido('mujer')} className="btn nav-link small text-secondary fw-semibold">Mujeres</button></li>
-                <li className="nav-item"><button onClick={() => filtrarPorGeneroRapido('unisex')} className="btn nav-link small text-secondary fw-semibold">Unisex</button></li>
-                <li className="nav-item"><button onClick={() => filtrarPorGeneroRapido('todos')} className="btn nav-link small text-secondary fw-semibold">Nosotros</button></li>
-                
-                <li className="nav-item position-relative">
-                    <button className="btn btn-outline-secondary d-flex align-items-center gap-2 rounded-pill px-3" onClick={() => setMostrarModal(true)}>
-                        🛒 Carrito
-                        <span className="badge bg-danger rounded-pill position-absolute top-0 start-100 translate-middle">{carrito.length}</span>
-                    </button>
-                </li>
-
-                {user ? (
-                <li className="nav-item d-flex align-items-center gap-3 ms-2">
-                    <span className="fw-bold text-success small">Hola, {user.name.split(' ')[0]}</span>
-                    <button className="btn btn-outline-danger btn-sm rounded-pill px-3" onClick={logoutHandler}>Cerrar Sesión</button>
-                </li>
-                ) : (
-                <li className="nav-item"><a href="/login" className="btn-login fw-bold small px-4 rounded-pill">Ingresar</a></li>
-                )}
-            </ul>
-          </div>
-        </div>
-      </nav>
-
-      {/* CONTENEDOR PRINCIPAL */}
       <div className="fade-in" style={{marginTop: '80px'}}>
         
         {/* HERO BANNER */}
@@ -228,12 +177,10 @@ const HomePage = () => {
         <div className="container">
           <div className="row">
             
-            {/* SIDEBAR DE FILTROS */}
+            {/* SIDEBAR DE FILTROS (Se mantiene aquí porque está muy ligado a la lógica local) */}
             <aside className="col-lg-3 mb-4">
               <div className="sidebar-filtros bg-white p-3 rounded shadow-sm sticky-top" style={{top: '100px', zIndex: 1}}>
                 <h5 className="fw-bold mb-3 text-secondary">⚡ Filtros</h5>
-                
-                {/* BOTÓN FAVORITOS (NUEVO) */}
                 <button 
                     className={`btn w-100 mb-4 fw-bold shadow-sm ${mostrarFavoritos ? 'btn-danger text-white' : 'btn-outline-danger'}`}
                     onClick={() => {
@@ -244,21 +191,16 @@ const HomePage = () => {
                     {mostrarFavoritos ? '❌ Ver Todos' : '❤️ Ver Mis Favoritos'}
                 </button>
 
-                {/* Checkboxes Género */}
                 <div className="mb-4">
                     <label className="fw-bold mb-2 small text-muted">Género</label>
                     <div className="form-check"><input className="form-check-input" type="checkbox" name="hombre" checked={filtrosGenero.hombre} onChange={handleGeneroChange} id="checkHombre"/><label className="form-check-label" htmlFor="checkHombre">Hombre</label></div>
                     <div className="form-check"><input className="form-check-input" type="checkbox" name="mujer" checked={filtrosGenero.mujer} onChange={handleGeneroChange} id="checkMujer"/><label className="form-check-label" htmlFor="checkMujer">Mujer</label></div>
                     <div className="form-check"><input className="form-check-input" type="checkbox" name="unisex" checked={filtrosGenero.unisex} onChange={handleGeneroChange} id="checkUnisex"/><label className="form-check-label" htmlFor="checkUnisex">Unisex</label></div>
                 </div>
-
-                {/* Precio */}
                 <div className="mb-4">
                     <div className="d-flex justify-content-between align-items-center mb-2"><label className="fw-bold small text-muted">Precio Máximo</label><span className="text-success fw-bold">${precioMax.toLocaleString()}</span></div>
                     <input type="range" className="form-range" min="0" max="150000" step="5000" value={precioMax} onChange={e => setPrecioMax(Number(e.target.value))} />
                 </div>
-
-                {/* Marca */}
                 <div className="mb-4">
                     <label className="fw-bold mb-2 small text-muted">Marca</label>
                     <select className="form-select" value={marcaSeleccionada} onChange={e => setMarcaSeleccionada(e.target.value)}>
@@ -266,8 +208,6 @@ const HomePage = () => {
                     {MARCAS_CONOCIDAS.map(m => <option key={m} value={m}>{m}</option>)}
                     </select>
                 </div>
-
-                {/* Tamaño */}
                 <div className="mb-4">
                     <label className="fw-bold mb-2 small text-muted">Tamaño (ML)</label>
                     <select className="form-select" value={mlSeleccionado} onChange={e => setMlSeleccionado(e.target.value)}>
@@ -279,7 +219,6 @@ const HomePage = () => {
                         <option value="200">200ml o más</option>
                     </select>
                 </div>
-
                 <button onClick={limpiarFiltros} className="btn btn-outline-danger w-100 py-2">🗑️ Borrar Filtros</button>
               </div>
             </aside>
@@ -287,53 +226,16 @@ const HomePage = () => {
             {/* LISTA DE PRODUCTOS */}
             <main className="col-lg-9">
               <h5 className="text-secondary mb-3">Resultados: <strong>{perfumesFiltrados.length}</strong> perfumes</h5>
-
               <div className="row">
                 {productosVisibles.map(prod => (
-                  <div className="col-md-4 mb-4" key={prod._id}>
-                    <div className="card h-100 shadow-sm border-0">
-                      <div className="position-relative">
-                        {/* Badge ML */}
-                        <span className="badge bg-dark position-absolute top-0 end-0 m-2 opacity-75">
-                            {extraerML(prod.nombre) > 0 ? `${extraerML(prod.nombre)}ml` : 'Perfume'}
-                        </span>
-                        
-                        {/* Botón Corazón */}
-                        <button 
-                            className="position-absolute top-0 start-0 m-2 btn p-0 border-0 bg-transparent shadow-none"
-                            onClick={() => toggleWishlist(prod)}
-                            style={{fontSize: '1.5rem', zIndex: 5, transition: 'transform 0.2s'}}
-                            onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.2)'}
-                            onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
-                        >
-                            {wishlist.some(item => item._id === prod._id) ? '❤️' : '🤍'}
-                        </button>
-
-                        {/* IMAGEN CLICKEABLE - Busca en Fragrantica/Google */}
-                        <img 
-                            src={prod.imagen} 
-                            className="card-img-top p-3" 
-                            alt={prod.nombre} 
-                            style={{height: '250px', objectFit: 'contain', cursor: 'pointer', transition: 'transform 0.2s'}}
-                            title="Click para ver info en Google"
-                            onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
-                            onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
-                            onClick={() => {
-                                const nombreLimpio = prod.nombre.replace(/\s*\d+ml\s*/i, "");
-                                const query = `site:fragrantica.es ${nombreLimpio} perfume`;
-                                
-                                window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, '_blank');
-                            }}
-                        />
-                      </div>
-                      <div className="card-body d-flex flex-column">
-                        <h6 className="card-title text-truncate fw-bold">{prod.nombre}</h6>
-                        <p className="card-text text-muted small mb-2">{prod.categoria}</p>
-                        <h5 className="text-success fw-bold mb-auto">${prod.precio.toLocaleString('es-CL')}</h5>
-                        <button onClick={() => agregarAlCarrito(prod)} className="btn-agregar mt-3">Añadir 🛒</button>
-                      </div>
-                    </div>
-                  </div>
+                  // 2. PRODUCTCARD COMPONENTE
+                  <ProductCard 
+                    key={prod._id} 
+                    prod={prod} 
+                    wishlist={wishlist} 
+                    toggleWishlist={toggleWishlist} 
+                    agregarAlCarrito={agregarAlCarrito} 
+                  />
                 ))}
               </div>
 
@@ -343,7 +245,6 @@ const HomePage = () => {
                     <p className="text-muted small mt-2">Mostrando {productosVisibles.length} de {perfumesFiltrados.length}</p>
                 </div>
               )}
-
               {productosVisibles.length === 0 && (
                 <div className="text-center py-5">
                     <h3>😕 No encontramos resultados</h3>
@@ -353,8 +254,8 @@ const HomePage = () => {
             </main>
           </div>
         </div>
-
-        {/* SECCIÓN QUIÉNES SOMOS / CONTACTO */}
+        
+        {/* SECCIÓN QUIÉNES SOMOS */}
         <section className="bg-light py-5 mt-5">
             <div className="container">
                 <h2 className="text-success fw-bold mb-3">¿Quiénes Somos?</h2>
@@ -370,44 +271,11 @@ const HomePage = () => {
             </div>
         </section>
 
-        {/* FOOTER */}
-        <footer className="footer-pro bg-dark text-white pt-5">
-          <div className="container pb-4">
-            <div className="row">
-              <div className="col-md-4 mb-4">
-                <h5 className="mb-3 text-uppercase fw-bold d-flex align-items-center"><img src="/vite.svg" alt="Logo" style={{height: '25px', marginRight: '10px'}} />PERFUMES CHILE</h5>
-                <p className="small text-white-50">Tu tienda de confianza para fragancias 100% originales en Chile.</p>
-                <div className="d-flex gap-3 mt-3">
-                    <a href="https://www.instagram.com/perfumeschile" target="_blank" rel="noopener noreferrer" className="text-white-50 d-flex align-items-center gap-1 small text-decoration-none"><span className="text-danger">📷</span> Instagram</a>
-                    <a href="https://www.facebook.com/perfumeschile" target="_blank" rel="noopener noreferrer" className="text-white-50 d-flex align-items-center gap-1 small text-decoration-none"><span className="text-primary">👍</span> Facebook</a>
-                </div>
-              </div>
-              <div className="col-md-4 mb-4">
-                <h5 className="mb-3 text-uppercase fw-bold">NAVEGACIÓN</h5>
-                <ul className="list-unstyled small">
-                  <li className="mb-2"><button onClick={() => filtrarPorGeneroRapido('hombre')} className="btn p-0 text-white-50 text-decoration-none">◆ Perfumes Hombre</button></li>
-                  <li className="mb-2"><button onClick={() => filtrarPorGeneroRapido('mujer')} className="btn p-0 text-white-50 text-decoration-none">◆ Perfumes Mujer</button></li>
-                  <li className="mb-2"><button onClick={() => filtrarPorGeneroRapido('unisex')} className="btn p-0 text-white-50 text-decoration-none">◆ Perfumes Unisex</button></li>
-                  <li className="mb-2"><button onClick={() => filtrarPorGeneroRapido('todos')} className="btn p-0 text-white-50 text-decoration-none">◆ Sobre Nosotros</button></li>
-                </ul>
-              </div>
-              <div className="col-md-4 mb-4">
-                <h5 className="mb-3 text-uppercase fw-bold">CONTÁCTANOS</h5>
-                <ul className="list-unstyled small text-white-50">
-                    <li className="mb-2 d-flex align-items-center gap-2">📍 Santiago, Chile</li>
-                    <li className="mb-2 d-flex align-items-center gap-2">📱 +56 9 5854 7236</li>
-                    <li className="mb-2 d-flex align-items-center gap-2">📧 contacto@perfumeschile.cl</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-          <div className="footer-bottom text-center py-3 border-top border-secondary">
-            <div className="container d-flex justify-content-between small text-white-50"><p className="m-0">&copy; 2025 <strong>Perfumes Chile</strong>.</p><p className="m-0">Desarrollado con ❤️ en Chile</p></div>
-          </div>
-        </footer>
+        {/* 3. FOOTER COMPONENTE */}
+        <Footer filtrarPorGeneroRapido={filtrarPorGeneroRapido} />
       </div>
 
-      {/* MODAL CARRITO */}
+      {/* MODAL CARRITO (Se queda aquí por ser un modal global) */}
       {mostrarModal && (
         <div className="modal d-block" style={{background: 'rgba(0,0,0,0.5)', zIndex: 1050}}>
           <div className="modal-dialog modal-dialog-centered">
