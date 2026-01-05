@@ -11,10 +11,13 @@ const HomePage = () => {
   const [marcaSeleccionada, setMarcaSeleccionada] = useState("todas");
   const [mlSeleccionado, setMlSeleccionado] = useState("todos");
   const [filtrosGenero, setFiltrosGenero] = useState({ hombre: false, mujer: false, unisex: false });
+  
+  // MANTENEMOS EL LÍMITE EN 20 PARA VELOCIDAD EN MÓVIL
   const [limiteProductos, setLimiteProductos] = useState(20);
+  
   const [mostrarModal, setMostrarModal] = useState(false);
   const [clienteNombre, setClienteNombre] = useState("");
-  const [clienteDireccion, setClienteDireccion] = useState("");
+  const [clienteDireccion, setClienteDireccion] = useState(""); // Variable reservada para futuro uso
 
   const NUMERO_WHATSAPP = "56958547236"; 
   const MARCAS_CONOCIDAS = ["ADOLFO DOMINGUEZ", "AFNAN", "AL HARAMAIN", "ANTONIO BANDERAS", "ARIANA GRANDE", "ARMAF", "ARMANI", "AZZARO", "BENETTON", "BHARARA", "BURBERRY", "CACHAREL", "CALVIN KLEIN", "CAROLINA HERRERA", "CLINIQUE", "COACH", "DIESEL", "DOLCE & GABBANA", "DONNA KARAN", "GIVENCHY", "GUCCI", "GUESS", "HALLOWEEN", "HERMES", "HUGO BOSS", "ISSEY MIYAKE", "JEAN PAUL GAULTIER", "JIMMY CHOO", "KENZO", "LACOSTE", "LANCOME", "LATTAFA", "MAISON ALHAMBRA", "MONCLER", "MONTBLANC", "MOSCHINO", "MUGLER", "PACO RABANNE", "RALPH LAUREN", "RASSASI", "SALVATORE FERRAGAMO", "TOMMY HILFIGER", "TOUS", "VERSACE", "VICTOR&ROLF", "VICTORINOX", "YVES SAINT LAURENT"];
@@ -37,7 +40,7 @@ const HomePage = () => {
     localStorage.setItem('carrito_compras', JSON.stringify(carrito));
   }, [carrito]);
 
-  // --- LÓGICA ---
+  // --- LÓGICA DE FILTRADO ---
   const extraerML = (texto) => {
     const match = (texto || "").match(/(\d+)\s*ml/i);
     return match ? parseInt(match[1]) : 0;
@@ -48,8 +51,10 @@ const HomePage = () => {
     if (!nombre.includes(busqueda.toLowerCase())) return false;
     if (prod.precio > precioMax) return false;
     if (marcaSeleccionada !== 'todas' && !nombre.toUpperCase().includes(marcaSeleccionada.toUpperCase())) return false;
+    
     const generosActivos = Object.keys(filtrosGenero).filter(k => filtrosGenero[k]);
     if (generosActivos.length > 0 && !generosActivos.includes((prod.categoria || "").toLowerCase())) return false;
+    
     if (mlSeleccionado !== 'todos') {
         const ml = extraerML(prod.nombre);
         if (mlSeleccionado === "30" && ml > 35) return false;
@@ -61,6 +66,7 @@ const HomePage = () => {
     return true;
   });
 
+  // Aquí cortamos la lista según el límite actual (20, 40, 60...)
   const productosVisibles = perfumesFiltrados.slice(0, limiteProductos);
 
   const agregarAlCarrito = (p) => {
@@ -88,24 +94,20 @@ const HomePage = () => {
     setFiltrosGenero({ hombre: false, mujer: false, unisex: false });
   };
 
-  const handleMenuFilter = (g) => {
-    limpiarFiltros();
-    setFiltrosGenero({ ...{ hombre: false, mujer: false, unisex: false }, [g]: true });
-  };
-
   return (
     <>
-      <nav className="navbar navbar-expand-lg fixed-top shadow-sm bg-white">
+      <nav className="navbar navbar-expand-lg fixed-top shadow-sm">
         <div className="container">
-          <a className="navbar-brand fw-bold" href="/">Perfumes Chile</a>
+          <a className="navbar-brand" href="/">Perfumes Chile</a>
           <div className="d-flex align-items-center gap-3">
             {user ? (
               <div className="d-flex align-items-center gap-2">
-                <span className="small">Hola, {user.name}</span>
+                <span className="small fw-bold">Hola, {user.name}</span>
                 <button onClick={logoutHandler} className="btn btn-sm btn-outline-danger">Salir</button>
               </div>
             ) : (
-              <a href="/login" className="btn btn-sm btn-primary">Ingresar</a>
+              // Botón Login con estilo verde
+              <a href="/login" className="btn-login">Ingresar</a>
             )}
             <button className="btn btn-dark btn-sm" onClick={() => setMostrarModal(true)}>🛒 {carrito.length}</button>
           </div>
@@ -113,23 +115,35 @@ const HomePage = () => {
       </nav>
 
       <div className="fade-in mt-5 pt-4">
-        <header className="hero-banner text-center py-5 bg-light mb-4">
-          <h1>✨ Oferta Especial</h1>
-          <button onClick={limpiarFiltros} className="btn btn-warning rounded-pill mt-3">Ver Catálogo</button>
+        <header className="hero-banner">
+          <div>
+            <h1>✨ Oferta Especial</h1>
+            <p>Los mejores perfumes al mejor precio</p>
+            <button onClick={limpiarFiltros} className="btn btn-light text-success fw-bold rounded-pill mt-2">Ver Catálogo</button>
+          </div>
         </header>
 
         <div className="container">
           <div className="row">
+            {/* Sidebar con clase correcta para el CSS */}
             <aside className="col-lg-3 mb-4">
-              <div className="p-3 border rounded">
-                <h5>Filtros</h5>
-                <input type="range" className="form-range" min="0" max="150000" value={precioMax} onChange={e => setPrecioMax(Number(e.target.value))} />
-                <p>Max: ${precioMax.toLocaleString()}</p>
-                <select className="form-select mb-2" value={marcaSeleccionada} onChange={e => setMarcaSeleccionada(e.target.value)}>
-                  <option value="todas">Todas las marcas</option>
-                  {MARCAS_CONOCIDAS.map(m => <option key={m} value={m}>{m}</option>)}
-                </select>
-                <button onClick={limpiarFiltros} className="btn btn-sm btn-outline-secondary w-100">Limpiar</button>
+              <div className="sidebar-filtros">
+                <h5 className="filtro-titulo">Filtros</h5>
+                
+                <div className="filtro-grupo">
+                    <label>Precio Máximo: ${precioMax.toLocaleString()}</label>
+                    <input type="range" className="form-range" min="0" max="150000" value={precioMax} onChange={e => setPrecioMax(Number(e.target.value))} />
+                </div>
+
+                <div className="filtro-grupo">
+                    <label className="mb-2">Marca</label>
+                    <select className="form-select mb-2" value={marcaSeleccionada} onChange={e => setMarcaSeleccionada(e.target.value)}>
+                    <option value="todas">Todas las marcas</option>
+                    {MARCAS_CONOCIDAS.map(m => <option key={m} value={m}>{m}</option>)}
+                    </select>
+                </div>
+
+                <button onClick={limpiarFiltros} className="btn btn-sm btn-outline-secondary w-100">Limpiar Filtros</button>
               </div>
             </aside>
 
@@ -138,28 +152,50 @@ const HomePage = () => {
                 {productosVisibles.map(prod => (
                   <div className="col-md-4 mb-4" key={prod._id}>
                     <div className="card h-100 shadow-sm">
-                      <img src={prod.imagen} className="card-img-top" alt={prod.nombre} style={{height: '200px', objectFit: 'contain'}} />
-                      <div className="card-body">
+                      <img src={prod.imagen} className="card-img-top" alt={prod.nombre} />
+                      {/* Badge de ML si lo quieres agregar, opcional */}
+                      <div className="card-body d-flex flex-column">
                         <h6 className="card-title text-truncate">{prod.nombre}</h6>
-                        <p className="fw-bold text-success">${prod.precio.toLocaleString('es-CL')}</p>
-                        <button onClick={() => agregarAlCarrito(prod)} className="btn btn-primary btn-sm w-100">Añadir 🛒</button>
+                        <p className="fw-bold text-success mb-auto">${prod.precio.toLocaleString('es-CL')}</p>
+                        
+                        {/* Botón Añadir con estilo VERDE (btn-agregar) */}
+                        <button onClick={() => agregarAlCarrito(prod)} className="btn-agregar mt-3">Añadir 🛒</button>
                       </div>
                     </div>
                   </div>
                 ))}
               </div>
+
+              {/* LÓGICA DEL BOTÓN VER MÁS */}
+              {productosVisibles.length < perfumesFiltrados.length && (
+                <div className="text-center mt-4 mb-5">
+                    <button 
+                        className="btn-login px-5 py-2 shadow-sm" 
+                        onClick={() => setLimiteProductos(prev => prev + 20)}
+                    >
+                        Ver más productos 👇
+                    </button>
+                    <p className="text-muted small mt-2">
+                        Mostrando {productosVisibles.length} de {perfumesFiltrados.length}
+                    </p>
+                </div>
+              )}
+
               {productosVisibles.length === 0 && <h3 className="text-center py-5">No hay resultados</h3>}
             </main>
           </div>
         </div>
 
-        <footer className="bg-dark text-white py-4 mt-5">
+        {/* Footer con clase correcta */}
+        <footer className="footer-pro py-4 mt-5">
             <div className="container text-center">
-                <p>&copy; 2025 Perfumes Chile - Originales 🇨🇱</p>
+                <h5>Perfumes Chile</h5>
+                <p>&copy; 2025 - Calidad y Garantía 🇨🇱</p>
             </div>
         </footer>
       </div>
 
+      {/* MODAL CARRITO */}
       {mostrarModal && (
         <div className="modal d-block" style={{background: 'rgba(0,0,0,0.5)'}}>
           <div className="modal-dialog">
@@ -177,9 +213,16 @@ const HomePage = () => {
                     }}>×</button>
                   </div>
                 ))}
-                <div className="fw-bold mt-2">Total: ${calcularTotal().toLocaleString()}</div>
-                <input type="text" className="form-control mt-3" placeholder="Tu nombre" value={clienteNombre} onChange={e => setClienteNombre(e.target.value)} />
-                <button className="btn btn-success w-100 mt-2" onClick={finalizarCompraWhatsApp}>Pedir por WhatsApp 📲</button>
+                
+                {carrito.length === 0 && <p className="text-center text-muted">El carrito está vacío</p>}
+
+                {carrito.length > 0 && (
+                    <>
+                        <div className="fw-bold mt-3 text-end">Total: ${calcularTotal().toLocaleString()}</div>
+                        <input type="text" className="form-control mt-3" placeholder="Tu nombre" value={clienteNombre} onChange={e => setClienteNombre(e.target.value)} />
+                        <button className="btn btn-success w-100 mt-3" onClick={finalizarCompraWhatsApp}>Pedir por WhatsApp 📲</button>
+                    </>
+                )}
               </div>
             </div>
           </div>
