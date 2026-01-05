@@ -6,6 +6,7 @@ const HomePage = () => {
   const [perfumes, setPerfumes] = useState([]);
   const [carrito, setCarrito] = useState([]);
   const [user, setUser] = useState(null); 
+  const [wishlist, setWishlist] = useState([]);
   
   // Filtros
   const [busqueda, setBusqueda] = useState("");
@@ -34,6 +35,8 @@ const HomePage = () => {
   useEffect(() => {
     const carritoGuardado = localStorage.getItem('carrito_compras');
     if (carritoGuardado) setCarrito(JSON.parse(carritoGuardado));
+    const wishlistGuardada = localStorage.getItem('wishlist_perfumes');
+    if (wishlistGuardada) setWishlist(JSON.parse(wishlistGuardada));
 
     const userInfo = localStorage.getItem('userInfo');
     if (userInfo) setUser(JSON.parse(userInfo));
@@ -47,6 +50,9 @@ const HomePage = () => {
   useEffect(() => {
     localStorage.setItem('carrito_compras', JSON.stringify(carrito));
   }, [carrito]);
+  useEffect(() => {
+    localStorage.setItem('wishlist_perfumes', JSON.stringify(wishlist));
+  }, [wishlist]);
 
   // --- LÓGICA AUXILIAR ---
   const extraerML = (texto) => {
@@ -120,6 +126,37 @@ const HomePage = () => {
   const limpiarFiltros = () => {
     setBusqueda(""); setPrecioMax(150000); setMarcaSeleccionada("todas"); setMlSeleccionado("todos");
     setFiltrosGenero({ hombre: false, mujer: false, unisex: false });
+    };
+// --- FUNCIÓN WISHLIST PROTEGIDA ---
+  const toggleWishlist = (prod) => {
+    // 1. VALIDACIÓN DE SEGURIDAD
+    if (!user) {
+        Swal.fire({
+            title: '🔒 Requiere acceso',
+            text: 'Debes iniciar sesión para guardar tus favoritos.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#009970',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ir a Iniciar Sesión',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = '/login'; // Redirige al login
+            }
+        });
+        return; // Detiene la función aquí si no hay usuario
+    }
+
+    // 2. LÓGICA NORMAL (Si ya está logueado)
+    const existe = wishlist.some(item => item._id === prod._id);
+    if (existe) {
+      setWishlist(wishlist.filter(item => item._id !== prod._id));
+      Swal.fire({ title: 'Eliminado de favoritos', icon: 'info', toast: true, position: 'top-end', timer: 1000, showConfirmButton: false });
+    } else {
+      setWishlist([...wishlist, prod]);
+      Swal.fire({ title: '¡Añadido a favoritos! ❤️', icon: 'success', toast: true, position: 'top-end', timer: 1000, showConfirmButton: false });
+    }
   };
 
   return (
@@ -278,9 +315,22 @@ const HomePage = () => {
                   <div className="col-md-4 mb-4" key={prod._id}>
                     <div className="card h-100 shadow-sm border-0">
                       <div className="position-relative">
+                        {/* Badge ML (Derecha) */}
                         <span className="badge bg-dark position-absolute top-0 end-0 m-2 opacity-75">
                             {extraerML(prod.nombre) > 0 ? `${extraerML(prod.nombre)}ml` : 'Perfume'}
                         </span>
+                        
+                        {/* NUEVO: Botón Corazón (Izquierda) */}
+                        <button 
+                            className="position-absolute top-0 start-0 m-2 btn p-0 border-0 bg-transparent shadow-none"
+                            onClick={() => toggleWishlist(prod)}
+                            style={{fontSize: '1.5rem', zIndex: 5, transition: 'transform 0.2s'}}
+                            onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.2)'}
+                            onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                        >
+                            {wishlist.some(item => item._id === prod._id) ? '❤️' : '🤍'}
+                        </button>
+
                         <img src={prod.imagen} className="card-img-top p-3" alt={prod.nombre} style={{height: '250px', objectFit: 'contain'}} />
                       </div>
                       <div className="card-body d-flex flex-column">
