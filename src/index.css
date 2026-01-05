@@ -74,15 +74,23 @@ body {
 }
 
 /* --- SIDEBAR DE FILTROS --- */
+/* En tu archivo src/index.css */
+
 .sidebar-filtros {
-  background: white;
+  background-color: #009970;
+  /* Tu verde característico */
+  color: white;
+  /* Cambia el texto a blanco para que sea legible */
+  /* Asegúrate de que las otras propiedades como padding y borderRadius se mantengan si ya las tenías */
   padding: 20px;
   border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-  position: sticky;
-  top: 100px;
-  max-height: calc(100vh - 120px);
-  overflow-y: auto;
+}
+
+/* También puedes necesitar ajustar el color de los títulos y etiquetas dentro del sidebar */
+.sidebar-filtros h5,
+.sidebar-filtros .form-label,
+.sidebar-filtros .form-check-label {
+  color: white;
 }
 
 /* Scrollbar Sidebar */
