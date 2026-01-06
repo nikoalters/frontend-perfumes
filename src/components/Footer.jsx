@@ -11,8 +11,8 @@ const Footer = ({ filtrarPorGeneroRapido }) => {
             </h5>
             <p className="small text-white-50">Tu tienda de confianza para fragancias 100% originales en Chile.</p>
             <div className="d-flex gap-3 mt-3">
-                <a href="https://www.instagram.com/perfumeschile" target="_blank" rel="noopener noreferrer" className="text-white-50 d-flex align-items-center gap-1 small text-decoration-none"><span className="text-danger">📷</span> Instagram</a>
-                <a href="https://www.facebook.com/perfumeschile" target="_blank" rel="noopener noreferrer" className="text-white-50 d-flex align-items-center gap-1 small text-decoration-none"><span className="text-primary">👍</span> Facebook</a>
+                <a href="https://www.instagram.com/nico_alters?igsh=em9xb2NuN2h6NTc=" target="_blank" rel="noopener noreferrer" className="text-white-50 d-flex align-items-center gap-1 small text-decoration-none"><span className="text-danger">📷</span> Instagram</a>
+                <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer" className="text-white-50 d-flex align-items-center gap-1 small text-decoration-none"><span className="text-primary">👍</span> Facebook</a>
             </div>
           </div>
           <div className="col-md-4 mb-4">
