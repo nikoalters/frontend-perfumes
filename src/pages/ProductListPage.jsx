@@ -30,14 +30,14 @@ const ProductListPage = () => {
         }
     }, [navigate]);
 
-    // 2. OBTENER PRODUCTOS (CON ANTI-CACHÉ)
+    // 2. OBTENER PERFUMES (CORREGIDO: /api/perfumes)
     const fetchProducts = async () => {
         try {
-            // Agregamos un timestamp (?t=...) para obligar a traer datos frescos de Render
-            const res = await fetch(`https://api-perfumes-chile.onrender.com/api/products?t=${new Date().getTime()}`);
+            // CORRECCIÓN: Usamos 'perfumes' en lugar de 'products'
+            const res = await fetch(`https://api-perfumes-chile.onrender.com/api/perfumes?t=${new Date().getTime()}`);
             
             if (!res.ok) {
-                console.error("Error en la respuesta del servidor:", res.status);
+                console.error("Error respuesta servidor:", res.status);
                 return;
             }
 
@@ -56,19 +56,18 @@ const ProductListPage = () => {
         return new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(valor);
     };
 
-    // 4. MANEJO DE INPUTS Y FORMULARIO
+    // 4. MANEJO DE INPUTS
     const handleInputChange = (e) => {
         const { id, value } = e.target;
         const field = id.split('-')[0]; 
         setFormData({ ...formData, [field]: value });
     };
 
-    // Activar modo edición cargando datos en el form
+    // MODO EDICIÓN
     const editClickHandler = (prod) => {
         setEditMode(true);
         setCurrentProductId(prod._id);
         
-        // Intentamos separar el nombre de los ML para el form
         const nombreSinML = prod.nombre.replace(/\d+ml/gi, '').trim();
         const mlDetectado = prod.nombre.match(/\d+/) ? prod.nombre.match(/\d+/)[0] : '';
 
@@ -88,13 +87,15 @@ const ProductListPage = () => {
         setCurrentProductId(null);
     };
 
+    // 5. GUARDAR / ACTUALIZAR (CORREGIDO: /api/perfumes)
     const handleSubmit = async (e) => {
         e.preventDefault();
         const nombreFinal = `${formData.nombre} ${formData.ml}ml`;
 
+        // URL CORREGIDA: /api/perfumes
         const url = editMode 
-            ? `https://api-perfumes-chile.onrender.com/api/products/${currentProductId}`
-            : 'https://api-perfumes-chile.onrender.com/api/products';
+            ? `https://api-perfumes-chile.onrender.com/api/perfumes/${currentProductId}`
+            : 'https://api-perfumes-chile.onrender.com/api/perfumes';
         
         const method = editMode ? 'PUT' : 'POST';
 
@@ -126,18 +127,18 @@ const ProductListPage = () => {
                 resetForm();
                 fetchProducts();
             } else {
-                Swal.fire('Error', 'No se pudo procesar el perfume', 'error');
+                Swal.fire('Error', 'No se pudo procesar', 'error');
             }
         } catch (error) {
             Swal.fire('Error', 'Fallo de red', 'error');
         }
     };
 
-    // 5. FUNCIÓN BORRAR
+    // 6. BORRAR (CORREGIDO: /api/perfumes)
     const deleteHandler = async (id) => {
         const result = await Swal.fire({
-            title: '¿Eliminar producto?',
-            text: "Esta acción no se puede deshacer.",
+            title: '¿Eliminar?',
+            text: "No podrás deshacer esto.",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#d33',
@@ -147,12 +148,13 @@ const ProductListPage = () => {
 
         if (result.isConfirmed) {
             try {
-                const res = await fetch(`https://api-perfumes-chile.onrender.com/api/products/${id}`, {
+                // URL CORREGIDA: /api/perfumes
+                const res = await fetch(`https://api-perfumes-chile.onrender.com/api/perfumes/${id}`, {
                     method: 'DELETE',
                     headers: { 'Authorization': `Bearer ${user.token}` }
                 });
                 if (res.ok) {
-                    Swal.fire('¡Borrado!', 'Eliminado de la base de datos', 'success');
+                    Swal.fire('¡Borrado!', 'Perfume eliminado', 'success');
                     fetchProducts();
                 }
             } catch (error) {
@@ -233,7 +235,7 @@ const ProductListPage = () => {
                 </div>
 
                 <div className="row">
-                    {/* FORMULARIO DINÁMICO (CREAR/EDITAR) */}
+                    {/* FORMULARIO DINÁMICO */}
                     <div className="col-md-4 mb-5">
                         <div className="card shadow border-0 rounded-4 sticky-top" style={{top: '100px'}}>
                             <div className="card-header bg-white border-bottom-0 pt-4 px-4">
