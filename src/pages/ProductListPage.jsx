@@ -16,7 +16,8 @@ const ProductListPage = () => {
         ml: '',
         precio: '',
         categoria: 'hombre',
-        imagen: ''
+        imagen: '',
+        stock: '' // <--- NUEVO: Estado para el stock
     });
 
     // 1. VERIFICAR SESIÓN Y CARGAR DATOS
@@ -30,10 +31,9 @@ const ProductListPage = () => {
         }
     }, [navigate]);
 
-    // 2. OBTENER PERFUMES (CORREGIDO: /api/perfumes)
+    // 2. OBTENER PERFUMES
     const fetchProducts = async () => {
         try {
-            // CORRECCIÓN: Usamos 'perfumes' en lugar de 'products'
             const res = await fetch(`https://api-perfumes-chile.onrender.com/api/perfumes?t=${new Date().getTime()}`);
             
             if (!res.ok) {
@@ -59,11 +59,12 @@ const ProductListPage = () => {
     // 4. MANEJO DE INPUTS
     const handleInputChange = (e) => {
         const { id, value } = e.target;
+        // Tu lógica original usa la parte antes del guion (nombre-prod -> nombre)
         const field = id.split('-')[0]; 
         setFormData({ ...formData, [field]: value });
     };
 
-    // MODO EDICIÓN
+    // MODO EDICIÓN (CARGAR DATOS EXISTENTES)
     const editClickHandler = (prod) => {
         setEditMode(true);
         setCurrentProductId(prod._id);
@@ -76,28 +77,31 @@ const ProductListPage = () => {
             ml: mlDetectado,
             precio: prod.precio,
             categoria: prod.categoria,
-            imagen: prod.imagen
+            imagen: prod.imagen,
+            stock: prod.countInStock // <--- CARGAMOS EL STOCK REAL DE LA DB
         });
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     const resetForm = () => {
-        setFormData({ nombre: '', ml: '', precio: '', categoria: 'hombre', imagen: '' });
+        setFormData({ nombre: '', ml: '', precio: '', categoria: 'hombre', imagen: '', stock: '' });
         setEditMode(false);
         setCurrentProductId(null);
     };
 
-    // 5. GUARDAR / ACTUALIZAR (CORREGIDO: /api/perfumes)
+    // 5. GUARDAR / ACTUALIZAR
     const handleSubmit = async (e) => {
         e.preventDefault();
         const nombreFinal = `${formData.nombre} ${formData.ml}ml`;
 
-        // URL CORREGIDA: /api/perfumes
         const url = editMode 
             ? `https://api-perfumes-chile.onrender.com/api/perfumes/${currentProductId}`
             : 'https://api-perfumes-chile.onrender.com/api/perfumes';
         
         const method = editMode ? 'PUT' : 'POST';
+
+        // Validamos que el stock sea un número, si está vacío ponemos 0
+        const stockFinal = formData.stock === '' ? 0 : Number(formData.stock);
 
         try {
             const res = await fetch(url, {
@@ -112,7 +116,7 @@ const ProductListPage = () => {
                     categoria: formData.categoria,
                     imagen: formData.imagen || '/vite.svg',
                     marca: "Original",
-                    countInStock: 10
+                    countInStock: stockFinal // <--- ENVIAMOS EL STOCK REAL
                 })
             });
 
@@ -120,7 +124,7 @@ const ProductListPage = () => {
                 Swal.fire({ 
                     icon: 'success', 
                     title: editMode ? '¡Actualizado!' : '¡Guardado!', 
-                    text: `${nombreFinal}`, 
+                    text: `Stock actual: ${stockFinal} unidades`, 
                     timer: 1500, 
                     showConfirmButton: false 
                 });
@@ -134,7 +138,7 @@ const ProductListPage = () => {
         }
     };
 
-    // 6. BORRAR (CORREGIDO: /api/perfumes)
+    // 6. BORRAR
     const deleteHandler = async (id) => {
         const result = await Swal.fire({
             title: '¿Eliminar?',
@@ -148,7 +152,6 @@ const ProductListPage = () => {
 
         if (result.isConfirmed) {
             try {
-                // URL CORREGIDA: /api/perfumes
                 const res = await fetch(`https://api-perfumes-chile.onrender.com/api/perfumes/${id}`, {
                     method: 'DELETE',
                     headers: { 'Authorization': `Bearer ${user.token}` }
@@ -174,10 +177,11 @@ const ProductListPage = () => {
                 .icon-box { font-size: 2.5rem; opacity: 0.8; }
                 @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
                 .fade-in { animation: fadeInUp 0.6s ease-out forwards; }
-                .table-responsive::-webkit-scrollbar { width: 6px; }
-                .table-responsive::-webkit-scrollbar-track { background: #f1f1f1; }
-                .table-responsive::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
-                .table-responsive::-webkit-scrollbar-thumb:hover { background: var(--color-principal); }
+                /* Estilos para badges de Stock */
+                .badge-stock { font-size: 0.75rem; padding: 4px 8px; border-radius: 4px; font-weight: bold; }
+                .stock-ok { background-color: #d1e7dd; color: #0f5132; } /* Verde claro */
+                .stock-low { background-color: #fff3cd; color: #664d03; } /* Amarillo alerta */
+                .stock-out { background-color: #f8d7da; color: #842029; } /* Rojo peligro */
             `}</style>
 
             <header className="admin-header text-center">
@@ -253,10 +257,19 @@ const ProductListPage = () => {
                                         <label className="form-label text-muted small fw-bold">Contenido (ml)</label>
                                         <input type="number" id="ml-prod" className="form-control bg-light border-0 py-2" placeholder="Ej: 100" value={formData.ml} onChange={handleInputChange} required />
                                     </div>
-                                    <div className="mb-3">
-                                        <label className="form-label text-muted small fw-bold">Precio</label>
-                                        <input type="number" id="precio-prod" className="form-control bg-light border-0 py-2" placeholder="50000" value={formData.precio} onChange={handleInputChange} required />
+                                    
+                                    {/* FILA DOBLE PARA PRECIO Y STOCK */}
+                                    <div className="row">
+                                        <div className="col-6 mb-3">
+                                            <label className="form-label text-muted small fw-bold">Precio ($)</label>
+                                            <input type="number" id="precio-prod" className="form-control bg-light border-0 py-2" placeholder="50000" value={formData.precio} onChange={handleInputChange} required />
+                                        </div>
+                                        <div className="col-6 mb-3">
+                                            <label className="form-label text-muted small fw-bold">Stock (Und)</label>
+                                            <input type="number" id="stock-prod" className="form-control bg-light border-0 py-2" placeholder="Ej: 10" value={formData.stock} onChange={handleInputChange} required />
+                                        </div>
                                     </div>
+
                                     <div className="mb-3">
                                         <label className="form-label text-muted small fw-bold">Categoría</label>
                                         <select id="categoria-prod" className="form-select bg-light border-0 py-2" value={formData.categoria} onChange={handleInputChange}>
@@ -292,7 +305,7 @@ const ProductListPage = () => {
                                         <thead className="table-light sticky-top">
                                             <tr>
                                                 <th className="ps-4 py-3">Producto</th>
-                                                <th className="py-3 text-center">Categoría</th>
+                                                <th className="py-3 text-center">Stock</th>
                                                 <th className="py-3">Precio</th>
                                                 <th className="text-center py-3">Acción</th>
                                             </tr>
@@ -304,18 +317,32 @@ const ProductListPage = () => {
                                                 if (prod.categoria === 'mujer') badgeColor = 'bg-danger';
                                                 if (prod.categoria === 'unisex') badgeColor = 'bg-success';
 
+                                                // LÓGICA DE ALERTA DE STOCK
+                                                let stockClass = 'stock-ok'; // Verde por defecto
+                                                let stockText = 'En Stock';
+                                                if (prod.countInStock <= 5) { stockClass = 'stock-low'; stockText = 'Bajo Stock'; }
+                                                if (prod.countInStock === 0) { stockClass = 'stock-out'; stockText = 'Agotado'; }
+
                                                 return (
                                                     <tr key={prod._id}>
                                                         <td className="ps-4">
                                                             <div className="d-flex align-items-center">
                                                                 <img src={prod.imagen || '/vite.svg'} width="45" height="45" className="rounded-circle border me-3 shadow-sm" style={{ objectFit: 'cover' }} alt="perfume" />
-                                                                <span className="fw-bold text-dark small">{prod.nombre}</span>
+                                                                <div>
+                                                                    <div className="fw-bold text-dark small">{prod.nombre}</div>
+                                                                    <span className={`badge ${badgeColor} rounded-pill text-uppercase`} style={{ fontSize: '0.55rem', padding: '0.3em 0.6em' }}>
+                                                                        {prod.categoria}
+                                                                    </span>
+                                                                </div>
                                                             </div>
                                                         </td>
                                                         <td className="text-center">
-                                                            <span className={`badge ${badgeColor} rounded-pill text-uppercase`} style={{ fontSize: '0.65rem', padding: '0.5em 0.8em' }}>
-                                                                {prod.categoria}
-                                                            </span>
+                                                            <div className="d-flex flex-column align-items-center">
+                                                                <span className="fw-bold" style={{fontSize: '1.1rem'}}>{prod.countInStock}</span>
+                                                                <span className={`badge-stock ${stockClass}`}>
+                                                                    {stockText}
+                                                                </span>
+                                                            </div>
                                                         </td>
                                                         <td className="fw-bold text-success small">{formatearPeso(prod.precio)}</td>
                                                         <td className="text-center">
