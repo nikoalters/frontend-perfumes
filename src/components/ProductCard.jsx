@@ -9,7 +9,7 @@ const ProductCard = ({ prod, wishlist, toggleWishlist, agregarAlCarrito }) => {
   };
 
   // Variables para saber el estado del stock
-  const sinStock = prod.countInStock === 0;
+  const sinStock = prod.countInStock <= 0;
   const pocoStock = prod.countInStock > 0 && prod.countInStock <= 5;
 
   return (
