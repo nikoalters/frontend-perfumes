@@ -7,6 +7,10 @@ const ProductListPage = () => {
     const [user, setUser] = useState(null);
     const navigate = useNavigate();
     
+    // ESTADOS PARA EDICIÓN
+    const [editMode, setEditMode] = useState(false);
+    const [currentProductId, setCurrentProductId] = useState(null);
+
     const [formData, setFormData] = useState({
         nombre: '',
         ml: '',
@@ -25,17 +29,17 @@ const ProductListPage = () => {
         }
     }, [navigate]);
 
+    // CORRECCIÓN: URL en plural para que carguen los datos
     const fetchProducts = async () => {
         try {
             const res = await fetch('https://api-perfumes-chile.onrender.com/api/products');
             const data = await res.json();
             setProducts(data);
         } catch (error) {
-            console.error("Error:", error);
+            console.error("Error cargando productos:", error);
         }
     };
 
-    // --- LÓGICA DE ESTADÍSTICAS ---
     const totalCantidad = products.length;
     const totalDinero = products.reduce((suma, prod) => suma + (prod.precio || 0), 0);
 
@@ -43,20 +47,44 @@ const ProductListPage = () => {
         return new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(valor);
     };
 
-    // --- MANEJO DE ACCIONES ---
     const handleInputChange = (e) => {
         const { id, value } = e.target;
-        const field = id.split('-')[0]; // Toma 'nombre' de 'nombre-prod'
+        const field = id.split('-')[0];
         setFormData({ ...formData, [field]: value });
+    };
+
+    // FUNCIÓN PARA CARGAR DATOS EN EL FORMULARIO (EDITAR)
+    const editClickHandler = (product) => {
+        setEditMode(true);
+        setCurrentProductId(product._id);
+        
+        // Separamos el nombre del ML si es posible, o lo cargamos limpio
+        const nombreLimpio = product.nombre.replace(/\d+ml/g, '').trim();
+        const mlEncontrado = product.nombre.match(/\d+/) ? product.nombre.match(/\d+/)[0] : '';
+
+        setFormData({
+            nombre: nombreLimpio,
+            ml: mlEncontrado,
+            precio: product.precio,
+            categoria: product.categoria,
+            imagen: product.imagen
+        });
+        window.scrollTo(0, 0); // Sube al formulario
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         const nombreFinal = `${formData.nombre} ${formData.ml}ml`;
+        
+        const url = editMode 
+            ? `https://api-perfumes-chile.onrender.com/api/products/${currentProductId}`
+            : 'https://api-perfumes-chile.onrender.com/api/products';
+        
+        const method = editMode ? 'PUT' : 'POST';
 
         try {
-            const res = await fetch('https://api-perfumes-chile.onrender.com/api/products', {
-                method: 'POST',
+            const res = await fetch(url, {
+                method: method,
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${user.token}`
@@ -72,13 +100,25 @@ const ProductListPage = () => {
             });
 
             if (res.ok) {
-                Swal.fire({ icon: 'success', title: '¡Guardado!', text: `Se agregó: ${nombreFinal}`, timer: 1500, showConfirmButton: false });
-                setFormData({ nombre: '', ml: '', precio: '', categoria: 'hombre', imagen: '' });
+                Swal.fire({ 
+                    icon: 'success', 
+                    title: editMode ? '¡Actualizado!' : '¡Guardado!', 
+                    text: `${nombreFinal}`, 
+                    timer: 1500, 
+                    showConfirmButton: false 
+                });
+                resetForm();
                 fetchProducts();
             }
         } catch (error) {
-            Swal.fire('Error', 'No se pudo guardar el producto', 'error');
+            Swal.fire('Error', 'No se pudo procesar la solicitud', 'error');
         }
+    };
+
+    const resetForm = () => {
+        setFormData({ nombre: '', ml: '', precio: '', categoria: 'hombre', imagen: '' });
+        setEditMode(false);
+        setCurrentProductId(null);
     };
 
     const deleteHandler = async (id) => {
@@ -110,48 +150,21 @@ const ProductListPage = () => {
 
     return (
         <div className="admin-container fade-in">
-            {/* INYECCIÓN DE TUS ESTILOS CSS */}
             <style>{`
-                :root {
-                    --color-principal: #009970;
-                    --color-hover: #00b383;
-                    --fondo-suave: #f8f9fa;
-                }
-                .admin-container {
-                    background-color: var(--fondo-suave);
-                    min-height: 100vh;
-                    padding-bottom: 50px;
-                }
-                .admin-header {
-                    background: linear-gradient(135deg, #111 0%, #333 100%);
-                    color: white;
-                    padding: 5rem 0 3rem 0;
-                    margin-bottom: 2rem;
-                    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-                }
-                .stat-card {
-                    transition: transform 0.3s;
-                    border: none;
-                    border-radius: 15px;
-                    overflow: hidden;
-                }
+                :root { --color-principal: #009970; --color-hover: #00b383; --fondo-suave: #f8f9fa; }
+                .admin-container { background-color: var(--fondo-suave); min-height: 100vh; padding-bottom: 50px; }
+                .admin-header { background: linear-gradient(135deg, #111 0%, #333 100%); color: white; padding: 5rem 0 3rem 0; margin-bottom: 2rem; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); }
+                .stat-card { transition: transform 0.3s; border: none; border-radius: 15px; overflow: hidden; }
                 .stat-card:hover { transform: translateY(-5px); }
                 .icon-box { font-size: 2.5rem; opacity: 0.8; }
-                
-                @keyframes fadeInUp {
-                    from { opacity: 0; transform: translateY(20px); }
-                    to { opacity: 1; transform: translateY(0); }
-                }
+                @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
                 .fade-in { animation: fadeInUp 0.6s ease-out forwards; }
-
-                /* Scrollbar bonito */
                 .table-responsive::-webkit-scrollbar { width: 6px; }
                 .table-responsive::-webkit-scrollbar-track { background: #f1f1f1; }
                 .table-responsive::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
                 .table-responsive::-webkit-scrollbar-thumb:hover { background: var(--color-principal); }
             `}</style>
 
-            {/* HEADER */}
             <header className="admin-header text-center">
                 <div className="container">
                     <h1 className="fw-bold display-5">🚀 Panel de Control</h1>
@@ -164,7 +177,6 @@ const ProductListPage = () => {
             </header>
 
             <div className="container">
-                {/* TARJETAS DE ESTADÍSTICAS */}
                 <div className="row mb-5">
                     <div className="col-md-4 mb-3">
                         <div className="card stat-card text-white bg-primary h-100 shadow">
@@ -207,11 +219,12 @@ const ProductListPage = () => {
                 </div>
 
                 <div className="row">
-                    {/* FORMULARIO DE CARGA */}
                     <div className="col-md-4 mb-5">
                         <div className="card shadow border-0 rounded-4 sticky-top" style={{top: '100px'}}>
                             <div className="card-header bg-white border-bottom-0 pt-4 px-4">
-                                <h5 className="mb-0 fw-bold text-primary">➕ Nuevo Perfume</h5>
+                                <h5 className={`mb-0 fw-bold ${editMode ? 'text-warning' : 'text-primary'}`}>
+                                    {editMode ? '✏️ Editando Perfume' : '➕ Nuevo Perfume'}
+                                </h5>
                             </div>
                             <div className="card-body px-4 pb-4">
                                 <form onSubmit={handleSubmit}>
@@ -239,15 +252,17 @@ const ProductListPage = () => {
                                         <label className="form-label text-muted small fw-bold">Imagen (URL o archivo)</label>
                                         <input type="text" id="imagen-prod" className="form-control bg-light border-0 py-2" placeholder="sauvage.jpg" value={formData.imagen} onChange={handleInputChange} />
                                     </div>
-                                    <button type="submit" className="btn btn-primary w-100 rounded-pill py-2 fw-bold shadow-sm mt-3">
-                                        Guardar Perfume
+                                    <button type="submit" className={`btn ${editMode ? 'btn-warning' : 'btn-primary'} w-100 rounded-pill py-2 fw-bold shadow-sm mt-3`}>
+                                        {editMode ? 'Actualizar Cambios' : 'Guardar Perfume'}
                                     </button>
+                                    {editMode && (
+                                        <button type="button" onClick={resetForm} className="btn btn-link w-100 text-muted mt-2 small">Cancelar Edición</button>
+                                    )}
                                 </form>
                             </div>
                         </div>
                     </div>
 
-                    {/* TABLA DE INVENTARIO */}
                     <div className="col-md-8">
                         <div className="card shadow border-0 rounded-4 overflow-hidden">
                             <div className="card-header bg-white border-bottom-0 pt-4 px-4">
@@ -259,7 +274,7 @@ const ProductListPage = () => {
                                         <thead className="table-light sticky-top">
                                             <tr>
                                                 <th className="ps-4 py-3">Producto</th>
-                                                <th className="py-3">Categoría</th>
+                                                <th className="py-3 text-center">Categoría</th>
                                                 <th className="py-3">Precio</th>
                                                 <th className="text-center py-3">Acción</th>
                                             </tr>
@@ -279,16 +294,17 @@ const ProductListPage = () => {
                                                                 <span className="fw-bold text-dark small">{prod.nombre}</span>
                                                             </div>
                                                         </td>
-                                                        <td>
+                                                        <td className="text-center">
                                                             <span className={`badge ${badgeColor} rounded-pill text-uppercase`} style={{ fontSize: '0.65rem', padding: '0.5em 0.8em' }}>
                                                                 {prod.categoria}
                                                             </span>
                                                         </td>
                                                         <td className="fw-bold text-success small">{formatearPeso(prod.precio)}</td>
                                                         <td className="text-center">
-                                                            <button className="btn btn-outline-danger btn-sm rounded-circle shadow-sm" onClick={() => deleteHandler(prod._id)} title="Eliminar">
-                                                                🗑️
-                                                            </button>
+                                                            <div className="d-flex justify-content-center gap-2">
+                                                                <button className="btn btn-outline-primary btn-sm rounded-circle shadow-sm" onClick={() => editClickHandler(prod)} title="Editar">✏️</button>
+                                                                <button className="btn btn-outline-danger btn-sm rounded-circle shadow-sm" onClick={() => deleteHandler(prod._id)} title="Eliminar">🗑️</button>
+                                                            </div>
                                                         </td>
                                                     </tr>
                                                 );
