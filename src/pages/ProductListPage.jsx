@@ -7,7 +7,7 @@ const ProductListPage = () => {
     const [user, setUser] = useState(null);
     const navigate = useNavigate();
     
-    // ESTADOS PARA EDICIÓN
+    // ESTADOS PARA EL MODO EDICIÓN
     const [editMode, setEditMode] = useState(false);
     const [currentProductId, setCurrentProductId] = useState(null);
 
@@ -19,6 +19,7 @@ const ProductListPage = () => {
         imagen: ''
     });
 
+    // 1. VERIFICAR SESIÓN Y CARGAR DATOS
     useEffect(() => {
         const userInfo = JSON.parse(localStorage.getItem('userInfo'));
         if (userInfo && userInfo.isAdmin) {
@@ -29,17 +30,25 @@ const ProductListPage = () => {
         }
     }, [navigate]);
 
-    // CORRECCIÓN: URL en plural para que carguen los datos
+    // 2. OBTENER PRODUCTOS (CON ANTI-CACHÉ)
     const fetchProducts = async () => {
         try {
-            const res = await fetch('https://api-perfumes-chile.onrender.com/api/products');
+            // Agregamos un timestamp (?t=...) para obligar a traer datos frescos de Render
+            const res = await fetch(`https://api-perfumes-chile.onrender.com/api/products?t=${new Date().getTime()}`);
+            
+            if (!res.ok) {
+                console.error("Error en la respuesta del servidor:", res.status);
+                return;
+            }
+
             const data = await res.json();
             setProducts(data);
         } catch (error) {
-            console.error("Error cargando productos:", error);
+            console.error("Error crítico de conexión:", error);
         }
     };
 
+    // 3. ESTADÍSTICAS Y FORMATO
     const totalCantidad = products.length;
     const totalDinero = products.reduce((suma, prod) => suma + (prod.precio || 0), 0);
 
@@ -47,35 +56,42 @@ const ProductListPage = () => {
         return new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(valor);
     };
 
+    // 4. MANEJO DE INPUTS Y FORMULARIO
     const handleInputChange = (e) => {
         const { id, value } = e.target;
-        const field = id.split('-')[0];
+        const field = id.split('-')[0]; 
         setFormData({ ...formData, [field]: value });
     };
 
-    // FUNCIÓN PARA CARGAR DATOS EN EL FORMULARIO (EDITAR)
-    const editClickHandler = (product) => {
+    // Activar modo edición cargando datos en el form
+    const editClickHandler = (prod) => {
         setEditMode(true);
-        setCurrentProductId(product._id);
+        setCurrentProductId(prod._id);
         
-        // Separamos el nombre del ML si es posible, o lo cargamos limpio
-        const nombreLimpio = product.nombre.replace(/\d+ml/g, '').trim();
-        const mlEncontrado = product.nombre.match(/\d+/) ? product.nombre.match(/\d+/)[0] : '';
+        // Intentamos separar el nombre de los ML para el form
+        const nombreSinML = prod.nombre.replace(/\d+ml/gi, '').trim();
+        const mlDetectado = prod.nombre.match(/\d+/) ? prod.nombre.match(/\d+/)[0] : '';
 
         setFormData({
-            nombre: nombreLimpio,
-            ml: mlEncontrado,
-            precio: product.precio,
-            categoria: product.categoria,
-            imagen: product.imagen
+            nombre: nombreSinML,
+            ml: mlDetectado,
+            precio: prod.precio,
+            categoria: prod.categoria,
+            imagen: prod.imagen
         });
-        window.scrollTo(0, 0); // Sube al formulario
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const resetForm = () => {
+        setFormData({ nombre: '', ml: '', precio: '', categoria: 'hombre', imagen: '' });
+        setEditMode(false);
+        setCurrentProductId(null);
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         const nombreFinal = `${formData.nombre} ${formData.ml}ml`;
-        
+
         const url = editMode 
             ? `https://api-perfumes-chile.onrender.com/api/products/${currentProductId}`
             : 'https://api-perfumes-chile.onrender.com/api/products';
@@ -109,18 +125,15 @@ const ProductListPage = () => {
                 });
                 resetForm();
                 fetchProducts();
+            } else {
+                Swal.fire('Error', 'No se pudo procesar el perfume', 'error');
             }
         } catch (error) {
-            Swal.fire('Error', 'No se pudo procesar la solicitud', 'error');
+            Swal.fire('Error', 'Fallo de red', 'error');
         }
     };
 
-    const resetForm = () => {
-        setFormData({ nombre: '', ml: '', precio: '', categoria: 'hombre', imagen: '' });
-        setEditMode(false);
-        setCurrentProductId(null);
-    };
-
+    // 5. FUNCIÓN BORRAR
     const deleteHandler = async (id) => {
         const result = await Swal.fire({
             title: '¿Eliminar producto?',
@@ -139,7 +152,7 @@ const ProductListPage = () => {
                     headers: { 'Authorization': `Bearer ${user.token}` }
                 });
                 if (res.ok) {
-                    Swal.fire('¡Borrado!', 'Producto eliminado exitosamente', 'success');
+                    Swal.fire('¡Borrado!', 'Eliminado de la base de datos', 'success');
                     fetchProducts();
                 }
             } catch (error) {
@@ -177,6 +190,7 @@ const ProductListPage = () => {
             </header>
 
             <div className="container">
+                {/* TARJETAS DE ESTADÍSTICAS */}
                 <div className="row mb-5">
                     <div className="col-md-4 mb-3">
                         <div className="card stat-card text-white bg-primary h-100 shadow">
@@ -219,6 +233,7 @@ const ProductListPage = () => {
                 </div>
 
                 <div className="row">
+                    {/* FORMULARIO DINÁMICO (CREAR/EDITAR) */}
                     <div className="col-md-4 mb-5">
                         <div className="card shadow border-0 rounded-4 sticky-top" style={{top: '100px'}}>
                             <div className="card-header bg-white border-bottom-0 pt-4 px-4">
@@ -256,13 +271,14 @@ const ProductListPage = () => {
                                         {editMode ? 'Actualizar Cambios' : 'Guardar Perfume'}
                                     </button>
                                     {editMode && (
-                                        <button type="button" onClick={resetForm} className="btn btn-link w-100 text-muted mt-2 small">Cancelar Edición</button>
+                                        <button type="button" onClick={resetForm} className="btn btn-link w-100 text-muted mt-2 small text-decoration-none">❌ Cancelar Edición</button>
                                     )}
                                 </form>
                             </div>
                         </div>
                     </div>
 
+                    {/* TABLA DE INVENTARIO */}
                     <div className="col-md-8">
                         <div className="card shadow border-0 rounded-4 overflow-hidden">
                             <div className="card-header bg-white border-bottom-0 pt-4 px-4">
