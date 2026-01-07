@@ -209,27 +209,32 @@ const HomePage = () => {
             throw new Error(orderData.message || 'Error al crear pedido');
         }
 
-        // 5. ARMAR MENSAJE DE WHATSAPP (Con el ID del pedido)
-        let texto = `📦 *PEDIDO WEB #${orderData._id.slice(-6)}* (Pendiente)\n\n`;
+        // 5. ARMAR MENSAJE DE WHATSAPP (Versión Limpia ✨)
+        // Usamos \n para los saltos de línea y emojis reales.
+        
+        let texto = `⚡ *NUEVO PEDIDO WEB* ⚡\n`;
+        texto += `🆔 *Pedido:* #${orderData._id.slice(-6)}\n`;
         texto += `👤 *Cliente:* ${clienteNombre}\n`;
-        texto += `📍 *Dirección:* ${clienteDireccion}, ${clienteComuna}\n`;
-        texto += `-----------------------------\n`;
-        texto += `🛒 *RESUMEN:*\n`;
+        texto += `📍 *Dirección:* ${clienteDireccion}, ${clienteComuna}\n\n`;
+        
+        texto += `🛒 *RESUMEN DE COMPRA:*\n`;
+        texto += `-----------------------------------\n`;
         
         carrito.forEach(p => {
-            texto += `▪ ${p.nombre} - $${p.precio.toLocaleString('es-CL')}\n`;
+            // Aquí usamos un guion simple o un punto para listar
+            texto += `🔹 ${p.nombre} - $${p.precio.toLocaleString('es-CL')}\n`;
         });
         
-        texto += `-----------------------------\n`;
+        texto += `-----------------------------------\n`;
         texto += `💰 *TOTAL A PAGAR: $${precioTotal.toLocaleString('es-CL')}*\n\n`;
-        texto += `ℹ _Hola, ya generé mi pedido en la web. Quedo atento para realizar el pago._`;
+        texto += `📝 *Mensaje:* Hola, acabo de hacer este pedido en la web. Quedo atento para los datos de transferencia.`;
 
         // 6. LIMPIAR Y ENVIAR
         setCarrito([]);
         localStorage.removeItem('carrito');
         setMostrarModal(false);
 
-        // AQUÍ ESTÁ EL TRUCO: encodeURIComponent envuelve TODO el texto
+        // LA MAGIA: encodeURIComponent convierte los \n y espacios en códigos para WhatsApp automáticamente
         window.open(`https://wa.me/${NUMERO_WHATSAPP}?text=${encodeURIComponent(texto)}`, '_blank');
 
     } catch (error) {
