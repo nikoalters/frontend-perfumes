@@ -210,26 +210,27 @@ const HomePage = () => {
         }
 
         // 5. ARMAR MENSAJE DE WHATSAPP (Con el ID del pedido)
-        let mensaje = `📦 *PEDIDO WEB #${orderData._id.slice(-6)}* (Pendiente)%0A%0A`; // Usamos los últimos 6 caracteres del ID
-        mensaje += `👤 *Cliente:* ${clienteNombre}%0A`;
-        mensaje += `📍 *Dirección:* ${clienteDireccion}, ${clienteComuna}%0A`;
-        mensaje += `-----------------------------%0A`;
-        mensaje += `🛒 *RESUMEN:*%0A`;
+        let texto = `📦 *PEDIDO WEB #${orderData._id.slice(-6)}* (Pendiente)\n\n`;
+        texto += `👤 *Cliente:* ${clienteNombre}\n`;
+        texto += `📍 *Dirección:* ${clienteDireccion}, ${clienteComuna}\n`;
+        texto += `-----------------------------\n`;
+        texto += `🛒 *RESUMEN:*\n`;
         
         carrito.forEach(p => {
-            mensaje += `▪️ ${p.nombre} - $${p.precio.toLocaleString('es-CL')}%0A`;
+            texto += `▪ ${p.nombre} - $${p.precio.toLocaleString('es-CL')}\n`;
         });
         
-        mensaje += `-----------------------------%0A`;
-        mensaje += `💰 *TOTAL A PAGAR: $${precioTotal.toLocaleString('es-CL')}*%0A%0A`;
-        mensaje += `ℹ️ _Hola, ya generé mi pedido en la web. Quedo atento para realizar el pago._`;
+        texto += `-----------------------------\n`;
+        texto += `💰 *TOTAL A PAGAR: $${precioTotal.toLocaleString('es-CL')}*\n\n`;
+        texto += `ℹ _Hola, ya generé mi pedido en la web. Quedo atento para realizar el pago._`;
 
-        // 6. LIMPIAR CARRITO Y ABRIR WHATSAPP
-        setCarrito([]); // Vaciamos el carrito visual
-        localStorage.removeItem('carrito'); // Vaciamos el carrito de la memoria
-        setMostrarModal(false); // Cerramos el modal
+        // 6. LIMPIAR Y ENVIAR
+        setCarrito([]);
+        localStorage.removeItem('carrito');
+        setMostrarModal(false);
 
-        window.open(`https://wa.me/${NUMERO_WHATSAPP}?text=${encodeURIComponent(mensaje)}`, '_blank');
+        // AQUÍ ESTÁ EL TRUCO: encodeURIComponent envuelve TODO el texto
+        window.open(`https://wa.me/${NUMERO_WHATSAPP}?text=${encodeURIComponent(texto)}`, '_blank');
 
     } catch (error) {
         console.error("Error procesando compra:", error);
