@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
-import { useNavigate, Link } from 'react-router-dom'; // <--- 1. AGREGAMOS 'Link' AQUÍ
+import { useNavigate, Link } from 'react-router-dom';
+import Swal from 'sweetalert2'; // <--- 1. IMPORTANTE: Importar SweetAlert
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -21,11 +22,32 @@ const LoginPage = () => {
 
       localStorage.setItem('userInfo', JSON.stringify(data));
       
-      alert('¡Login Exitoso!');
+      // 2. REEMPLAZO DEL ALERT FEO POR SWEETALERT BONITO ✨
+      Swal.fire({
+        icon: 'success',
+        title: '¡Bienvenido!',
+        text: `Hola de nuevo, ${data.name.split(' ')[0]}`,
+        background: '#1e1e2f', // Fondo oscuro
+        color: '#fff',         // Texto blanco
+        timer: 2000,           // Se cierra solo en 2 segundos
+        showConfirmButton: false
+      });
+
       navigate('/'); 
 
     } catch (error) {
-      setError('Correo o contraseña inválidos');
+      const msg = 'Correo o contraseña inválidos';
+      setError(msg);
+
+      // 3. TAMBIÉN MOSTRAMOS ALERTA BONITA SI FALLA ❌
+      Swal.fire({
+        icon: 'error',
+        title: 'Error de acceso',
+        text: msg,
+        background: '#1e1e2f',
+        color: '#fff',
+        confirmButtonColor: '#d63031'
+      });
     }
   };
 
@@ -66,7 +88,6 @@ const LoginPage = () => {
               </button>
             </form>
 
-            {/* 2. SECCIÓN NUEVA: ENLACE AL REGISTRO */}
             <div className="row py-3">
               <div className="col text-center">
                  ¿Nuevo cliente? <Link to="/register" className="text-decoration-none fw-bold">Regístrate aquí</Link>

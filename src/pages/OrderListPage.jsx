@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2'; 
 
 const OrderListPage = () => {
   const [orders, setOrders] = useState([]);
@@ -35,30 +36,67 @@ const OrderListPage = () => {
   }, [navigate]);
 
   // --- ACCIONES (Pagar, Enviar, Rechazar) ---
-  const handleAction = async (id, action) => {
-    let url = '';
-    let confirmMsg = '';
+  // --- ACCIONES CON SWEETALERT 2 ---
+  const handleAction = (id, action) => {
+    let confirmTitle = '';
+    let confirmText = '';
+    let confirmIcon = '';
+    let confirmButtonColor = '';
 
+    // Configuración según la acción
     if (action === 'pay') {
-        url = `/pay`; 
-        confirmMsg = '¿Confirmar PAGO recibido? 💰';
+        confirmTitle = '¿Aprobar Pago?';
+        confirmText = 'Se marcará el pedido como PAGADO.';
+        confirmIcon = 'question';
+        confirmButtonColor = '#00b894'; // Verde
     } else if (action === 'deliver') {
-        url = `/deliver`;
-        confirmMsg = '¿Confirmar ENVÍO realizado? 🚚';
+        confirmTitle = '¿Marcar como Enviado?';
+        confirmText = 'El cliente verá que su pedido va en camino.';
+        confirmIcon = 'info';
+        confirmButtonColor = '#0984e3'; // Azul
     } else if (action === 'cancel') {
-        url = `/cancel`;
-        confirmMsg = '¿Estás seguro de RECHAZAR este pedido por falta de stock? 🚫';
+        confirmTitle = '¿Rechazar Pedido?';
+        confirmText = 'Esta acción no se puede deshacer. Se marcará sin stock.';
+        confirmIcon = 'warning';
+        confirmButtonColor = '#d63031'; // Rojo
     }
 
-    if (window.confirm(confirmMsg)) {
-      try {
-        const res = await fetch(`https://api-perfumes-chile.onrender.com/api/orders/${id}${url}`, {
-          method: 'PUT',
-          headers: { Authorization: `Bearer ${user.token}` }
-        });
-        if (res.ok) fetchOrders();
-      } catch (error) { console.error(error); }
-    }
+    // Disparar la Alerta Bonita
+    Swal.fire({
+      title: confirmTitle,
+      text: confirmText,
+      icon: confirmIcon,
+      showCancelButton: true,
+      confirmButtonColor: confirmButtonColor,
+      cancelButtonColor: '#2d3436',
+      confirmButtonText: 'Sí, confirmar',
+      cancelButtonText: 'Cancelar',
+      background: '#1e1e2f', // Fondo oscuro (Cyberpunk)
+      color: '#ffffff'       // Letras blancas
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        // Si dijo que SÍ, ejecutamos la lógica del backend
+        let url = action === 'pay' ? '/pay' : action === 'deliver' ? '/deliver' : '/cancel';
+        try {
+            const res = await fetch(`https://api-perfumes-chile.onrender.com/api/orders/${id}${url}`, {
+            method: 'PUT',
+            headers: { Authorization: `Bearer ${user.token}` }
+            });
+            if (res.ok) {
+                fetchOrders(); // Recargar lista
+                Swal.fire({
+                    title: '¡Listo!',
+                    text: 'El estado ha sido actualizado.',
+                    icon: 'success',
+                    timer: 1500,
+                    showConfirmButton: false,
+                    background: '#1e1e2f',
+                    color: '#fff'
+                });
+            }
+        } catch (error) { console.error(error); }
+      }
+    });
   };
 
   const verProductos = (items) => {
