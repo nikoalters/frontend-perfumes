@@ -9,6 +9,7 @@ const OrderListPage = () => {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem('userInfo'));
 
+  // 1. Cargar Pedidos
   const fetchOrders = async () => {
     try {
       const res = await fetch('https://api-perfumes-chile.onrender.com/api/orders', {
@@ -34,6 +35,7 @@ const OrderListPage = () => {
     }
   }, [navigate]);
 
+  // 2. Marcar como PAGADO
   const markAsPaidHandler = async (id) => {
     if (window.confirm('¿Confirmas que recibiste el pago de este pedido?')) {
       try {
@@ -51,22 +53,38 @@ const OrderListPage = () => {
     }
   };
 
-  // --- 👇 FUNCIÓN NUEVA PARA VER LOS PERFUMES 👇 ---
+  // 3. Marcar como ENVIADO (NUEVA FUNCIÓN) 🚚
+  const markAsDeliveredHandler = async (id) => {
+    if (window.confirm('¿Ya enviaste este pedido al cliente?')) {
+      try {
+        const res = await fetch(`https://api-perfumes-chile.onrender.com/api/orders/${id}/deliver`, {
+          method: 'PUT', // Método PUT para actualizar
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          }
+        });
+        if (res.ok) fetchOrders();
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
+
+  // 4. Ver productos
   const verProductos = (items) => {
-    // Creamos un texto simple con la lista
     const lista = items.map(item => `▪ ${item.qty}x ${item.nombre}`).join('\n');
     alert(`🛒 PRODUCTOS DEL PEDIDO:\n\n${lista}`);
   };
-  // ------------------------------------------------
 
-  // Estilos
+  // Estilos Dark Mode
   const styles = {
     container: { padding: '2rem', backgroundColor: '#121212', minHeight: '100vh', color: '#fff' },
     table: { width: '100%', borderCollapse: 'collapse', marginTop: '1rem', backgroundColor: '#1e1e1e' },
     th: { backgroundColor: '#333', padding: '12px', textAlign: 'left', color: '#00d4ff' },
     td: { padding: '12px', borderBottom: '1px solid #333' },
-    btnPay: { backgroundColor: '#28a745', color: 'white', border: 'none', padding: '5px 10px', cursor: 'pointer', borderRadius: '4px', marginRight: '5px' },
-    btnView: { backgroundColor: '#17a2b8', color: 'white', border: 'none', padding: '5px 10px', cursor: 'pointer', borderRadius: '4px' } // Estilo botón nuevo
+    btnPay: { backgroundColor: '#28a745', color: 'white', border: 'none', padding: '5px 10px', cursor: 'pointer', borderRadius: '4px', marginLeft: '5px' },
+    btnDeliver: { backgroundColor: '#fd7e14', color: 'white', border: 'none', padding: '5px 10px', cursor: 'pointer', borderRadius: '4px', marginLeft: '5px' }, // Botón Naranja
+    btnView: { backgroundColor: '#17a2b8', color: 'white', border: 'none', padding: '5px 10px', cursor: 'pointer', borderRadius: '4px' }
   };
 
   return (
@@ -81,7 +99,8 @@ const OrderListPage = () => {
                 <th style={styles.th}>ID</th>
                 <th style={styles.th}>USUARIO</th>
                 <th style={styles.th}>TOTAL</th>
-                <th style={styles.th}>ESTADO</th>
+                <th style={styles.th}>PAGO</th>
+                <th style={styles.th}>ENTREGA</th> {/* Columna Nueva */}
                 <th style={styles.th}>ACCIONES</th>
               </tr>
             </thead>
@@ -91,6 +110,8 @@ const OrderListPage = () => {
                   <td style={styles.td}>...{order._id.slice(-6)}</td>
                   <td style={styles.td}>{order.user ? order.user.name : 'Anónimo'}</td>
                   <td style={styles.td}>${order.totalPrice.toLocaleString('es-CL')}</td>
+                  
+                  {/* Estado de PAGO */}
                   <td style={styles.td}>
                     {order.isPaid ? (
                       <span style={{color: '#00ff00', fontWeight:'bold'}}>✅ PAGADO</span>
@@ -98,23 +119,46 @@ const OrderListPage = () => {
                       <span style={{color: 'red', fontWeight:'bold'}}>❌ PENDIENTE</span>
                     )}
                   </td>
+
+                  {/* Estado de ENTREGA (Nuevo) */}
                   <td style={styles.td}>
-                    {/* BOTÓN 1: VER PRODUCTOS (NUEVO) */}
+                    {order.isDelivered ? (
+                      <span style={{color: '#00ff00', fontWeight:'bold'}}>✅ ENVIADO</span>
+                    ) : (
+                      <span style={{color: 'orange', fontWeight:'bold'}}>⌛ PROCESANDO</span>
+                    )}
+                  </td>
+
+                  {/* Botones de Acción */}
+                  <td style={styles.td}>
+                    {/* 1. Ver Items */}
                     <button 
                         style={styles.btnView} 
                         onClick={() => verProductos(order.orderItems)}
-                        title="Ver lista de perfumes"
+                        title="Ver lista"
                     >
-                        👁️ Ver Items
+                        👁️
                     </button>
 
-                    {/* BOTÓN 2: APROBAR PAGO (Solo si falta pagar) */}
+                    {/* 2. Aprobar Pago (Si falta pagar) */}
                     {!order.isPaid && (
                       <button 
-                        style={{...styles.btnPay, marginLeft: '10px'}}
+                        style={styles.btnPay}
                         onClick={() => markAsPaidHandler(order._id)}
+                        title="Aprobar Pago"
                       >
-                        💰 Aprobar
+                        💰
+                      </button>
+                    )}
+
+                    {/* 3. Enviar (Si ya pagó y falta enviar) */}
+                    {order.isPaid && !order.isDelivered && (
+                      <button 
+                        style={styles.btnDeliver}
+                        onClick={() => markAsDeliveredHandler(order._id)}
+                        title="Marcar como Enviado"
+                      >
+                        🚚
                       </button>
                     )}
                   </td>
