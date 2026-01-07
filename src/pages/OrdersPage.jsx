@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 const OrdersPage = () => {
   const [pedidos, setPedidos] = useState([]);
@@ -170,13 +171,33 @@ const OrdersPage = () => {
                     </td>
 
                     <td style={styles.td}>
-                      <button 
-                        onClick={() => alert(`📦 Productos:\n\n${pedido.orderItems.map(i => `▪ ${i.qty}x ${i.nombre}`).join('\n')}`)} 
-                        style={styles.btnVer}
-                      >
-                        👁️ Ver
-                      </button>
-                    </td>
+  <button 
+    style={styles.btnVer}
+    onClick={() => {
+        // Construimos la lista bonita para el cliente
+        let htmlList = '<div style="text-align: left; margin-top: 10px;">';
+        pedido.orderItems.forEach(item => {
+            htmlList += `
+              <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #eee; padding: 8px 0;">
+                <span style="color: #333;">${item.nombre}</span>
+                <span style="color: #28a745; font-weight: bold;">x${item.qty}</span>
+              </div>`;
+        });
+        htmlList += '</div>';
+
+        Swal.fire({
+            title: '🛍️ Tu Compra',
+            html: htmlList,
+            confirmButtonText: 'Genial',
+            confirmButtonColor: '#28a745',
+            background: '#fff', 
+            color: '#333'
+        });
+    }}
+  >
+    👁️ Ver
+  </button>
+</td>
                   </tr>
                 ))}
               </tbody>
