@@ -44,7 +44,7 @@ const Navbar = ({ busqueda, setBusqueda, carritoCount, user, logoutHandler, setM
               {user ? (
               <li className="nav-item d-flex align-items-center gap-3">
                 
-                {/* 👇 CAMBIO: PERFIL VERTICAL COMPACTO */}
+                {/* PERFIL VERTICAL (Icono y Nombre) */}
                 <Link to="/profile" className="d-flex flex-column align-items-center text-decoration-none text-secondary" style={{cursor: 'pointer', lineHeight: '1'}} title="Ir a mi Perfil">
                     <i className="bi bi-person-circle text-success fs-5 mb-1"></i>
                     <span className="fw-bold text-truncate" style={{fontSize: '0.7rem', maxWidth: '70px'}}>
@@ -52,26 +52,30 @@ const Navbar = ({ busqueda, setBusqueda, carritoCount, user, logoutHandler, setM
                     </span>
                 </Link>
 
-                {/* BOTONES DE GESTIÓN */}
-                <div className="d-flex gap-2">
+                {/* BOTONES DE GESTIÓN CON TEXTO RESTAURADO */}
+                <div className="d-flex gap-2 align-items-center">
                     {/* Botón Mis Pedidos (Cliente) */}
                     {!user.isAdmin && (
-                        <Link to="/mis-pedidos" className="btn btn-light btn-sm rounded-pill px-3 border" title="Mis Pedidos">
+                        <Link to="/mis-pedidos" className="btn btn-light btn-sm rounded-pill px-3 border d-flex align-items-center gap-1">
                             📜 Pedidos
                         </Link>
                     )}
 
-                    {/* Botones Admin */}
+                    {/* Botones Admin (Con Texto) */}
                     {user.isAdmin && (
                         <>
-                            <Link to="/admin/productlist" className="btn btn-dark btn-sm rounded-pill px-3" title="Gestión Productos">📦</Link>
-                            <Link to="/admin/orderlist" className="btn btn-warning btn-sm rounded-pill px-3" title="Gestión Ventas">💰</Link>
+                            <Link to="/admin/productlist" className="btn btn-dark btn-sm rounded-pill px-3 d-flex align-items-center gap-1">
+                                📦 Productos
+                            </Link>
+                            <Link to="/admin/orderlist" className="btn btn-warning btn-sm rounded-pill px-3 d-flex align-items-center gap-1">
+                                💰 Ventas
+                            </Link>
                         </>
                     )}
 
-                    {/* Botón Salir */}
-                    <button className="btn btn-outline-danger btn-sm rounded-circle" style={{width:'32px', height:'32px', padding:0}} onClick={logoutHandler} title="Cerrar Sesión">
-                        <i className="bi bi-box-arrow-right"></i>
+                    {/* Botón Salir (Con Texto) */}
+                    <button className="btn btn-outline-danger btn-sm rounded-pill px-3 d-flex align-items-center gap-1" onClick={logoutHandler}>
+                        🚪 Salir
                     </button>
                 </div>
               </li>
