@@ -39,26 +39,28 @@ const Navbar = ({ busqueda, setBusqueda, carritoCount, user, logoutHandler, setM
               <li className="nav-item d-flex align-items-center gap-2 ms-2">
                   <span className="fw-bold text-success small me-2">Hola, {user.name.split(' ')[0]}</span>
 
-                  {/* BOTÓN CLIENTE: MIS PEDIDOS */}
-                  <Link to="/mis-pedidos" className="btn btn-outline-primary btn-sm rounded-pill px-3">
-                    📜 Mis Pedidos
-                  </Link>
+                  {/* 👇 CAMBIO AQUÍ: Solo mostramos "Mis Pedidos" si NO es admin */}
+                  {!user.isAdmin && (
+                    <Link to="/mis-pedidos" className="btn btn-outline-primary btn-sm rounded-pill px-3">
+                      📜 Mis Pedidos
+                    </Link>
+                  )}
 
-                  {/* --- 🛡️ ZONA ADMIN (DOS BOTONES AHORA) 🛡️ --- */}
+                  {/* --- 🛡️ ZONA ADMIN 🛡️ --- */}
                   {user.isAdmin && (
                     <>
-                        {/* Botón 1: Ir a editar Productos */}
+                        {/* Botón Productos */}
                         <Link to="/admin/productlist" className="btn btn-dark btn-sm rounded-pill px-3">
                             📦 Productos
                         </Link>
                         
-                        {/* Botón 2: Ir a aprobar Ventas (NUEVO) */}
+                        {/* Botón Ventas */}
                         <Link to="/admin/orderlist" className="btn btn-warning btn-sm rounded-pill px-3">
                             💰 Ventas
                         </Link>
                     </>
                   )}
-                  {/* ----------------------------------------------- */}
+                  {/* ------------------------------------- */}
 
                   <button className="btn btn-outline-danger btn-sm rounded-pill px-3" onClick={logoutHandler}>Salir</button>
               </li>
