@@ -39,19 +39,26 @@ const Navbar = ({ busqueda, setBusqueda, carritoCount, user, logoutHandler, setM
               <li className="nav-item d-flex align-items-center gap-2 ms-2">
                   <span className="fw-bold text-success small me-2">Hola, {user.name.split(' ')[0]}</span>
 
-                  {/* --- 🆕 BOTÓN NUEVO: MIS PEDIDOS --- */}
+                  {/* BOTÓN CLIENTE: MIS PEDIDOS */}
                   <Link to="/mis-pedidos" className="btn btn-outline-primary btn-sm rounded-pill px-3">
                     📜 Mis Pedidos
                   </Link>
-                  {/* ----------------------------------- */}
 
-                  {/* --- 🛡️ BOTÓN SECRETO DE ADMIN 🛡️ --- */}
+                  {/* --- 🛡️ ZONA ADMIN (DOS BOTONES AHORA) 🛡️ --- */}
                   {user.isAdmin && (
-                    <Link to="/admin/productlist" className="btn btn-dark btn-sm rounded-pill px-3">
-                        ⚙️ Panel
-                    </Link>
+                    <>
+                        {/* Botón 1: Ir a editar Productos */}
+                        <Link to="/admin/productlist" className="btn btn-dark btn-sm rounded-pill px-3">
+                            📦 Productos
+                        </Link>
+                        
+                        {/* Botón 2: Ir a aprobar Ventas (NUEVO) */}
+                        <Link to="/admin/orderlist" className="btn btn-warning btn-sm rounded-pill px-3">
+                            💰 Ventas
+                        </Link>
+                    </>
                   )}
-                  {/* ------------------------------------- */}
+                  {/* ----------------------------------------------- */}
 
                   <button className="btn btn-outline-danger btn-sm rounded-pill px-3" onClick={logoutHandler}>Salir</button>
               </li>
