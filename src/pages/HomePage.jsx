@@ -229,7 +229,7 @@ const HomePage = () => {
         localStorage.removeItem('carrito'); // Vaciamos el carrito de la memoria
         setMostrarModal(false); // Cerramos el modal
 
-        window.open(`https://wa.me/${NUMERO_WHATSAPP}?text=${mensaje}`, '_blank');
+        window.open(`https://wa.me/${NUMERO_WHATSAPP}?text=${encodeURIComponent(mensaje)}`, '_blank');
 
     } catch (error) {
         console.error("Error procesando compra:", error);
