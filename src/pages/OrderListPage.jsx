@@ -1,16 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
+// 👇 1. IMPORTAMOS LIBRERÍA DE GRÁFICOS
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 const OrderListPage = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  
+  // 👇 2. ESTADO PARA LOS DATOS DEL GRÁFICO
+  const [chartData, setChartData] = useState([]);
 
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem('userInfo'));
 
-  // --- CÁLCULOS DE ESTADÍSTICAS (Variables de Estado) ---
+  // --- CÁLCULOS DE ESTADÍSTICAS ---
   const [stats, setStats] = useState({
     ingresos: 0,
     ventasTotales: 0,
@@ -30,7 +35,6 @@ const OrderListPage = () => {
 
       // --- 📊 CALCULADORA DE NEGOCIO ---
       const totalIngresos = ordenados.reduce((acc, order) => {
-        // Solo sumamos si está PAGADO y NO cancelado
         return (order.isPaid && !order.isCancelled) ? acc + order.totalPrice : acc;
       }, 0);
 
@@ -42,7 +46,28 @@ const OrderListPage = () => {
         ventasTotales: totalVentas,
         pendientes: totalPendientes
       });
-      // ---------------------------------
+
+      // --- 📈 3. PROCESAMIENTO DE DATOS PARA EL GRÁFICO (NUEVO) ---
+      const ventasPorFecha = ordenados.reduce((acc, order) => {
+        if (order.isPaid && !order.isCancelled) {
+          // Extraemos fecha YYYY-MM-DD
+          const fecha = order.createdAt.substring(0, 10);
+          acc[fecha] = (acc[fecha] || 0) + order.totalPrice;
+        }
+        return acc;
+      }, {});
+
+      // Convertimos a formato para el gráfico y ordenamos cronológicamente
+      const dataGrafico = Object.keys(ventasPorFecha)
+        .map(fecha => ({
+          name: fecha.split('-').reverse().slice(0, 2).join('/'), // "07/01"
+          fullDate: fecha,
+          total: ventasPorFecha[fecha]
+        }))
+        .sort((a, b) => new Date(a.fullDate) - new Date(b.fullDate));
+
+      setChartData(dataGrafico);
+      // -----------------------------------------------------------
 
       setLoading(false);
     } catch (err) {
@@ -60,58 +85,22 @@ const OrderListPage = () => {
   }, [navigate]);
 
   const handleAction = (id, action) => {
-    let confirmTitle = '';
-    let confirmText = '';
-    let confirmIcon = '';
-    let confirmButtonColor = '';
+    let confirmTitle = ''; let confirmText = ''; let confirmIcon = ''; let confirmButtonColor = '';
 
-    if (action === 'pay') {
-        confirmTitle = '¿Aprobar Pago?';
-        confirmText = 'Se marcará el pedido como PAGADO.';
-        confirmIcon = 'question';
-        confirmButtonColor = '#00b894';
-    } else if (action === 'deliver') {
-        confirmTitle = '¿Marcar como Enviado?';
-        confirmText = 'El cliente verá que su pedido va en camino.';
-        confirmIcon = 'info';
-        confirmButtonColor = '#0984e3';
-    } else if (action === 'cancel') {
-        confirmTitle = '¿Rechazar Pedido?';
-        confirmText = 'Esta acción no se puede deshacer.';
-        confirmIcon = 'warning';
-        confirmButtonColor = '#d63031';
-    }
+    if (action === 'pay') { confirmTitle = '¿Aprobar Pago?'; confirmText = 'Se marcará el pedido como PAGADO.'; confirmIcon = 'question'; confirmButtonColor = '#00b894'; } 
+    else if (action === 'deliver') { confirmTitle = '¿Marcar como Enviado?'; confirmText = 'El cliente verá que su pedido va en camino.'; confirmIcon = 'info'; confirmButtonColor = '#0984e3'; } 
+    else if (action === 'cancel') { confirmTitle = '¿Rechazar Pedido?'; confirmText = 'Esta acción no se puede deshacer.'; confirmIcon = 'warning'; confirmButtonColor = '#d63031'; }
 
     Swal.fire({
-      title: confirmTitle,
-      text: confirmText,
-      icon: confirmIcon,
-      showCancelButton: true,
-      confirmButtonColor: confirmButtonColor,
-      cancelButtonColor: '#2d3436',
-      confirmButtonText: 'Sí, confirmar',
-      cancelButtonText: 'Cancelar',
-      background: '#1e1e2f',
-      color: '#fff'
+      title: confirmTitle, text: confirmText, icon: confirmIcon, showCancelButton: true, confirmButtonColor: confirmButtonColor, cancelButtonColor: '#2d3436', confirmButtonText: 'Sí, confirmar', cancelButtonText: 'Cancelar', background: '#1e1e2f', color: '#fff'
     }).then(async (result) => {
       if (result.isConfirmed) {
         let url = action === 'pay' ? '/pay' : action === 'deliver' ? '/deliver' : '/cancel';
         try {
             const res = await fetch(`https://api-perfumes-chile.onrender.com/api/orders/${id}${url}`, {
-            method: 'PUT',
-            headers: { Authorization: `Bearer ${user.token}` }
+            method: 'PUT', headers: { Authorization: `Bearer ${user.token}` }
             });
-            if (res.ok) {
-                fetchOrders();
-                Swal.fire({
-                    title: '¡Listo!',
-                    icon: 'success',
-                    timer: 1500,
-                    showConfirmButton: false,
-                    background: '#1e1e2f',
-                    color: '#fff'
-                });
-            }
+            if (res.ok) { fetchOrders(); Swal.fire({ title: '¡Listo!', icon: 'success', timer: 1500, showConfirmButton: false, background: '#1e1e2f', color: '#fff' }); }
         } catch (error) { console.error(error); }
       }
     });
@@ -120,23 +109,10 @@ const OrderListPage = () => {
   const verProductos = (items) => {
     let htmlList = '<div style="text-align: left; padding: 0 20px;">';
     items.forEach(item => {
-        htmlList += `
-          <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #444;">
-            <span style="color: #fff;">${item.nombre}</span>
-            <span style="color: #00cec9; font-weight: bold;">x${item.qty}</span>
-          </div>`;
+        htmlList += `<div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #444;"><span style="color: #fff;">${item.nombre}</span><span style="color: #00cec9; font-weight: bold;">x${item.qty}</span></div>`;
     });
     htmlList += '</div>';
-
-    Swal.fire({
-        title: '📦 Contenido',
-        html: htmlList,
-        background: '#1e1e2f',
-        color: '#fff',
-        confirmButtonText: 'Cerrar',
-        confirmButtonColor: '#6c5ce7',
-        width: '400px'
-    });
+    Swal.fire({ title: '📦 Contenido', html: htmlList, background: '#1e1e2f', color: '#fff', confirmButtonText: 'Cerrar', confirmButtonColor: '#6c5ce7', width: '400px' });
   };
 
   // --- ESTILOS ---
@@ -144,13 +120,17 @@ const OrderListPage = () => {
     container: { padding: '40px', backgroundColor: '#0f0f1a', minHeight: '100vh', fontFamily: 'Arial, sans-serif' },
     headerTitle: { color: 'white', fontSize: '2rem', fontWeight: 'bold', borderLeft: '5px solid #6c5ce7', paddingLeft: '15px' },
     
-    // ESTILOS DE LAS TARJETAS DE ESTADÍSTICAS
-    statsGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px', marginBottom: '40px', marginTop: '20px' },
+    // TARJETAS ESTADÍSTICAS
+    statsGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px', marginBottom: '30px', marginTop: '20px' },
     statCard: { backgroundColor: '#1e1e2f', padding: '20px', borderRadius: '15px', border: '1px solid #2d2d44', textAlign: 'center', boxShadow: '0 4px 15px rgba(0,0,0,0.3)' },
     statNumber: { fontSize: '2rem', fontWeight: 'bold', color: '#fff', margin: '10px 0' },
     statLabel: { color: '#a29bfe', textTransform: 'uppercase', fontSize: '0.8rem', letterSpacing: '1px' },
 
-    // ESTILOS DE LA LISTA DE PEDIDOS
+    // 👇 4. ESTILOS DEL GRÁFICO (No Invasivo: Altura controlada)
+    chartContainer: { height: '300px', width: '100%', marginBottom: '40px', backgroundColor: '#1e1e2f', borderRadius: '15px', padding: '20px', border: '1px solid #2d2d44' },
+    chartTitle: { color: '#fff', fontSize: '1.2rem', marginBottom: '15px', fontWeight: 'bold' },
+
+    // LISTA DE PEDIDOS
     grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' },
     card: { backgroundColor: '#1e1e2f', borderRadius: '15px', padding: '20px', boxShadow: '0 4px 15px rgba(0,0,0,0.3)', position: 'relative', border: '1px solid #2d2d44' },
     cardHeader: { display: 'flex', justifyContent: 'space-between', marginBottom: '15px', borderBottom: '1px solid #333', paddingBottom: '10px' },
@@ -168,7 +148,6 @@ const OrderListPage = () => {
     <div style={s.container}>
       <h1 style={s.headerTitle}>Panel de Control</h1>
       
-      {/* 📊 SECCIÓN DE ESTADÍSTICAS (NUEVA) */}
       {!loading && (
         <div style={s.statsGrid}>
             <div style={s.statCard}>
@@ -186,8 +165,34 @@ const OrderListPage = () => {
         </div>
       )}
       
+      {/* 👇 5. AQUÍ VA EL GRÁFICO (Solo si hay datos) */}
+      {!loading && chartData.length > 0 && (
+        <div style={s.chartContainer}>
+            <h4 style={s.chartTitle}>📈 Tendencia de Ventas</h4>
+            <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={chartData}>
+                    <defs>
+                        <linearGradient id="colorVentas" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#00d2ff" stopOpacity={0.8}/>
+                            <stop offset="95%" stopColor="#00d2ff" stopOpacity={0}/>
+                        </linearGradient>
+                    </defs>
+                    <XAxis dataKey="name" stroke="#a29bfe" tick={{fontSize: 12}} />
+                    <YAxis stroke="#a29bfe" tick={{fontSize: 12}} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#444" vertical={false} />
+                    <Tooltip 
+                        contentStyle={{ backgroundColor: '#2d3436', border: 'none', borderRadius: '10px', color: '#fff' }}
+                        formatter={(value) => [`$${value.toLocaleString('es-CL')}`, 'Venta']}
+                    />
+                    <Area type="monotone" dataKey="total" stroke="#00d2ff" fillOpacity={1} fill="url(#colorVentas)" strokeWidth={3} />
+                </AreaChart>
+            </ResponsiveContainer>
+        </div>
+      )}
+
       {loading && <p style={{color:'white'}}>Cargando sistema...</p>}
       
+      <h3 style={{color:'white', marginBottom:'20px', borderBottom:'1px solid #333', paddingBottom:'10px'}}>📦 Listado de Pedidos</h3>
       <div style={s.grid}>
         {orders.map((order) => (
           <div key={order._id} style={{
@@ -223,20 +228,11 @@ const OrderListPage = () => {
 
             <div style={s.actionContainer}>
                 <button style={s.btnOutline} onClick={() => verProductos(order.orderItems)}>👁️ Ver Items</button>
-                
                 {!order.isCancelled && (
                     <>
-                        {!order.isPaid && (
-                            <button style={s.btn('#00b894')} onClick={() => handleAction(order._id, 'pay')}>💰 Aprobar</button>
-                        )}
-
-                        {order.isPaid && !order.isDelivered && (
-                            <button style={s.btn('#0984e3')} onClick={() => handleAction(order._id, 'deliver')}>🚚 Enviar</button>
-                        )}
-
-                        {!order.isDelivered && (
-                            <button style={s.btn('#d63031')} onClick={() => handleAction(order._id, 'cancel')}>✖️ Rechazar</button>
-                        )}
+                        {!order.isPaid && <button style={s.btn('#00b894')} onClick={() => handleAction(order._id, 'pay')}>💰 Aprobar</button>}
+                        {order.isPaid && !order.isDelivered && <button style={s.btn('#0984e3')} onClick={() => handleAction(order._id, 'deliver')}>🚚 Enviar</button>}
+                        {!order.isDelivered && <button style={s.btn('#d63031')} onClick={() => handleAction(order._id, 'cancel')}>✖️ Rechazar</button>}
                     </>
                 )}
             </div>
