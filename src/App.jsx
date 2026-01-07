@@ -5,6 +5,7 @@ import RegisterPage from './pages/RegisterPage';
 import ProductListPage from './pages/ProductListPage'; 
 import './index.css';
 import OrdersPage from './pages/OrdersPage';
+import OrderListPage from './pages/OrderListPage';
 
 function App() {
   return (
@@ -21,8 +22,9 @@ function App() {
        {/* Ruta de Administrador (NUEVA) */}
       <Route path="/admin/productlist" element={<ProductListPage />} />
       <Route path="/mis-pedidos" element={<OrdersPage />} />
+      <Route path="/admin/orderlist" element={<OrderListPage />} />
     </Routes>
   );
 }
-//nose que poner aqui para que se actualize la mierddaaaaaa
+
 export default App;
