@@ -208,33 +208,32 @@ const HomePage = () => {
         if (!orderRes.ok) {
             throw new Error(orderData.message || 'Error al crear pedido');
         }
-
-        // 5. ARMAR MENSAJE DE WHATSAPP (Versión Limpia ✨)
-        // Usamos \n para los saltos de línea y emojis reales.
         
-        let texto = `⚡ *NUEVO PEDIDO WEB* ⚡\n`;
+        // 5. ARMAR MENSAJE (Versión corregida para UTF-8)
+        // Nota: Asegúrate de ver estos emojis en tu editor.
+        let texto = "⚡ *NUEVO PEDIDO WEB* ⚡\n\n";
         texto += `🆔 *Pedido:* #${orderData._id.slice(-6)}\n`;
         texto += `👤 *Cliente:* ${clienteNombre}\n`;
         texto += `📍 *Dirección:* ${clienteDireccion}, ${clienteComuna}\n\n`;
         
-        texto += `🛒 *RESUMEN DE COMPRA:*\n`;
-        texto += `-----------------------------------\n`;
+        texto += "🛒 *RESUMEN DE COMPRA:*\n";
+        texto += "-----------------------------------\n";
         
         carrito.forEach(p => {
-            // Aquí usamos un guion simple o un punto para listar
-            texto += `🔹 ${p.nombre} - $${p.precio.toLocaleString('es-CL')}\n`;
+            // Usamos un guión simple para evitar caracteres raros
+            texto += `- ${p.nombre} ($${p.precio.toLocaleString('es-CL')})\n`;
         });
         
-        texto += `-----------------------------------\n`;
-        texto += `💰 *TOTAL A PAGAR: $${precioTotal.toLocaleString('es-CL')}*\n\n`;
-        texto += `📝 *Mensaje:* Hola, acabo de hacer este pedido en la web. Quedo atento para los datos de transferencia.`;
+        texto += "-----------------------------------\n";
+        texto += `💰 *TOTAL: $${precioTotal.toLocaleString('es-CL')}*\n\n`;
+        texto += "👋 Hola, acabo de hacer este pedido. Quedo atento/a.";
 
         // 6. LIMPIAR Y ENVIAR
         setCarrito([]);
         localStorage.removeItem('carrito');
         setMostrarModal(false);
 
-        // LA MAGIA: encodeURIComponent convierte los \n y espacios en códigos para WhatsApp automáticamente
+        // encodeURIComponent se encarga de que los emojis viajen bien
         window.open(`https://wa.me/${NUMERO_WHATSAPP}?text=${encodeURIComponent(texto)}`, '_blank');
 
     } catch (error) {
