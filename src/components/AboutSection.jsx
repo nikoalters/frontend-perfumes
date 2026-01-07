@@ -40,19 +40,24 @@ const AboutSection = () => {
       {/* 3. SECCIÓN MIXTA: CONTACTO + FAQ */}
       <div className="row align-items-start bg-white p-4 rounded-3 shadow-sm border">
         
-        {/* LADO IZQUIERDO: CONTACTO */}
+        {/* LADO IZQUIERDO: CONTACTO (ACTUALIZADO SOLO WSP E INSTAGRAM) */}
         <div className="col-md-5 mb-4 mb-md-0 text-center text-md-start">
             <h3 className="fw-bold mb-3">📱 ¡Hablemos!</h3>
             <p className="text-muted">¿Buscas un aroma específico o necesitas asesoría para un regalo? Escríbenos.</p>
             
-            <div className="d-grid gap-2 d-md-block">
-                <a href="https://wa.me/56958547236" target="_blank" rel="noreferrer" className="btn btn-success btn-lg me-md-2 fw-bold text-white">
+            <div className="d-flex flex-wrap gap-2 justify-content-center justify-content-md-start">
+                {/* Botón WhatsApp */}
+                <a href="https://wa.me/56958547236" target="_blank" rel="noreferrer" className="btn btn-success btn-lg fw-bold text-white shadow-sm border-0" style={{backgroundColor: '#25D366'}}>
                     <i className="bi bi-whatsapp me-2"></i> WhatsApp
                 </a>
-                <a href="https://facebook.com" target="_blank" rel="noreferrer" className="btn btn-outline-primary btn-lg fw-bold">
-                    <i className="bi bi-facebook me-2"></i> Facebook
+                
+                {/* Botón Instagram (Nuevo estilo degradado) */}
+                <a href="https://www.instagram.com/perfumeschile" target="_blank" rel="noreferrer" className="btn btn-lg fw-bold text-white shadow-sm border-0" 
+                   style={{background: 'linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)'}}>
+                    <i className="bi bi-instagram me-2"></i> Instagram
                 </a>
             </div>
+            
             <p className="mt-3 mb-0 text-success fw-bold small">
                 <i className="bi bi-telephone-inbound me-2"></i> +56 9 5854 7236
             </p>
