@@ -11,8 +11,13 @@ const HomePage = () => {
   const [perfumes, setPerfumes] = useState([]);
   const [carrito, setCarrito] = useState([]);
   const [user, setUser] = useState(null); 
-  const [wishlist, setWishlist] = useState([]); // Ahora esto vendrá de la BD
+  const [wishlist, setWishlist] = useState([]); 
   const [mostrarFavoritos, setMostrarFavoritos] = useState(false);
+
+  // Estados del Formulario de Pedido (NUEVOS)
+  const [clienteNombre, setClienteNombre] = useState("");
+  const [clienteDireccion, setClienteDireccion] = useState(""); // Nuevo
+  const [clienteComuna, setClienteComuna] = useState("");       // Nuevo
 
   // Filtros
   const [busqueda, setBusqueda] = useState("");
@@ -22,37 +27,28 @@ const HomePage = () => {
   const [filtrosGenero, setFiltrosGenero] = useState({ hombre: false, mujer: false, unisex: false });
   const [limiteProductos, setLimiteProductos] = useState(20);
   const [mostrarModal, setMostrarModal] = useState(false);
-  const [clienteNombre, setClienteNombre] = useState("");
 
   const NUMERO_WHATSAPP = "56958547236"; 
   const MARCAS_CONOCIDAS = ["ADOLFO DOMINGUEZ", "AFNAN", "AL HARAMAIN", "ANTONIO BANDERAS", "ARIANA GRANDE", "ARMAF", "ARMANI", "AZZARO", "BENETTON", "BHARARA", "BURBERRY", "CACHAREL", "CALVIN KLEIN", "CAROLINA HERRERA", "CLINIQUE", "COACH", "DIESEL", "DOLCE & GABBANA", "DONNA KARAN", "GIVENCHY", "GUCCI", "GUESS", "HALLOWEEN", "HERMES", "HUGO BOSS", "ISSEY MIYAKE", "JEAN PAUL GAULTIER", "JIMMY CHOO", "KENZO", "LACOSTE", "LANCOME", "LATTAFA", "MAISON ALHAMBRA", "MONCLER", "MONTBLANC", "MOSCHINO", "MUGLER", "PACO RABANNE", "RALPH LAUREN", "RASSASI", "SALVATORE FERRAGAMO", "TOMMY HILFIGER", "TOUS", "VERSACE", "VICTOR&ROLF", "VICTORINOX", "YVES SAINT LAURENT"];
 
   // --- CARGAR DATOS ---
   useEffect(() => {
-    // 1. Cargar Carrito (Sigue siendo local por ahora)
     const carritoGuardado = localStorage.getItem('carrito_compras');
     if (carritoGuardado) setCarrito(JSON.parse(carritoGuardado));
 
-    // 2. Cargar Usuario
     const userInfo = localStorage.getItem('userInfo');
     if (userInfo) {
       const usuarioParseado = JSON.parse(userInfo);
       setUser(usuarioParseado);
       
-      // 🚀 NUEVA LÓGICA BACKEND: Cargar Wishlist desde la Base de Datos
       fetch('https://api-perfumes-chile.onrender.com/api/users/wishlist', {
-        headers: {
-          'Authorization': `Bearer ${usuarioParseado.token}` // Importante: Enviamos el token
-        }
+        headers: { 'Authorization': `Bearer ${usuarioParseado.token}` }
       })
       .then(res => res.json())
-      .then(data => {
-        if(Array.isArray(data)) setWishlist(data); // Si responde un array, lo guardamos
-      })
+      .then(data => { if(Array.isArray(data)) setWishlist(data); })
       .catch(err => console.error("Error cargando wishlist:", err));
     }
 
-    // 3. Cargar Perfumes
     fetch('https://api-perfumes-chile.onrender.com/api/perfumes')
       .then(res => res.json())
       .then(data => setPerfumes(data))
@@ -60,7 +56,6 @@ const HomePage = () => {
   }, []);
 
   useEffect(() => { localStorage.setItem('carrito_compras', JSON.stringify(carrito)); }, [carrito]);
-  // NOTA: Ya no guardamos 'wishlist' en localStorage, ahora vive en la base de datos.
 
   // --- HELPERS ---
   const extraerML = (texto) => {
@@ -86,7 +81,6 @@ const HomePage = () => {
     setMostrarFavoritos(false);
   };
 
-  // --- 🚀 NUEVA LÓGICA WISHLIST (CONECTADA AL BACKEND) ---
   const toggleWishlist = async (prod) => {
     if (!user) {
         Swal.fire({
@@ -98,13 +92,10 @@ const HomePage = () => {
             cancelButtonColor: '#d33',
             confirmButtonText: 'Ir a Iniciar Sesión',
             cancelButtonText: 'Cancelar'
-        }).then((result) => {
-            if (result.isConfirmed) window.location.href = '/login';
-        });
+        }).then((result) => { if (result.isConfirmed) window.location.href = '/login'; });
         return;
     }
 
-    // 1. Optimismo UI (Actualizamos visualmente antes de esperar al servidor para que se sienta rápido)
     const existe = wishlist.some(item => item._id === prod._id);
     let nuevaWishlist;
     
@@ -117,30 +108,19 @@ const HomePage = () => {
     }
     setWishlist(nuevaWishlist);
 
-    // 2. Petición al Servidor (En segundo plano)
     try {
-      const response = await fetch('https://api-perfumes-chile.onrender.com/api/users/wishlist', {
+      await fetch('https://api-perfumes-chile.onrender.com/api/users/wishlist', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${user.token}`
-        },
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${user.token}` },
         body: JSON.stringify({ productId: prod._id })
       });
-
-      if (!response.ok) {
-        throw new Error('Error al actualizar wishlist');
-      }
-      // Si todo sale bien, no hacemos nada más porque ya actualizamos la UI arriba.
     } catch (error) {
-      console.error(error);
-      // Si falla, revertimos el cambio visual (Rollback)
       setWishlist(wishlist); 
-      Swal.fire('Error', 'No se pudo guardar en el servidor', 'error');
+      console.error(error);
     }
   };
 
-  // --- CARRITO & LOGOUT ---
+  // --- CARRITO & CHECKOUT WHATSAPP ---
   const agregarAlCarrito = (p) => {
     setCarrito([...carrito, p]);
     Swal.fire({ title: '¡Agregado!', text: p.nombre, icon: 'success', timer: 1000, showConfirmButton: false, toast: true, position: 'top-end' });
@@ -148,7 +128,6 @@ const HomePage = () => {
 
   const logoutHandler = () => {
     localStorage.removeItem('userInfo');
-    // localStorage.removeItem('wishlist_perfumes'); // YA NO ES NECESARIO BORRAR ESTO, PUES NO EXISTE
     setUser(null);
     setWishlist([]); 
     setMostrarFavoritos(false);
@@ -157,27 +136,43 @@ const HomePage = () => {
 
   const calcularTotal = () => carrito.reduce((s, i) => s + i.precio, 0);
 
+  // --- NUEVA LÓGICA DE PEDIDO WHATSAPP ESTRUCTURADO ---
   const finalizarCompraWhatsApp = () => {
-    let mensaje = `Hola! Soy *${clienteNombre}* y mi pedido es:%0A%0A`;
-    carrito.forEach(p => mensaje += `▪️ ${p.nombre} - $${p.precio.toLocaleString('es-CL')}%0A`);
-    mensaje += `%0A💰 *TOTAL: $${calcularTotal().toLocaleString('es-CL')}*`;
+    // 1. Validación de campos
+    if (!clienteNombre.trim() || !clienteDireccion.trim() || !clienteComuna.trim()) {
+        Swal.fire('Faltan datos', 'Por favor completa tu nombre, dirección y comuna para coordinar el envío.', 'warning');
+        return;
+    }
+
+    // 2. Construcción del Mensaje Profesional
+    let mensaje = `📦 *SOLICITUD DE PEDIDO WEB*%0A%0A`;
+    mensaje += `👤 *Cliente:* ${clienteNombre}%0A`;
+    mensaje += `📍 *Dirección:* ${clienteDireccion}, ${clienteComuna}%0A`;
+    mensaje += `-----------------------------%0A`;
+    mensaje += `🛒 *RESUMEN:*%0A`;
+    
+    carrito.forEach(p => {
+        mensaje += `▪️ ${p.nombre} - $${p.precio.toLocaleString('es-CL')}%0A`;
+    });
+    
+    mensaje += `-----------------------------%0A`;
+    mensaje += `💰 *TOTAL A PAGAR: $${calcularTotal().toLocaleString('es-CL')}*%0A%0A`;
+    mensaje += `ℹ️ _Hola, acabo de hacer este pedido. Quedo atento a la confirmación de stock y datos para transferir._`;
+
+    // 3. Abrir WhatsApp
     window.open(`https://wa.me/${NUMERO_WHATSAPP}?text=${mensaje}`, '_blank');
   };
 
   // --- FILTRADO ---
   const perfumesFiltrados = perfumes.filter(prod => {
     if (mostrarFavoritos && !wishlist.some(item => item._id === prod._id)) return false;
-
     const nombre = (prod.nombre || "").toLowerCase();
     const categoria = (prod.categoria || "").toLowerCase();
-
     if (!nombre.includes(busqueda.toLowerCase())) return false;
     if (prod.precio > precioMax) return false;
     if (marcaSeleccionada !== 'todas' && !nombre.toUpperCase().includes(marcaSeleccionada.toUpperCase())) return false;
-    
     const generosSeleccionados = Object.keys(filtrosGenero).filter(key => filtrosGenero[key]);
     if (generosSeleccionados.length > 0 && !generosSeleccionados.includes(categoria)) return false;
-
     if (mlSeleccionado !== 'todos') {
         const ml = extraerML(prod.nombre);
         if (mlSeleccionado === "30" && ml > 35) return false;
@@ -191,18 +186,10 @@ const HomePage = () => {
 
   const productosVisibles = perfumesFiltrados.slice(0, limiteProductos);
 
-  // --- RENDER ---
   return (
     <>
-      {/* NAVBAR */}
       <Navbar 
-        busqueda={busqueda} 
-        setBusqueda={setBusqueda} 
-        carritoCount={carrito.length} 
-        user={user} 
-        logoutHandler={logoutHandler} 
-        setMostrarModal={setMostrarModal} 
-        filtrarPorGeneroRapido={filtrarPorGeneroRapido}
+        busqueda={busqueda} setBusqueda={setBusqueda} carritoCount={carrito.length} user={user} logoutHandler={logoutHandler} setMostrarModal={setMostrarModal} filtrarPorGeneroRapido={filtrarPorGeneroRapido}
       />
 
       <div className="fade-in" style={{marginTop: '80px'}}>
@@ -233,6 +220,7 @@ const HomePage = () => {
                     {mostrarFavoritos ? '❌ Ver Todos' : '❤️ Ver Mis Favoritos'}
                 </button>
 
+                {/* Filtros de Género, Precio, Marca, Tamaño... (Igual que antes) */}
                 <div className="mb-4">
                     <label className="fw-bold mb-2 small text-muted">Género</label>
                     <div className="form-check"><input className="form-check-input" type="checkbox" name="hombre" checked={filtrosGenero.hombre} onChange={handleGeneroChange} id="checkHombre"/><label className="form-check-label" htmlFor="checkHombre">Hombre</label></div>
@@ -270,13 +258,7 @@ const HomePage = () => {
               <h5 className="text-secondary mb-3">Resultados: <strong>{perfumesFiltrados.length}</strong> perfumes</h5>
               <div className="row">
                 {productosVisibles.map(prod => (
-                  <ProductCard 
-                    key={prod._id} 
-                    prod={prod} 
-                    wishlist={wishlist} 
-                    toggleWishlist={toggleWishlist} 
-                    agregarAlCarrito={agregarAlCarrito} 
-                  />
+                  <ProductCard key={prod._id} prod={prod} wishlist={wishlist} toggleWishlist={toggleWishlist} agregarAlCarrito={agregarAlCarrito} />
                 ))}
               </div>
 
@@ -296,7 +278,7 @@ const HomePage = () => {
           </div>
         </div>
         
-        {/* QUIENES SOMOS */}
+        {/* SECCION QUIENES SOMOS (Igual que antes) */}
         <section className="bg-light py-5 mt-5">
             <div className="container">
                 <h2 className="text-success fw-bold mb-3">¿Quiénes Somos?</h2>
@@ -305,32 +287,86 @@ const HomePage = () => {
                     <div className="d-flex align-items-center gap-2 mb-3"><span style={{fontSize: '1.5rem'}}>📱</span><h4 className="mb-0">¡Hablemos!</h4></div>
                     <p className="fw-bold mb-3">WhatsApp: <span className="text-success">+56 9 5854 7236</span></p>
                     <div className="d-flex gap-2">
-                        <a href="https://www.instagram.com/nico_alters?igsh=em9xb2NuN2h6NTc=" target="_blank" rel="noopener noreferrer" className="btn btn-outline-danger btn-sm d-flex align-items-center gap-1 text-decoration-none">📷 @perfumeschile</a>
+                        <a href="https://www.instagram.com/perfumeschile" target="_blank" rel="noopener noreferrer" className="btn btn-outline-danger btn-sm d-flex align-items-center gap-1 text-decoration-none">📷 @perfumeschile</a>
                         <a href="https://www.facebook.com/perfumeschile" target="_blank" rel="noopener noreferrer" className="btn btn-outline-primary btn-sm d-flex align-items-center gap-1 text-decoration-none">👍 Facebook</a>
                     </div>
                 </div>
             </div>
         </section>
 
-        {/* FOOTER */}
         <Footer filtrarPorGeneroRapido={filtrarPorGeneroRapido} />
       </div>
 
-      {/* MODAL CARRITO */}
+      {/* --- MODAL CARRITO ACTUALIZADO CON FORMULARIO --- */}
       {mostrarModal && (
-        <div className="modal d-block" style={{background: 'rgba(0,0,0,0.5)', zIndex: 1050}}>
-          <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content">
-              <div className="modal-header"><h5 className="modal-title">Tu Carrito 🛍️</h5><button className="btn-close" onClick={() => setMostrarModal(false)}></button></div>
-              <div className="modal-body">
-                {carrito.map((item, idx) => (
-                  <div key={idx} className="d-flex justify-content-between align-items-center mb-2 border-bottom pb-2">
-                    <div><span className="d-block fw-bold small text-truncate" style={{maxWidth: '200px'}}>{item.nombre}</span><span className="text-success small">${item.precio.toLocaleString()}</span></div>
-                    <button className="btn btn-sm btn-outline-danger" onClick={() => {const n = [...carrito]; n.splice(idx, 1); setCarrito(n);}}>Eliminar</button>
-                  </div>
-                ))}
-                {carrito.length === 0 && <p className="text-center text-muted my-3">El carrito está vacío</p>}
-                {carrito.length > 0 && (<><div className="d-flex justify-content-between fw-bold mt-3 fs-5"><span>Total:</span><span>${calcularTotal().toLocaleString()}</span></div><hr /><input type="text" className="form-control mb-3" placeholder="Tu nombre (Opcional)" value={clienteNombre} onChange={e => setClienteNombre(e.target.value)} /><button className="btn btn-success w-100 py-2 fw-bold" onClick={finalizarCompraWhatsApp}>Completar Pedido por WhatsApp 📲</button></>)}
+        <div className="modal d-block fade-in" style={{background: 'rgba(0,0,0,0.6)', zIndex: 1050}}>
+          <div className="modal-dialog modal-dialog-centered modal-lg"> {/* modal-lg para más espacio */}
+            <div className="modal-content border-0 shadow-lg rounded-4">
+              <div className="modal-header bg-success text-white border-bottom-0">
+                <h5 className="modal-title fw-bold">🛍️ Tu Carrito de Compras</h5>
+                <button className="btn-close btn-close-white" onClick={() => setMostrarModal(false)}></button>
+              </div>
+              
+              <div className="modal-body p-4">
+                <div className="row">
+                    {/* COLUMNA IZQUIERDA: LISTA DE PRODUCTOS */}
+                    <div className="col-md-6 mb-4 mb-md-0 border-end">
+                        <h6 className="fw-bold text-muted mb-3">Resumen del Pedido</h6>
+                        <div style={{maxHeight: '300px', overflowY: 'auto', paddingRight: '10px'}}>
+                            {carrito.map((item, idx) => (
+                            <div key={idx} className="d-flex justify-content-between align-items-center mb-3 bg-light p-2 rounded">
+                                <div className="d-flex align-items-center gap-2">
+                                    <img src={item.imagen} alt="miniatura" style={{width: '40px', height: '40px', objectFit: 'contain'}} className="bg-white rounded p-1"/>
+                                    <div>
+                                        <span className="d-block fw-bold small text-truncate" style={{maxWidth: '150px'}}>{item.nombre}</span>
+                                        <span className="text-success small fw-bold">${item.precio.toLocaleString()}</span>
+                                    </div>
+                                </div>
+                                <button className="btn btn-sm text-danger" onClick={() => {const n = [...carrito]; n.splice(idx, 1); setCarrito(n);}} title="Eliminar">🗑️</button>
+                            </div>
+                            ))}
+                            {carrito.length === 0 && <div className="text-center py-5 text-muted">🛒 Tu carrito está vacío</div>}
+                        </div>
+                        {carrito.length > 0 && (
+                            <div className="mt-3 pt-3 border-top">
+                                <div className="d-flex justify-content-between align-items-center">
+                                    <span className="lead">Total a pagar:</span>
+                                    <span className="fw-bold fs-4 text-success">${calcularTotal().toLocaleString()}</span>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* COLUMNA DERECHA: FORMULARIO DE DATOS */}
+                    <div className="col-md-6">
+                        <h6 className="fw-bold text-muted mb-3">📦 Datos de Envío</h6>
+                        {carrito.length > 0 ? (
+                            <div className="bg-light p-3 rounded">
+                                <div className="mb-3">
+                                    <label className="form-label small fw-bold text-secondary">Nombre Completo</label>
+                                    <input type="text" className="form-control" placeholder="Ej: Juan Pérez" value={clienteNombre} onChange={e => setClienteNombre(e.target.value)} />
+                                </div>
+                                <div className="mb-3">
+                                    <label className="form-label small fw-bold text-secondary">Dirección (Calle y Número)</label>
+                                    <input type="text" className="form-control" placeholder="Ej: Av. Pajaritos 3030" value={clienteDireccion} onChange={e => setClienteDireccion(e.target.value)} />
+                                </div>
+                                <div className="mb-3">
+                                    <label className="form-label small fw-bold text-secondary">Comuna / Ciudad</label>
+                                    <input type="text" className="form-control" placeholder="Ej: Maipú" value={clienteComuna} onChange={e => setClienteComuna(e.target.value)} />
+                                </div>
+                                
+                                <button className="btn btn-success w-100 py-3 fw-bold shadow-sm mt-2" onClick={finalizarCompraWhatsApp}>
+                                    📲 Confirmar Pedido por WhatsApp
+                                </button>
+                                <small className="d-block text-center text-muted mt-2" style={{fontSize: '0.75rem'}}>
+                                    *Al confirmar, te redirigiremos a WhatsApp para coordinar el pago y envío.
+                                </small>
+                            </div>
+                        ) : (
+                            <p className="text-center text-muted mt-5">Agrega productos para continuar.</p>
+                        )}
+                    </div>
+                </div>
               </div>
             </div>
           </div>
