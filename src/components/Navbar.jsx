@@ -44,24 +44,27 @@ const Navbar = ({ busqueda, setBusqueda, carritoCount, user, logoutHandler, setM
               {user ? (
               <li className="nav-item d-flex align-items-center gap-3">
                 
-                {/* PERFIL VERTICAL (Icono y Nombre) */}
-                <Link to="/profile" className="d-flex flex-column align-items-center text-decoration-none text-secondary" style={{cursor: 'pointer', lineHeight: '1'}} title="Ir a mi Perfil">
-                    <i className="bi bi-person-circle text-success fs-5 mb-1"></i>
-                    <span className="fw-bold text-truncate" style={{fontSize: '0.7rem', maxWidth: '70px'}}>
+                {/* 👇 CAMBIO AQUÍ: MINI LOGO (AVATAR CON INICIAL) */}
+                <Link to="/profile" className="d-flex flex-column align-items-center text-decoration-none" style={{cursor: 'pointer', lineHeight: '1'}} title="Ir a mi Perfil">
+                    {/* Círculo verde con la inicial */}
+                    <div className="rounded-circle bg-success text-white d-flex align-items-center justify-content-center mb-1 shadow-sm" 
+                         style={{width: '32px', height: '32px', fontSize: '16px', fontWeight: 'bold'}}>
+                        {user.name.charAt(0).toUpperCase()}
+                    </div>
+                    {/* Nombre abajo */}
+                    <span className="fw-bold text-secondary text-truncate" style={{fontSize: '0.7rem', maxWidth: '70px'}}>
                         {user.name.split(' ')[0]}
                     </span>
                 </Link>
 
-                {/* BOTONES DE GESTIÓN CON TEXTO RESTAURADO */}
-                <div className="d-flex gap-2 align-items-center">
-                    {/* Botón Mis Pedidos (Cliente) */}
+                {/* BOTONES DE GESTIÓN (Con texto como pediste) */}
+                <div className="d-flex gap-2 align-items-center ms-2">
                     {!user.isAdmin && (
                         <Link to="/mis-pedidos" className="btn btn-light btn-sm rounded-pill px-3 border d-flex align-items-center gap-1">
                             📜 Pedidos
                         </Link>
                     )}
 
-                    {/* Botones Admin (Con Texto) */}
                     {user.isAdmin && (
                         <>
                             <Link to="/admin/productlist" className="btn btn-dark btn-sm rounded-pill px-3 d-flex align-items-center gap-1">
@@ -73,7 +76,6 @@ const Navbar = ({ busqueda, setBusqueda, carritoCount, user, logoutHandler, setM
                         </>
                     )}
 
-                    {/* Botón Salir (Con Texto) */}
                     <button className="btn btn-outline-danger btn-sm rounded-pill px-3 d-flex align-items-center gap-1" onClick={logoutHandler}>
                         🚪 Salir
                     </button>
