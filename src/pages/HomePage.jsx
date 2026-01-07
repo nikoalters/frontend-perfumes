@@ -4,6 +4,8 @@ import Swal from 'sweetalert2';
 // Componentes
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import AboutSection from '../components/AboutSection'; 
+import CommentsSection from '../components/CommentsSection'; // <--- AGREGADO
 import ProductCard from '../components/ProductCard';
 
 const HomePage = () => {
@@ -14,7 +16,7 @@ const HomePage = () => {
   const [wishlist, setWishlist] = useState([]); 
   const [mostrarFavoritos, setMostrarFavoritos] = useState(false);
 
-  // Estados del Formulario de Pedido (NUEVOS)
+  // Estados del Formulario de Pedido
   const [clienteNombre, setClienteNombre] = useState("");
   const [clienteDireccion, setClienteDireccion] = useState("");
   const [clienteComuna, setClienteComuna] = useState("");       
@@ -23,7 +25,6 @@ const HomePage = () => {
   useEffect(() => {
     if (user) {
         setClienteNombre(user.name || "");
-        // Si la base de datos ya tiene dirección, la ponemos en el formulario
         if (user.direccion) setClienteDireccion(user.direccion);
         if (user.comuna) setClienteComuna(user.comuna);
     }
@@ -147,7 +148,6 @@ const HomePage = () => {
   const calcularTotal = () => carrito.reduce((s, i) => s + i.precio, 0);
 
   const finalizarCompraWhatsApp = async () => {
-    // 1. VALIDACIÓN
     if (!clienteNombre.trim() || !clienteDireccion.trim() || !clienteComuna.trim()) {
         Swal.fire('Faltan datos', 'Por favor completa tu nombre, dirección y comuna.', 'warning');
         return;
@@ -159,7 +159,6 @@ const HomePage = () => {
     }
 
     try {
-        // 2. ACTUALIZAR DIRECCIÓN DEL USUARIO (Si cambió)
         await fetch('https://api-perfumes-chile.onrender.com/api/users/profile', {
             method: 'PUT',
             headers: {
@@ -173,18 +172,16 @@ const HomePage = () => {
             })
         });
 
-        // 3. PREPARAR LOS DATOS DEL PEDIDO (Formato que pide el Backend)
         const orderItems = carrito.map(item => ({
-            product: item._id,       // ID del producto
+            product: item._id,
             nombre: item.nombre,
-            image: item.imagen,      // Asegúrate que tu producto tiene campo 'imagen'
+            image: item.imagen,
             precio: item.precio,
-            qty: 1                   // Por defecto 1 (si tu carrito agrupa, cambia esto)
+            qty: 1
         }));
 
         const precioTotal = calcularTotal();
 
-        // 4. CREAR EL PEDIDO EN LA BASE DE DATOS 💾
         const orderRes = await fetch('https://api-perfumes-chile.onrender.com/api/orders', {
             method: 'POST',
             headers: {
@@ -198,19 +195,17 @@ const HomePage = () => {
                     comuna: clienteComuna
                 },
                 itemsPrice: precioTotal,
-                shippingPrice: 0, // Si cobras envío, ponlo aquí
+                shippingPrice: 0,
                 totalPrice: precioTotal
             })
         });
 
-        const orderData = await orderRes.json(); // Aquí recibimos el ID del pedido nuevo
+        const orderData = await orderRes.json();
 
         if (!orderRes.ok) {
             throw new Error(orderData.message || 'Error al crear pedido');
         }
         
-        // 5. ARMAR MENSAJE (Versión corregida para UTF-8)
-        // Nota: Asegúrate de ver estos emojis en tu editor.
         let texto = "⚡ *NUEVO PEDIDO WEB* ⚡\n\n";
         texto += `🆔 *Pedido:* #${orderData._id.slice(-6)}\n`;
         texto += `👤 *Cliente:* ${clienteNombre}\n`;
@@ -220,7 +215,6 @@ const HomePage = () => {
         texto += "-----------------------------------\n";
         
         carrito.forEach(p => {
-            // Usamos un guión simple para evitar caracteres raros
             texto += `- ${p.nombre} ($${p.precio.toLocaleString('es-CL')})\n`;
         });
         
@@ -228,12 +222,10 @@ const HomePage = () => {
         texto += `💰 *TOTAL: $${precioTotal.toLocaleString('es-CL')}*\n\n`;
         texto += "👋 Hola, acabo de hacer este pedido. Quedo atento/a.";
 
-        // 6. LIMPIAR Y ENVIAR
         setCarrito([]);
         localStorage.removeItem('carrito');
         setMostrarModal(false);
 
-        // encodeURIComponent se encarga de que los emojis viajen bien
         window.open(`https://wa.me/${NUMERO_WHATSAPP}?text=${encodeURIComponent(texto)}`, '_blank');
 
     } catch (error) {
@@ -299,7 +291,7 @@ const HomePage = () => {
                     {mostrarFavoritos ? '❌ Ver Todos' : '❤️ Ver Mis Favoritos'}
                 </button>
 
-                {/* Filtros de Género, Precio, Marca, Tamaño... (Igual que antes) */}
+                {/* Filtros de Género, Precio, Marca, Tamaño... */}
                 <div className="mb-4">
                     <label className="fw-bold mb-2 small text-muted">Género</label>
                     <div className="form-check"><input className="form-check-input" type="checkbox" name="hombre" checked={filtrosGenero.hombre} onChange={handleGeneroChange} id="checkHombre"/><label className="form-check-label" htmlFor="checkHombre">Hombre</label></div>
@@ -357,21 +349,10 @@ const HomePage = () => {
           </div>
         </div>
         
-        {/* SECCION QUIENES SOMOS (Igual que antes) */}
-        <section className="bg-light py-5 mt-5">
-            <div className="container">
-                <h2 className="text-success fw-bold mb-3">¿Quiénes Somos?</h2>
-                <p className="lead text-muted mb-5">Somos una empresa dedicada a la venta de perfumes 100% originales, entregando confianza y calidad en todo Chile.</p>
-                <div className="card p-4 shadow-sm border-0" style={{maxWidth: '500px'}}>
-                    <div className="d-flex align-items-center gap-2 mb-3"><span style={{fontSize: '1.5rem'}}>📱</span><h4 className="mb-0">¡Hablemos!</h4></div>
-                    <p className="fw-bold mb-3">WhatsApp: <span className="text-success">+56 9 5854 7236</span></p>
-                    <div className="d-flex gap-2">
-                        <a href="https://www.instagram.com/perfumeschile" target="_blank" rel="noopener noreferrer" className="btn btn-outline-danger btn-sm d-flex align-items-center gap-1 text-decoration-none">📷 @perfumeschile</a>
-                        <a href="https://www.facebook.com/perfumeschile" target="_blank" rel="noopener noreferrer" className="btn btn-outline-primary btn-sm d-flex align-items-center gap-1 text-decoration-none">👍 Facebook</a>
-                    </div>
-                </div>
-            </div>
-        </section>
+        {/* 👇 SECCIONES NUEVAS (Reemplazando el HTML antiguo) */}
+        <AboutSection />
+        
+        <CommentsSection />
 
         <Footer filtrarPorGeneroRapido={filtrarPorGeneroRapido} />
       </div>
@@ -379,7 +360,7 @@ const HomePage = () => {
       {/* --- MODAL CARRITO ACTUALIZADO CON FORMULARIO --- */}
       {mostrarModal && (
         <div className="modal d-block fade-in" style={{background: 'rgba(0,0,0,0.6)', zIndex: 1050}}>
-          <div className="modal-dialog modal-dialog-centered modal-lg"> {/* modal-lg para más espacio */}
+          <div className="modal-dialog modal-dialog-centered modal-lg">
             <div className="modal-content border-0 shadow-lg rounded-4">
               <div className="modal-header bg-success text-white border-bottom-0">
                 <h5 className="modal-title fw-bold">🛍️ Tu Carrito de Compras</h5>
