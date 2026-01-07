@@ -16,16 +16,18 @@ const HomePage = () => {
 
   // Estados del Formulario de Pedido (NUEVOS)
   const [clienteNombre, setClienteNombre] = useState("");
-  const [clienteDireccion, setClienteDireccion] = useState(""); // Nuevo
-  const [clienteComuna, setClienteComuna] = useState("");       // Nuevo
-
-  // EFECTO: Si el usuario ya inició sesión, rellenamos su nombre automáticamente
+  const [clienteDireccion, setClienteDireccion] = useState("");
+  const [clienteComuna, setClienteComuna] = useState("");       
+  
+  // EFECTO: Si el usuario inicia sesión, cargamos sus datos guardados automáticamente
   useEffect(() => {
-    if (user && user.name) {
-        setClienteNombre(user.name);
+    if (user) {
+        setClienteNombre(user.name || "");
+        // Si la base de datos ya tiene dirección, la ponemos en el formulario
+        if (user.direccion) setClienteDireccion(user.direccion);
+        if (user.comuna) setClienteComuna(user.comuna);
     }
   }, [user]);
-
 
   // Filtros
   const [busqueda, setBusqueda] = useState("");
@@ -144,15 +146,46 @@ const HomePage = () => {
 
   const calcularTotal = () => carrito.reduce((s, i) => s + i.precio, 0);
 
-  // --- NUEVA LÓGICA DE PEDIDO WHATSAPP ESTRUCTURADO ---
-  const finalizarCompraWhatsApp = () => {
-    // 1. Validación de campos
+  // --- REEMPLAZA TU FUNCIÓN 'finalizarCompraWhatsApp' POR ESTA ---
+
+  const finalizarCompraWhatsApp = async () => {
+    // 1. Validación (Igual que antes)
     if (!clienteNombre.trim() || !clienteDireccion.trim() || !clienteComuna.trim()) {
-        Swal.fire('Faltan datos', 'Por favor completa tu nombre, dirección y comuna para coordinar el envío.', 'warning');
+        Swal.fire('Faltan datos', 'Por favor completa tu nombre, dirección y comuna.', 'warning');
         return;
     }
 
-    // 2. Construcción del Mensaje Profesional
+    // 2. NUEVO: Guardar dirección en la Base de Datos (Si está logueado)
+    if (user) {
+        try {
+            const res = await fetch('https://api-perfumes-chile.onrender.com/api/users/profile', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${user.token}`
+                },
+                body: JSON.stringify({
+                    name: clienteNombre, // Actualizamos nombre por si lo corrigió
+                    direccion: clienteDireccion,
+                    comuna: clienteComuna
+                    // No enviamos password ni email para no tocarlos
+                })
+            });
+
+            if (res.ok) {
+                const data = await res.json();
+                // Actualizamos el localStorage para que el navegador recuerde los datos nuevos
+                const usuarioActualizado = { ...data, token: user.token };
+                localStorage.setItem('userInfo', JSON.stringify(usuarioActualizado));
+                setUser(usuarioActualizado); // Actualizamos el estado visual
+            }
+        } catch (error) {
+            console.error("Error guardando dirección en segundo plano:", error);
+            // No detenemos la compra, seguimos adelante aunque falle el guardado
+        }
+    }
+
+    // 3. Abrir WhatsApp (Tu código original mejorado)
     let mensaje = `📦 *SOLICITUD DE PEDIDO WEB*%0A%0A`;
     mensaje += `👤 *Cliente:* ${clienteNombre}%0A`;
     mensaje += `📍 *Dirección:* ${clienteDireccion}, ${clienteComuna}%0A`;
@@ -167,7 +200,6 @@ const HomePage = () => {
     mensaje += `💰 *TOTAL A PAGAR: $${calcularTotal().toLocaleString('es-CL')}*%0A%0A`;
     mensaje += `ℹ️ _Hola, acabo de hacer este pedido. Quedo atento a la confirmación de stock y datos para transferir._`;
 
-    // 3. Abrir WhatsApp
     window.open(`https://wa.me/${NUMERO_WHATSAPP}?text=${mensaje}`, '_blank');
   };
 
