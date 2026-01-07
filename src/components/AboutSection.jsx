@@ -52,7 +52,7 @@ const AboutSection = () => {
                 </a>
                 
                 {/* Botón Instagram (Nuevo estilo degradado) */}
-                <a href="https://www.instagram.com/perfumeschile" target="_blank" rel="noreferrer" className="btn btn-lg fw-bold text-white shadow-sm border-0" 
+                <a href="https://www.instagram.com/nico_alters?igsh=em9xb2NuN2h6NTc=" target="_blank" rel="noreferrer" className="btn btn-lg fw-bold text-white shadow-sm border-0" 
                    style={{background: 'linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)'}}>
                     <i className="bi bi-instagram me-2"></i> Instagram
                 </a>
