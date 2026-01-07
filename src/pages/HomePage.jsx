@@ -146,61 +146,95 @@ const HomePage = () => {
 
   const calcularTotal = () => carrito.reduce((s, i) => s + i.precio, 0);
 
-  // --- REEMPLAZA TU FUNCIÓN 'finalizarCompraWhatsApp' POR ESTA ---
-
   const finalizarCompraWhatsApp = async () => {
-    // 1. Validación (Igual que antes)
+    // 1. VALIDACIÓN
     if (!clienteNombre.trim() || !clienteDireccion.trim() || !clienteComuna.trim()) {
         Swal.fire('Faltan datos', 'Por favor completa tu nombre, dirección y comuna.', 'warning');
         return;
     }
 
-    // 2. NUEVO: Guardar dirección en la Base de Datos (Si está logueado)
-    if (user) {
-        try {
-            const res = await fetch('https://api-perfumes-chile.onrender.com/api/users/profile', {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${user.token}`
-                },
-                body: JSON.stringify({
-                    name: clienteNombre, // Actualizamos nombre por si lo corrigió
-                    direccion: clienteDireccion,
-                    comuna: clienteComuna
-                    // No enviamos password ni email para no tocarlos
-                })
-            });
-
-            if (res.ok) {
-                const data = await res.json();
-                // Actualizamos el localStorage para que el navegador recuerde los datos nuevos
-                const usuarioActualizado = { ...data, token: user.token };
-                localStorage.setItem('userInfo', JSON.stringify(usuarioActualizado));
-                setUser(usuarioActualizado); // Actualizamos el estado visual
-            }
-        } catch (error) {
-            console.error("Error guardando dirección en segundo plano:", error);
-            // No detenemos la compra, seguimos adelante aunque falle el guardado
-        }
+    if (!user) {
+        Swal.fire('Inicia Sesión', 'Debes iniciar sesión para guardar tu pedido.', 'info');
+        return;
     }
 
-    // 3. Abrir WhatsApp (Tu código original mejorado)
-    let mensaje = `📦 *SOLICITUD DE PEDIDO WEB*%0A%0A`;
-    mensaje += `👤 *Cliente:* ${clienteNombre}%0A`;
-    mensaje += `📍 *Dirección:* ${clienteDireccion}, ${clienteComuna}%0A`;
-    mensaje += `-----------------------------%0A`;
-    mensaje += `🛒 *RESUMEN:*%0A`;
-    
-    carrito.forEach(p => {
-        mensaje += `▪️ ${p.nombre} - $${p.precio.toLocaleString('es-CL')}%0A`;
-    });
-    
-    mensaje += `-----------------------------%0A`;
-    mensaje += `💰 *TOTAL A PAGAR: $${calcularTotal().toLocaleString('es-CL')}*%0A%0A`;
-    mensaje += `ℹ️ _Hola, acabo de hacer este pedido. Quedo atento a la confirmación de stock y datos para transferir._`;
+    try {
+        // 2. ACTUALIZAR DIRECCIÓN DEL USUARIO (Si cambió)
+        await fetch('https://api-perfumes-chile.onrender.com/api/users/profile', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${user.token}`
+            },
+            body: JSON.stringify({
+                name: clienteNombre,
+                direccion: clienteDireccion,
+                comuna: clienteComuna
+            })
+        });
 
-    window.open(`https://wa.me/${NUMERO_WHATSAPP}?text=${mensaje}`, '_blank');
+        // 3. PREPARAR LOS DATOS DEL PEDIDO (Formato que pide el Backend)
+        const orderItems = carrito.map(item => ({
+            product: item._id,       // ID del producto
+            nombre: item.nombre,
+            image: item.imagen,      // Asegúrate que tu producto tiene campo 'imagen'
+            precio: item.precio,
+            qty: 1                   // Por defecto 1 (si tu carrito agrupa, cambia esto)
+        }));
+
+        const precioTotal = calcularTotal();
+
+        // 4. CREAR EL PEDIDO EN LA BASE DE DATOS 💾
+        const orderRes = await fetch('https://api-perfumes-chile.onrender.com/api/orders', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${user.token}`
+            },
+            body: JSON.stringify({
+                orderItems: orderItems,
+                shippingAddress: {
+                    direccion: clienteDireccion,
+                    comuna: clienteComuna
+                },
+                itemsPrice: precioTotal,
+                shippingPrice: 0, // Si cobras envío, ponlo aquí
+                totalPrice: precioTotal
+            })
+        });
+
+        const orderData = await orderRes.json(); // Aquí recibimos el ID del pedido nuevo
+
+        if (!orderRes.ok) {
+            throw new Error(orderData.message || 'Error al crear pedido');
+        }
+
+        // 5. ARMAR MENSAJE DE WHATSAPP (Con el ID del pedido)
+        let mensaje = `📦 *PEDIDO WEB #${orderData._id.slice(-6)}* (Pendiente)%0A%0A`; // Usamos los últimos 6 caracteres del ID
+        mensaje += `👤 *Cliente:* ${clienteNombre}%0A`;
+        mensaje += `📍 *Dirección:* ${clienteDireccion}, ${clienteComuna}%0A`;
+        mensaje += `-----------------------------%0A`;
+        mensaje += `🛒 *RESUMEN:*%0A`;
+        
+        carrito.forEach(p => {
+            mensaje += `▪️ ${p.nombre} - $${p.precio.toLocaleString('es-CL')}%0A`;
+        });
+        
+        mensaje += `-----------------------------%0A`;
+        mensaje += `💰 *TOTAL A PAGAR: $${precioTotal.toLocaleString('es-CL')}*%0A%0A`;
+        mensaje += `ℹ️ _Hola, ya generé mi pedido en la web. Quedo atento para realizar el pago._`;
+
+        // 6. LIMPIAR CARRITO Y ABRIR WHATSAPP
+        setCarrito([]); // Vaciamos el carrito visual
+        localStorage.removeItem('carrito'); // Vaciamos el carrito de la memoria
+        setMostrarModal(false); // Cerramos el modal
+
+        window.open(`https://wa.me/${NUMERO_WHATSAPP}?text=${mensaje}`, '_blank');
+
+    } catch (error) {
+        console.error("Error procesando compra:", error);
+        Swal.fire('Error', 'Hubo un problema al guardar el pedido. Intenta de nuevo.', 'error');
+    }
   };
 
   // --- FILTRADO ---
