@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom'; // <--- 1. Importamos Link para navegar sin recargar
+import { Link } from 'react-router-dom';
 
 const Navbar = ({ busqueda, setBusqueda, carritoCount, user, logoutHandler, setMostrarModal, filtrarPorGeneroRapido }) => {
   return (
@@ -39,8 +39,13 @@ const Navbar = ({ busqueda, setBusqueda, carritoCount, user, logoutHandler, setM
               <li className="nav-item d-flex align-items-center gap-2 ms-2">
                   <span className="fw-bold text-success small me-2">Hola, {user.name.split(' ')[0]}</span>
 
+                  {/* --- 🆕 BOTÓN NUEVO: MIS PEDIDOS --- */}
+                  <Link to="/mis-pedidos" className="btn btn-outline-primary btn-sm rounded-pill px-3">
+                    📜 Mis Pedidos
+                  </Link>
+                  {/* ----------------------------------- */}
+
                   {/* --- 🛡️ BOTÓN SECRETO DE ADMIN 🛡️ --- */}
-                  {/* Solo se renderiza si user.isAdmin es true */}
                   {user.isAdmin && (
                     <Link to="/admin/productlist" className="btn btn-dark btn-sm rounded-pill px-3">
                         ⚙️ Panel
@@ -51,7 +56,7 @@ const Navbar = ({ busqueda, setBusqueda, carritoCount, user, logoutHandler, setM
                   <button className="btn btn-outline-danger btn-sm rounded-pill px-3" onClick={logoutHandler}>Salir</button>
               </li>
               ) : (
-              <li className="nav-item"><a href="/login" className="btn-login fw-bold small px-4 rounded-pill">Ingresar</a></li>
+              <li className="nav-item"><Link to="/login" className="btn-login fw-bold small px-4 rounded-pill text-decoration-none">Ingresar</Link></li>
               )}
           </ul>
         </div>
