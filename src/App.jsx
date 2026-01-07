@@ -6,7 +6,7 @@ import ProductListPage from './pages/ProductListPage';
 import './index.css';
 import OrdersPage from './pages/OrdersPage';
 import OrderListPage from './pages/OrderListPage';
-
+import ProfilePage from './pages/ProfilePage';
 function App() {
   return (
     <Routes>
@@ -23,6 +23,7 @@ function App() {
       <Route path="/admin/productlist" element={<ProductListPage />} />
       <Route path="/mis-pedidos" element={<OrdersPage />} />
       <Route path="/admin/orderlist" element={<OrderListPage />} />
+      <Route path="/profile" element={<ProfilePage />} />
     </Routes>
   );
 }

@@ -37,7 +37,8 @@ const Navbar = ({ busqueda, setBusqueda, carritoCount, user, logoutHandler, setM
 
               {user ? (
               <li className="nav-item d-flex align-items-center gap-2 ms-2">
-                  <span className="fw-bold text-success small me-2">Hola, {user.name.split(' ')[0]}</span>
+                <span className="fw-bold text-success small me-2">Hola, {user.name.split(' ')[0]}</span>
+                <Link to="/profile" className="btn btn-outline-secondary btn-sm rounded-pill px-3" title="Mi Perfil">👤</Link>
 
                   {/* 👇 CAMBIO AQUÍ: Solo mostramos "Mis Pedidos" si NO es admin */}
                   {!user.isAdmin && (
