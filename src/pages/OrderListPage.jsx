@@ -99,9 +99,29 @@ const OrderListPage = () => {
     });
   };
 
+  // Función para ver productos con estilo Cyberpunk
   const verProductos = (items) => {
-    const lista = items.map(item => `▪ ${item.qty}x ${item.nombre}`).join('\n');
-    alert(`🛒 PRODUCTOS:\n\n${lista}`);
+    // Generamos el HTML de la lista
+    let htmlList = '<div style="text-align: left; padding: 0 20px;">';
+    
+    items.forEach(item => {
+        htmlList += `
+          <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #444;">
+            <span style="color: #fff;">${item.nombre}</span>
+            <span style="color: #00cec9; font-weight: bold;">x${item.qty}</span>
+          </div>`;
+    });
+    htmlList += '</div>';
+
+    Swal.fire({
+        title: '📦 Contenido del Pedido',
+        html: htmlList,
+        background: '#1e1e2f', // Fondo oscuro
+        color: '#fff',         // Texto blanco
+        confirmButtonText: 'Cerrar',
+        confirmButtonColor: '#6c5ce7',
+        width: '400px'
+    });
   };
 
   // --- ESTILOS "DASHBOARD CYBERPUNK" 🎨 ---
