@@ -19,6 +19,14 @@ const HomePage = () => {
   const [clienteDireccion, setClienteDireccion] = useState(""); // Nuevo
   const [clienteComuna, setClienteComuna] = useState("");       // Nuevo
 
+  // EFECTO: Si el usuario ya inició sesión, rellenamos su nombre automáticamente
+  useEffect(() => {
+    if (user && user.name) {
+        setClienteNombre(user.name);
+    }
+  }, [user]);
+
+
   // Filtros
   const [busqueda, setBusqueda] = useState("");
   const [precioMax, setPrecioMax] = useState(150000);
