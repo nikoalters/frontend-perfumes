@@ -1,127 +1,69 @@
-@import url('https://fonts.googleapis.com/css?family=Montserrat:400,600,800');
+@import url('https://fonts.googleapis.com/css?family=Montserrat:400,800');
 
-/* --- VARIABLES DE COLOR (Paleta inspirada en la foto + Tu marca) --- */
-:root {
-    --color-brand: #009970;
-    /* Tu verde corporativo */
-    --color-neon-cyan: #00e5ff;
-    /* Cian brillante de la foto */
-    --color-neon-pink: #ff2a6d;
-    /* Rosa brillante de la foto */
-    --bg-dark-deep: #0f0c29;
-    /* Azul muy oscuro para el fondo */
-    --bg-dark-mid: #302b63;
-    /* Morado oscuro medio */
-    --bg-dark-light: #24243e;
-    /* Gris azulado oscuro */
-    --card-bg: rgba(30, 30, 46, 0.75);
-    /* Color de la tarjeta semitransparente */
-}
-
-/* 1. NUEVO FONDO DE PANTALLA CON DEGRADADO ATMOSFÉRICO */
+/* =========================================
+   ESTILOS GENERALES (PC Y MÓVIL)
+   ========================================= */
 .auth-body {
-    /* Degradado diagonal profundo en lugar de negro plano */
-    background: linear-gradient(135deg, var(--bg-dark-deep), var(--bg-dark-mid), var(--bg-dark-light));
-    background-size: 400% 400%;
-    animation: gradientBG 15s ease infinite;
-    /* Sutil movimiento del fondo */
-
+    background: #121212;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
     font-family: 'Montserrat', sans-serif;
     height: 100vh;
-    /* Aseguramos que cubra todo sin márgenes extraños */
-    margin: 0;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-}
-
-/* Animación suave para el fondo */
-@keyframes gradientBG {
-    0% {
-        background-position: 0% 50%;
-    }
-
-    50% {
-        background-position: 100% 50%;
-    }
-
-    100% {
-        background-position: 0% 50%;
-    }
-}
-
-/* 2. LA TARJETA PRINCIPAL ESTILO "NEON GLASS" */
-.auth-container {
-    background-color: var(--card-bg);
-    /* Fondo semitransparente */
-    /* EFECTO VIDRIO BORROSO */
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-
-    border-radius: 25px;
-    position: relative;
     overflow: hidden;
-    width: 950px;
-    max-width: 95%;
-    min-height: 600px;
-
-    /* Borde sutil brillante */
-    border: 1px solid rgba(255, 255, 255, 0.1);
-
-    /* DOBLE SOMBRA DE NEÓN (Cian a la izquierda, Rosa a la derecha) */
-    box-shadow:
-        -15px -15px 30px rgba(0, 229, 255, 0.15),
-        /* Brillo Cian superior izq */
-        15px 15px 30px rgba(255, 42, 109, 0.15),
-        /* Brillo Rosa inferior der */
-        inset 0 0 20px rgba(255, 255, 255, 0.05);
-    /* Brillo interior sutil */
+    /* Evita scrolls raros */
 }
 
-/* Títulos */
 .auth-title {
-    font-weight: 800;
+    font-weight: bold;
     margin: 0;
-    /* Degradado de texto: Verde a Cian */
-    background: linear-gradient(to right, var(--color-brand), var(--color-neon-cyan));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    letter-spacing: 1px;
-    font-size: 2rem;
+    color: var(--color-principal);
+    /* Tu verde */
+    margin-bottom: 1rem;
 }
 
 .auth-title-overlay {
     font-weight: 800;
     margin: 0;
     color: white;
-    font-size: 2.8rem;
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+    font-size: 2rem;
+    line-height: 1.2;
 }
 
 .auth-p {
     font-size: 14px;
-    font-weight: 400;
-    line-height: 24px;
+    font-weight: 300;
+    line-height: 20px;
     letter-spacing: 0.5px;
-    margin: 25px 0 35px;
-    color: #ddd;
+    margin: 20px 0 30px;
+    color: #f0f0f0;
 }
 
 .auth-span {
-    font-size: 13px;
-    color: #aaa;
-    margin-bottom: 25px;
-    margin-top: 10px;
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 10px;
 }
 
+.auth-container {
+    background-color: #1e1e2e;
+    border-radius: 20px;
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25),
+        0 10px 10px rgba(0, 0, 0, 0.22);
+    position: relative;
+    overflow: hidden;
+    width: 900px;
+    max-width: 100%;
+    min-height: 600px;
+    /* Un poco más alto para que quepa todo */
+    border: 1px solid rgba(0, 153, 112, 0.3);
+    /* Borde verde sutil */
+}
+
+/* INPUTS */
 .auth-form {
-    background-color: transparent;
-    /* El fondo lo da el contenedor padre */
+    background-color: #1e1e2e;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -131,113 +73,70 @@
     text-align: center;
 }
 
-/* 3. INPUTS ESTILO "INCRUSTADO" (Neumorfismo Oscuro) */
 .auth-form input {
-    background-color: rgba(20, 20, 35, 0.6);
-    /* Más oscuro que la tarjeta */
-    border: none;
-    padding: 15px 20px;
-    margin: 10px 0;
+    background-color: #2a2a3c;
+    border: 1px solid #333;
+    padding: 12px 15px;
+    margin: 8px 0;
     width: 100%;
-    border-radius: 12px;
+    border-radius: 8px;
     color: white;
     outline: none;
-    transition: all 0.3s ease;
-    font-size: 14px;
-    /* Sombra interna para dar profundidad */
-    box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.3), inset -2px -2px 5px rgba(255, 255, 255, 0.05);
-}
-
-.auth-form input::placeholder {
-    color: #666;
+    transition: 0.3s;
 }
 
 .auth-form input:focus {
-    /* Al enfocar, brilla con tu verde corporativo */
-    box-shadow: 0 0 15px var(--color-brand), inset 2px 2px 5px rgba(0, 0, 0, 0.5);
-    background-color: rgba(20, 20, 35, 0.9);
-    transform: scale(1.02);
+    border-color: var(--color-principal);
+    background-color: #32324a;
 }
 
-/* 4. BOTONES CON DEGRADADO Y BRILLO */
+/* BOTÓN PRINCIPAL (Ingresar / Registrarse) */
 .auth-btn {
     border-radius: 50px;
     border: none;
-    /* Degradado vibrante para el botón principal */
-    background: linear-gradient(45deg, var(--color-brand), var(--color-neon-cyan));
+    background: linear-gradient(to right, #009970, #00bf8f);
     color: #FFFFFF;
     font-size: 13px;
-    font-weight: 800;
-    padding: 15px 50px;
-    letter-spacing: 2px;
+    font-weight: bold;
+    padding: 15px 45px;
+    letter-spacing: 1px;
     text-transform: uppercase;
-    transition: all 0.3s ease;
-    margin-top: 30px;
+    transition: transform 80ms ease-in;
+    margin-top: 25px;
     cursor: pointer;
-    /* Sombra de brillo */
-    box-shadow: 0 5px 20px rgba(0, 229, 255, 0.4);
-}
-
-.auth-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(0, 229, 255, 0.6);
+    box-shadow: 0 4px 15px rgba(0, 153, 112, 0.4);
 }
 
 .auth-btn:active {
     transform: scale(0.95);
 }
 
-/* Botón transparente del overlay */
+/* BOTÓN TRANSPARENTE (Cambiar modo) */
 .ghost-btn {
     border-radius: 50px;
     border: 2px solid #FFFFFF;
     background-color: transparent;
     color: #FFFFFF;
-    font-size: 13px;
-    font-weight: 800;
-    padding: 15px 50px;
-    letter-spacing: 2px;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 12px 45px;
+    letter-spacing: 1px;
     text-transform: uppercase;
-    transition: all 0.3s ease;
+    transition: transform 80ms ease-in;
     cursor: pointer;
-    margin-top: 30px;
-    position: relative;
-    overflow: hidden;
-    z-index: 1;
-}
-
-/* Efecto de relleno al pasar el mouse sobre el botón fantasma */
-.ghost-btn::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 0%;
-    height: 100%;
-    background-color: white;
-    transition: all 0.3s ease;
-    z-index: -1;
+    margin-top: 10px;
 }
 
 .ghost-btn:hover {
-    color: var(--bg-dark-deep);
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+    background-color: rgba(255, 255, 255, 0.2);
 }
 
-.ghost-btn:hover::before {
-    width: 100%;
-}
-
-/* =========================================
-   LÓGICA DE ANIMACIÓN (NO CAMBIA MUCHO)
-   ========================================= */
-
+/* CONTENEDORES DE FORMULARIO */
 .form-container {
     position: absolute;
     top: 0;
     height: 100%;
-    transition: all 0.7s ease-in-out;
-    /* Un poco más lento para más drama */
+    transition: all 0.6s ease-in-out;
 }
 
 .sign-in-container {
@@ -253,6 +152,7 @@
     z-index: 1;
 }
 
+/* ANIMACIÓN DESKTOP */
 .auth-container.right-panel-active .sign-in-container {
     transform: translateX(100%);
     opacity: 0;
@@ -262,7 +162,7 @@
     transform: translateX(100%);
     opacity: 1;
     z-index: 5;
-    animation: show 0.7s;
+    animation: show 0.6s;
 }
 
 @keyframes show {
@@ -280,7 +180,7 @@
     }
 }
 
-/* 5. EL PANEL DESLIZANTE (Overlay) MEJORADO */
+/* OVERLAY (PANEL VERDE) */
 .overlay-container {
     position: absolute;
     top: 0;
@@ -288,34 +188,27 @@
     width: 50%;
     height: 100%;
     overflow: hidden;
-    transition: transform 0.7s ease-in-out;
+    transition: transform 0.6s ease-in-out;
     z-index: 100;
-    border-top-right-radius: 25px;
-    border-bottom-right-radius: 25px;
 }
 
 .auth-container.right-panel-active .overlay-container {
     transform: translateX(-100%);
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-    border-top-left-radius: 25px;
-    border-bottom-left-radius: 25px;
 }
 
 .overlay {
-    /* Degradado complejo que mezcla tu verde con los colores neon */
-    background: linear-gradient(135deg, var(--color-brand), var(--color-neon-cyan), var(--color-neon-pink));
-    background-size: 300% 300%;
-    animation: gradientBG 8s ease infinite;
-    /* El panel también se mueve */
-
+    background: #009970;
+    background: linear-gradient(to right, #006349, #009970);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: 0 0;
     color: #FFFFFF;
     position: relative;
     left: -100%;
     height: 100%;
     width: 200%;
     transform: translateX(0);
-    transition: transform 0.7s ease-in-out;
+    transition: transform 0.6s ease-in-out;
 }
 
 .auth-container.right-panel-active .overlay {
@@ -328,15 +221,13 @@
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    padding: 0 50px;
+    padding: 0 40px;
     text-align: center;
     top: 0;
     height: 100%;
     width: 50%;
     transform: translateX(0);
-    transition: transform 0.7s ease-in-out;
-    /* Textura sutil sobre el panel de color */
-    background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 20.5V18H0v2.5h20zM20 22H0v2.5h20V22zm20-4h-20v2.5h20V18zm0 4h-20v2.5h20V22z' fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+    transition: transform 0.6s ease-in-out;
 }
 
 .overlay-left {
@@ -356,67 +247,148 @@
     transform: translateX(20%);
 }
 
-/* --- RESPONSIVE (Móviles) --- */
+
+/* =========================================
+   CORRECCIÓN PARA MÓVILES (LO QUE ARREGLA TU PROBLEMA)
+   ========================================= */
 @media (max-width: 768px) {
+    .auth-body {
+        height: auto;
+        min-height: 100vh;
+        padding: 20px 0;
+        /* Espacio arriba y abajo */
+    }
+
     .auth-container {
-        width: 90%;
-        min-height: 80vh;
-        flex-direction: column;
-        height: auto;
-    }
-
-    .form-container,
-    .overlay-container {
         width: 100%;
-        position: relative;
-        left: auto !important;
-        transform: none !important;
-        height: auto;
-        padding: 30px 0;
-    }
-
-    .overlay-container {
-        height: 250px;
-        /* Altura fija para el panel de color en móvil */
-        order: 1;
-        border-radius: 25px 25px 0 0 !important;
-    }
-
-    .form-container {
-        order: 2;
-        min-height: 400px;
-    }
-
-    .sign-up-container {
-        display: none;
-    }
-
-    .auth-container.right-panel-active .sign-up-container {
+        max-width: 380px;
+        /* Ancho máximo para que no se estire feo */
+        min-height: 750px;
+        /* Suficiente altura para que quepa todo */
         display: flex;
+        flex-direction: column;
+        position: relative;
+        overflow: hidden;
+        /* Asegurar que nada se salga */
     }
 
-    .auth-container.right-panel-active .sign-in-container {
-        display: none;
+    /* 1. EL PANEL VERDE (OVERLAY) SE VA ABAJO */
+    .overlay-container {
+        position: absolute;
+        bottom: 0;
+        /* Pegado abajo */
+        left: 0;
+        top: auto;
+        /* Ya no está arriba */
+        width: 100%;
+        /* Ocupa todo el ancho */
+        height: 35%;
+        /* Ocupa el 35% de abajo */
+        transform: none !important;
+        /* Quitamos la animación lateral */
     }
 
     .overlay {
         width: 100%;
+        height: 100%;
         left: 0;
+        transform: none !important;
     }
 
+    /* Ocultamos/Mostramos los textos del panel verde según el estado */
     .overlay-panel {
         width: 100%;
+        height: 100%;
+        padding: 20px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        transform: none !important;
+        transition: opacity 0.3s ease;
+        /* Transición suave de aparecer/desaparecer */
     }
 
+    /* Lógica: Si está activo el panel derecho, ocultamos el texto izquierdo y viceversa */
     .overlay-left {
-        display: none;
-    }
-
-    .auth-container.right-panel-active .overlay-right {
-        display: none;
+        opacity: 0;
+        pointer-events: none;
+        /* Para que no se pueda clickear lo invisible */
+        z-index: 1;
     }
 
     .auth-container.right-panel-active .overlay-left {
-        display: flex;
+        opacity: 1;
+        pointer-events: all;
+        z-index: 2;
+    }
+
+    .overlay-right {
+        opacity: 1;
+        z-index: 2;
+    }
+
+    .auth-container.right-panel-active .overlay-right {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    /* 2. EL FORMULARIO SE QUEDA ARRIBA */
+    .form-container {
+        width: 100%;
+        height: 65%;
+        /* Ocupa el 65% de arriba */
+        position: absolute;
+        top: 0;
+        left: 0;
+        transition: opacity 0.4s ease-in-out;
+        /* Transición de opacidad en vez de movimiento */
+    }
+
+    /* Ajuste de los formularios individuales */
+    .sign-in-container,
+    .sign-up-container {
+        width: 100%;
+        transform: none !important;
+        /* Quitamos movimiento lateral */
+    }
+
+    /* Animación simple: aparecer/desaparecer */
+    .sign-in-container {
+        opacity: 1;
+        z-index: 5;
+    }
+
+    .auth-container.right-panel-active .sign-in-container {
+        opacity: 0;
+        z-index: 1;
+    }
+
+    .sign-up-container {
+        opacity: 0;
+        z-index: 1;
+    }
+
+    .auth-container.right-panel-active .sign-up-container {
+        opacity: 1;
+        z-index: 5;
+        animation: none;
+        /* Quitamos keyframes complejos */
+    }
+
+    /* Ajustes finales de texto para móvil */
+    .auth-title-overlay {
+        font-size: 1.5rem;
+        /* Texto verde un poco más chico */
+    }
+
+    .auth-p {
+        margin: 10px 0 15px;
+        /* Menos margen */
+        font-size: 0.9rem;
+    }
+
+    .ghost-btn {
+        padding: 10px 30px;
+        /* Botón un poco más compacto */
     }
 }
