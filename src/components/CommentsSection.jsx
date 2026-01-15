@@ -56,7 +56,6 @@ const CommentsSection = () => {
   };
 
   return (
-    // CONTENEDOR PRINCIPAL
     <div className="container my-5 py-5 rounded-4 position-relative overflow-hidden" 
          style={{ 
              background: 'rgba(10, 10, 20, 0.6)', 
@@ -65,15 +64,26 @@ const CommentsSection = () => {
              boxShadow: '0 0 40px rgba(0,0,0,0.5)'
          }}>
       
-      {/* Título con degradado de texto */}
-      <h3 className="text-center mb-5 fw-bold" 
-          style={{
-            background: 'linear-gradient(to right, #fff, #009970)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent'
-          }}>
-          💬 Experiencias de la Comunidad
-      </h3>
+      {/* --- TÍTULO METAL LÍQUIDO ANIMADO --- */}
+      <div className="text-center mb-5">
+          <h3 className="fw-black display-6 text-uppercase" 
+              style={{
+                /* El Truco del Metal: Degradado de Verde Claro a Oscuro que se repite */
+                backgroundImage: 'linear-gradient(to right, #a8ff78, #009970, #004d38, #009970, #a8ff78)', 
+                backgroundSize: '200% auto',
+                color: '#fff',
+                backgroundClip: 'text',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                animation: 'shine 4s linear infinite', // Velocidad del brillo
+                fontWeight: '900',
+                letterSpacing: '3px',
+                filter: 'drop-shadow(0 0 5px rgba(0,153,112,0.5))' // Resplandor externo
+              }}>
+              Voces de la Comunidad
+          </h3>
+          <div style={{height: '2px', width: '100px', background: 'var(--color-principal)', margin: '10px auto', borderRadius: '2px'}}></div>
+      </div>
 
       {/* LISTA DE COMENTARIOS */}
       <div className="row justify-content-center mb-4">
@@ -85,14 +95,13 @@ const CommentsSection = () => {
           ) : (
             <div style={{ maxHeight: '500px', overflowY: 'auto', paddingRight: '15px' }} className="custom-scroll pe-2">
               {comments.map((c) => (
-                // --- TARJETA CON ESTILO DEGRADADO ---
                 <div key={c._id} className="card mb-3 border-0 shadow-sm position-relative overflow-hidden" 
                      style={{
-                         background: 'rgba(255,255,255,0.03)', // Fondo oscuro casi transparente
+                         background: 'rgba(255,255,255,0.03)', 
                          borderRadius: '15px'
                      }}>
                   
-                  {/* BORDE LATERAL DEGRADADO (Aquí está la magia del Login) */}
+                  {/* Borde Lateral Neón (Login Style) */}
                   <div style={{
                       position: 'absolute',
                       top: 0, left: 0, bottom: 0,
@@ -103,11 +112,10 @@ const CommentsSection = () => {
                   <div className="card-body ps-4">
                     <div className="d-flex justify-content-between align-items-center mb-2">
                         <div className="d-flex align-items-center gap-3">
-                            {/* Avatar con degradado completo */}
                             <span className="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold shadow" 
                                   style={{
                                       width: '40px', height: '40px', 
-                                      background: 'linear-gradient(135deg, var(--color-principal), #00e5ff)', // Mismo degradado
+                                      background: 'linear-gradient(135deg, var(--color-principal), #00e5ff)',
                                       fontSize: '1rem'
                                   }}>
                                 {c.name.charAt(0).toUpperCase()}
@@ -123,7 +131,6 @@ const CommentsSection = () => {
                             {new Date(c.createdAt).toLocaleDateString()}
                         </small>
                     </div>
-                    {/* Texto del comentario */}
                     <p className="card-text text-light opacity-75 mt-2" style={{lineHeight: '1.6'}}>
                         "{c.comentario}"
                     </p>
@@ -135,7 +142,7 @@ const CommentsSection = () => {
         </div>
       </div>
 
-      {/* FORMULARIO INPUT NEÓN */}
+      {/* FORMULARIO */}
       <div className="row justify-content-center">
         <div className="col-md-10 col-lg-8">
           {user ? (
@@ -171,6 +178,15 @@ const CommentsSection = () => {
           )}
         </div>
       </div>
+
+      {/* INYECTAMOS LA ANIMACIÓN CSS AQUÍ */}
+      <style>{`
+        @keyframes shine {
+          to {
+            background-position: 200% center;
+          }
+        }
+      `}</style>
     </div>
   );
 };
