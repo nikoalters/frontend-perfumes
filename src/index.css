@@ -1,240 +1,307 @@
-/* assets/css/styles.css */
+@import url('https://fonts.googleapis.com/css?family=Montserrat:400,600,800');
 
+/* --- 1. DEFINICIÓN DE VARIABLES (Paleta Oscura/Neón) --- */
 :root {
   --color-principal: #009970;
-  --color-hover: #00b383;
-  --color-texto: #333;
-  --fondo-suave: #f8f9fa;
-  --color-borde: #e9ecef;
+  /* Tu verde corporativo */
+  --color-hover: #00c48f;
+  /* Verde más brillante para hovers */
+  --color-neon-glow: rgba(0, 153, 112, 0.5);
+  /* Resplandor verde */
+
+  /* Colores de Fondo Oscuro (Mismos del Login) */
+  --bg-dark-deep: #0f0c29;
+  --bg-dark-mid: #302b63;
+  --bg-dark-light: #24243e;
+
+  --text-primary: #ffffff;
+  --text-secondary: #aaaaaa;
+
+  --glass-bg: rgba(20, 20, 35, 0.6);
+  /* Color vidrio oscuro */
+  --glass-border: rgba(255, 255, 255, 0.1);
 }
 
+/* --- 2. CUERPO GLOBAL (Fondo Animado) --- */
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: var(--fondo-suave);
+  font-family: 'Montserrat', sans-serif;
+  /* Tipografía más moderna */
   margin: 0;
   padding: 0;
+  color: var(--text-primary);
+
+  /* EL DEGRADADO ANIMADO GLOBAL */
+  background: linear-gradient(135deg, var(--bg-dark-deep), var(--bg-dark-mid), var(--bg-dark-light));
+  background-size: 400% 400%;
+  animation: gradientBG 15s ease infinite;
+  min-height: 100vh;
 }
 
-/* --- Navbar --- */
+@keyframes gradientBG {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* --- 3. NAVBAR DE CRISTAL (Glassmorphism) --- */
 .navbar {
-  background-color: rgba(255, 255, 255, 0.95) !important;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background-color: rgba(10, 10, 15, 0.7) !important;
+  /* Oscuro translúcido */
+  backdrop-filter: blur(15px);
+  /* Efecto borroso */
+  -webkit-backdrop-filter: blur(15px);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+  border-bottom: 1px solid var(--glass-border);
+  transition: all 0.3s ease;
 }
 
+/* Links del Navbar */
 .navbar-brand {
-  color: var(--color-principal) !important;
-  font-weight: bold;
-  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  /* Texto con degradado verde */
+  background: linear-gradient(to right, white, var(--color-principal));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 20px rgba(0, 153, 112, 0.3);
 }
 
+.nav-link {
+  color: var(--text-secondary) !important;
+  font-weight: 500;
+  transition: 0.3s;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  color: white !important;
+  text-shadow: 0 0 10px var(--color-principal);
+  /* Brillo verde al pasar mouse */
+}
+
+.navbar-toggler {
+  border-color: rgba(255, 255, 255, 0.5);
+  filter: invert(1);
+  /* Hace el icono de hamburguesa blanco */
+}
+
+/* Botón Login en Navbar */
 .btn-login {
-  background-color: var(--color-principal);
-  color: white;
-  padding: 8px 20px;
+  background: transparent;
+  border: 1px solid var(--color-principal);
+  color: var(--color-principal);
+  padding: 8px 25px;
   border-radius: 50px;
-  text-decoration: none;
+  font-weight: bold;
   transition: 0.3s;
 }
 
 .btn-login:hover {
-  background-color: var(--color-hover);
+  background: var(--color-principal);
   color: white;
+  box-shadow: 0 0 15px var(--color-neon-glow);
 }
 
-/* --- Hero Banner --- */
+/* --- 4. HERO BANNER (Portada) --- */
 .hero-banner {
-  background: linear-gradient(135deg, #009970 0%, #006349 100%);
-  height: 300px;
-  margin-top: 80px;
+  /* Vidrio brillante en lugar de bloque sólido */
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+
+  height: 350px;
+  /* Un poco más alto */
+  margin-top: 20px;
+  margin-bottom: 3rem;
+
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
-  color: white;
-  border-radius: 20px;
+  border-radius: 25px;
   width: 95%;
   margin-left: auto;
   margin-right: auto;
-  margin-bottom: 3rem;
-  box-shadow: 0 10px 30px rgba(0, 153, 112, 0.3);
-}
 
-.hero-banner h1 {
-  font-size: 2.5rem;
-  font-weight: 800;
-  margin-bottom: 0.5rem;
-  text-shadow: 1px 1px 10px rgba(0, 0, 0, 0.2);
-}
-
-.hero-banner p {
-  font-size: 1.1rem;
-  margin-bottom: 1.5rem;
-  opacity: 0.95;
-}
-
-/* --- SIDEBAR DE FILTROS --- */
-/* En tu archivo src/index.css */
-
-/* --- SIDEBAR ELEGANTE (Fondo blanco, Borde Verde) --- */
-.sidebar-filtros {
-  background-color: white !important;
-  border: 2px solid var(--color-principal);
-  /* Borde verde de marca */
-  color: #333 !important;
-  /* Texto oscuro para que se lea bien */
-}
-
-/* Títulos en Verde para resaltar */
-.sidebar-filtros h5,
-.sidebar-filtros .filtro-titulo {
-  color: var(--color-principal) !important;
-  font-weight: 800;
-}
-
-/* Etiquetas normales */
-.sidebar-filtros label,
-.sidebar-filtros .form-check-label,
-.sidebar-filtros span {
-  color: #555 !important;
-}
-
-/* Ajuste visual del botón borrar */
-.sidebar-filtros .btn-outline-danger {
-  color: #dc3545;
-  border-color: #dc3545;
-}
-
-.sidebar-filtros .btn-outline-danger:hover {
-  background-color: #dc3545;
-  color: white;
-}
-
-/* --- Cards de Productos --- */
-.card {
-  border: none;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  border-radius: 10px;
+  /* Sombra de neón */
+  box-shadow: 0 0 40px rgba(0, 153, 112, 0.15);
+  position: relative;
   overflow: hidden;
-  background-color: #fff;
 }
 
-.card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-}
-
-.card-img-top {
-  height: 250px;
-  object-fit: contain;
-  padding: 15px;
-  background-color: #fff;
-}
-
-.badge-ml {
+/* Efecto de luz dentro del hero */
+.hero-banner::before {
+  content: '';
   position: absolute;
-  top: 10px;
-  right: 10px;
-  background: rgba(0, 0, 0, 0.6);
-  color: white;
-  padding: 2px 8px;
-  border-radius: 4px;
-  font-size: 0.8rem;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(0, 153, 112, 0.2) 0%, transparent 70%);
+  animation: pulseLight 5s infinite alternate;
 }
 
-.btn-agregar {
-  background-color: var(--color-principal);
-  color: white;
-  border: none;
-  width: 100%;
-  padding: 10px;
-  font-weight: bold;
-  border-radius: 5px;
-}
-
-.btn-agregar:hover {
-  background-color: var(--color-hover);
-  color: white;
-}
-
-/* --- Footer --- */
-.footer-pro {
-  background-color: #111;
-  color: #bbb;
-  font-size: 0.9rem;
-  margin-top: auto;
-}
-
-.footer-pro h5 {
-  color: #fff;
-  font-weight: 700;
-  margin-bottom: 1.2rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-
-/* Estilos comunes para Enlaces (a) y Botones (button) del Footer */
-.footer-pro a,
-.footer-pro button {
-  color: #bbb !important;
-  /* Color gris base */
-  text-decoration: none;
-  transition: all 0.3s ease;
-  /* Suavizado de la animación */
-  display: block;
-  /* Ocupan su propia línea */
-  margin-bottom: 0.5rem;
-  background: none;
-  /* Quitar fondo gris de botones */
-  border: none;
-  /* Quitar bordes de botones */
-  padding: 0;
-  /* Resetear rellenos */
-  text-align: left;
-  /* Alinear texto a la izquierda */
-  cursor: pointer;
-  /* Manito al pasar el mouse */
-}
-
-/* Efecto Hover (Color Verde + Desplazamiento) */
-.footer-pro a:hover,
-.footer-pro button:hover {
-  color: var(--color-principal) !important;
-  /* Tu verde #009970 */
-  transform: translateX(10px);
-  /* Se mueve 10px a la derecha */
-}
-
-/* --- ANIMACIONES --- */
-@keyframes fadeInUp {
+@keyframes pulseLight {
   from {
-    opacity: 0;
-    transform: translateY(20px);
+    transform: scale(1);
+    opacity: 0.5;
   }
 
   to {
-    opacity: 1;
-    transform: translateY(0);
+    transform: scale(1.2);
+    opacity: 0.8;
   }
 }
 
-.fade-in {
-  animation: fadeInUp 0.6s ease-out forwards;
+.hero-banner h1 {
+  font-size: 3rem;
+  font-weight: 800;
+  color: white;
+  text-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  position: relative;
+  z-index: 2;
 }
 
-/* Scrollbar General */
+.hero-banner p {
+  color: #ddd;
+  font-size: 1.2rem;
+  position: relative;
+  z-index: 2;
+}
+
+/* --- 5. SIDEBAR (Filtros Oscuros) --- */
+.sidebar-filtros {
+  background-color: var(--glass-bg) !important;
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border) !important;
+  /* Quitamos el borde verde sólido */
+  color: white !important;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.sidebar-filtros h5,
+.sidebar-filtros .filtro-titulo {
+  color: var(--color-principal) !important;
+  /* Títulos verdes */
+  text-shadow: 0 0 10px rgba(0, 153, 112, 0.4);
+}
+
+.sidebar-filtros label,
+.sidebar-filtros span {
+  color: #ccc !important;
+}
+
+/* Estilo para los Checkboxes en modo oscuro */
+.form-check-input {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: #555;
+}
+
+.form-check-input:checked {
+  background-color: var(--color-principal);
+  border-color: var(--color-principal);
+  box-shadow: 0 0 10px var(--color-principal);
+}
+
+/* --- 6. CARDS DE PRODUCTOS (Vidrio Oscuro) --- */
+.card {
+  background-color: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  color: white;
+  border-radius: 15px;
+  overflow: hidden;
+  transition: all 0.4s ease;
+}
+
+.card:hover {
+  transform: translateY(-10px);
+  /* El borde brilla verde al pasar el mouse */
+  border-color: var(--color-principal);
+  box-shadow: 0 0 25px rgba(0, 153, 112, 0.3);
+}
+
+.card-img-top {
+  background-color: transparent;
+  /* Fondo transparente para la imagen */
+  padding: 20px;
+  transition: transform 0.5s ease;
+  filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.5));
+  /* Sombra a la botella PNG */
+}
+
+.card:hover .card-img-top {
+  transform: scale(1.1) rotate(2deg);
+  /* Efecto zoom y rotación sutil */
+}
+
+.card-body {
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+}
+
+.card-title {
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.card-text {
+  color: #ccc;
+}
+
+.btn-agregar {
+  background: transparent;
+  border: 1px solid var(--color-principal);
+  color: var(--color-principal);
+  border-radius: 50px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 0.8rem;
+  transition: 0.3s;
+}
+
+.btn-agregar:hover {
+  background: var(--color-principal);
+  color: white;
+  box-shadow: 0 0 15px var(--color-neon-glow);
+}
+
+/* --- 7. FOOTER --- */
+.footer-pro {
+  background-color: rgba(0, 0, 0, 0.6);
+  /* Más transparente */
+  backdrop-filter: blur(10px);
+  border-top: 1px solid var(--glass-border);
+  color: #888;
+}
+
+.footer-pro h5 {
+  color: white;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+.footer-pro a:hover {
+  color: var(--color-principal) !important;
+  text-shadow: 0 0 10px var(--color-principal);
+}
+
+/* --- 8. SCROLLBAR --- */
 ::-webkit-scrollbar {
-  width: 10px;
-}
-
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  width: 8px;
+  background: #0f0c29;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #ccc;
-  border-radius: 5px;
+  background: #333;
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
