@@ -1,65 +1,92 @@
-/* Fondo completo de pantalla */
+/* 1. EL FONDO (Background) */
 .glass-bg {
-    background-image: url('https://images.unsplash.com/photo-1541643600914-78b084683601?q=80&w=2504&auto=format&fit=crop');
+    /* Imagen de fondo de alta calidad */
+    background-image: url('https://images.unsplash.com/photo-1615634260167-c8cdede054de?q=80&w=2564&auto=format&fit=crop');
+    background-color: #004d38;
+    /* Color verde oscuro por si falla la imagen */
     background-size: cover;
     background-position: center;
+    background-repeat: no-repeat;
+
+    /* Ocupar toda la pantalla y centrar contenido */
     height: 100vh;
-    width: 100%;
+    width: 100vw;
     display: flex;
     justify-content: center;
     align-items: center;
+    position: fixed;
+    /* Asegura que se quede quieto */
+    top: 0;
+    left: 0;
+    z-index: 100;
+    /* Asegura que esté por encima de todo */
 }
 
-/* El cuadro de vidrio */
+/* 2. LA TARJETA (El efecto vidrio) */
 .glass-container {
     background: rgba(255, 255, 255, 0.1);
-    /* Blanco casi transparente */
-    backdrop-filter: blur(15px);
-    /* EL EFECTO BORROSO MÁGICO */
-    -webkit-backdrop-filter: blur(15px);
+    /* Blanco muy transparente */
+    backdrop-filter: blur(10px);
+    /* EL EFECTO BORROSO */
+    -webkit-backdrop-filter: blur(10px);
+    /* Para Safari */
     border: 1px solid rgba(255, 255, 255, 0.2);
+    /* Borde sutil */
+
     padding: 3rem;
     border-radius: 20px;
-    width: 100%;
+    width: 90%;
     max-width: 400px;
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    /* Ancho máximo de la tarjeta */
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
 }
 
-/* Inputs transparentes */
+/* 3. LOS INPUTS (Cajas de texto) */
 .glass-input {
-    background: rgba(255, 255, 255, 0.2);
-    border: none;
-    padding: 15px;
-    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 12px 20px;
+    border-radius: 50px;
+    /* Redonditos */
     width: 100%;
     color: white;
+    /* Texto blanco */
     outline: none;
     transition: 0.3s;
 }
 
 .glass-input::placeholder {
-    color: rgba(255, 255, 255, 0.7);
+    color: rgba(255, 255, 255, 0.8);
+    /* Placeholder clarito */
 }
 
 .glass-input:focus {
-    background: rgba(255, 255, 255, 0.4);
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.25);
+    border-color: white;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
 }
 
-/* Botón de vidrio */
+/* 4. EL BOTÓN */
 .glass-btn {
     width: 100%;
-    padding: 15px;
+    padding: 12px;
     border: none;
-    border-radius: 10px;
+    border-radius: 50px;
     background: white;
-    color: #333;
+    /* Botón blanco */
+    color: #009970;
+    /* Texto Verde (Tu marca) */
     font-weight: bold;
+    font-size: 1rem;
     cursor: pointer;
     transition: 0.3s;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .glass-btn:hover {
-    background: #f8f9fa;
-    transform: scale(1.02);
+    background: #f0f0f0;
+    transform: scale(1.05);
+    /* Crece un poquito */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
