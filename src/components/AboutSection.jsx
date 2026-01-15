@@ -2,107 +2,159 @@ import React from 'react';
 
 const AboutSection = () => {
   return (
-    <div className="container my-5 pt-5 border-top">
+    <div className="container my-5 pt-5 border-top border-secondary border-opacity-25">
       
+      {/* 1. TÍTULO CON DEGRADADO */}
       <div className="text-center mb-5">
-        <h2 className="fw-bold text-success display-6">¿Quiénes Somos?</h2>
-        <p className="lead text-muted mx-auto" style={{ maxWidth: '700px' }}>
-          Somos <strong>Perfumes Chile</strong>. Nuestra misión es democratizar el lujo, 
-          entregando fragancias 100% originales con despacho rápido y seguro a todo el país.
+        <h2 className="fw-bolder display-5 mb-3" 
+            style={{
+                background: 'linear-gradient(to right, #fff, var(--color-principal), #00e5ff)', 
+                WebkitBackgroundClip: 'text', 
+                WebkitTextFillColor: 'transparent',
+                letterSpacing: '2px'
+            }}>
+            ¿QUIÉNES SOMOS?
+        </h2>
+        <p className="lead text-secondary mx-auto" style={{ maxWidth: '700px', fontSize: '1.1rem' }}>
+          Somos <strong className="text-white">Perfumes Chile</strong>. Nuestra misión es democratizar el lujo, 
+          entregando fragancias <span style={{color: '#00e5ff'}}>100% originales</span> con despacho rápido y la atención que mereces.
         </p>
       </div>
 
       
+      {/* 2. TARJETAS 3D (CARACTERÍSTICAS) */}
       <div className="row text-center mb-5 g-4">
+        {/* Card 1: Originalidad */}
         <div className="col-md-4">
-          <div className="p-4 bg-light rounded-3 shadow-sm h-100 border border-success border-opacity-25">
-            <i className="bi bi-patch-check-fill text-success" style={{ fontSize: '3rem' }}></i>
-            <h4 className="fw-bold mt-3">100% Originales</h4>
-            <p className="text-muted small">Garantizamos autenticidad. Productos sellados y con código de lote verificable.</p>
+          <div className="p-4 rounded-4 h-100 position-relative overflow-hidden hover-card" 
+               style={{background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)', transition: '0.3s'}}>
+            <div className="mb-3 d-inline-block p-3 rounded-circle shadow-lg" style={{background: 'rgba(0, 153, 112, 0.2)'}}>
+                <i className="bi bi-patch-check-fill" style={{ fontSize: '2.5rem', color: '#009970' }}></i>
+            </div>
+            <h4 className="fw-bold text-white mt-2">100% Originales</h4>
+            <p className="text-secondary small mt-3">
+                Garantía absoluta de autenticidad. Productos sellados, con celofán y código de lote verificable. Sin imitaciones.
+            </p>
           </div>
         </div>
+
+        {/* Card 2: Envíos */}
         <div className="col-md-4">
-          <div className="p-4 bg-light rounded-3 shadow-sm h-100 border border-primary border-opacity-25">
-            <i className="bi bi-truck text-primary" style={{ fontSize: '3rem' }}></i>
-            <h4 className="fw-bold mt-3">Envíos Rápidos</h4>
-            <p className="text-muted small">Despachamos en 24-48hrs en Santiago. Envíos a regiones vía Starken/Chilexpress.</p>
+          <div className="p-4 rounded-4 h-100 position-relative overflow-hidden hover-card" 
+               style={{background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)', transition: '0.3s'}}>
+            <div className="mb-3 d-inline-block p-3 rounded-circle shadow-lg" style={{background: 'rgba(0, 229, 255, 0.2)'}}>
+                <i className="bi bi-rocket-takeoff-fill" style={{ fontSize: '2.5rem', color: '#00e5ff' }}></i>
+            </div>
+            <h4 className="fw-bold text-white mt-2">Envíos Flash</h4>
+            <p className="text-secondary small mt-3">
+                Santiago Urbano en 24-48hrs. Regiones vía Starken/Chilexpress con número de seguimiento en tiempo real.
+            </p>
           </div>
         </div>
+
+        {/* Card 3: Seguridad (Actualizado a Transferencia) */}
         <div className="col-md-4">
-          <div className="p-4 bg-light rounded-3 shadow-sm h-100 border border-warning border-opacity-25">
-            <i className="bi bi-shield-lock-fill text-warning" style={{ fontSize: '3rem' }}></i>
-            <h4 className="fw-bold mt-3">Compra Segura</h4>
-            <p className="text-muted small">Tus datos están protegidos. Paga con transferencia o WebPay con total tranquilidad.</p>
+          <div className="p-4 rounded-4 h-100 position-relative overflow-hidden hover-card" 
+               style={{background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)', transition: '0.3s'}}>
+            <div className="mb-3 d-inline-block p-3 rounded-circle shadow-lg" style={{background: 'rgba(255, 42, 109, 0.2)'}}>
+                <i className="bi bi-shield-lock-fill" style={{ fontSize: '2.5rem', color: '#ff2a6d' }}></i>
+            </div>
+            <h4 className="fw-bold text-white mt-2">Compra Directa</h4>
+            <p className="text-secondary small mt-3">
+                Trato directo y personalizado. Paga vía Transferencia Bancaria sin comisiones ocultas y con confirmación inmediata.
+            </p>
           </div>
         </div>
       </div>
 
       
-      <div className="row align-items-start bg-white p-4 rounded-3 shadow-sm border">
+      {/* 3. SECCIÓN CONTACTO Y FAQ (VIDRIO OSCURO) */}
+      <div className="row align-items-start p-4 rounded-4 shadow-lg border border-secondary border-opacity-10" 
+           style={{background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(10px)'}}>
         
-        
-        <div className="col-md-5 mb-4 mb-md-0 text-center text-md-start">
-            <h3 className="fw-bold mb-3">📱 ¡Hablemos!</h3>
-            <p className="text-muted">¿Buscas un aroma específico o necesitas asesoría para un regalo? Escríbenos.</p>
+        {/* COLUMNA IZQ: CONTACTO */}
+        <div className="col-md-5 mb-5 mb-md-0 text-center text-md-start">
+            <h3 className="fw-bold mb-3 text-white">📱 ¿Necesitas Ayuda?</h3>
+            <p className="text-secondary mb-4">
+                ¿Buscas un aroma específico o necesitas asesoría para un regalo especial? Habla directamente con nosotros.
+            </p>
             
-            <div className="d-flex flex-wrap gap-2 justify-content-center justify-content-md-start">
-               
-                <a href="https://wa.me/56958547236" target="_blank" rel="noreferrer" className="btn btn-success btn-lg fw-bold text-white shadow-sm border-0" style={{backgroundColor: '#25D366'}}>
-                    <i className="bi bi-whatsapp me-2"></i> WhatsApp
+            <div className="d-flex flex-column gap-3">
+                {/* Botón WhatsApp */}
+                <a href="https://wa.me/56958547236" target="_blank" rel="noreferrer" 
+                   className="btn btn-lg fw-bold text-white shadow d-flex align-items-center justify-content-center justify-content-md-start gap-3 rounded-pill" 
+                   style={{background: 'linear-gradient(90deg, #25D366, #128C7E)', border: 'none', transition: 'transform 0.2s'}}>
+                    <i className="bi bi-whatsapp fs-4"></i> 
+                    <span>Escríbenos al WhatsApp</span>
                 </a>
                 
-                
-                <a href="https://www.instagram.com/nico_alters?igsh=em9xb2NuN2h6NTc=" target="_blank" rel="noreferrer" className="btn btn-lg fw-bold text-white shadow-sm border-0" 
-                   style={{background: 'linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)'}}>
-                    <i className="bi bi-instagram me-2"></i> Instagram
+                {/* Botón Instagram */}
+                <a href="https://www.instagram.com/nico_alters?igsh=em9xb2NuN2h6NTc=" target="_blank" rel="noreferrer" 
+                   className="btn btn-lg fw-bold text-white shadow d-flex align-items-center justify-content-center justify-content-md-start gap-3 rounded-pill" 
+                   style={{background: 'linear-gradient(45deg, #f09433 0%, #dc2743 50%, #bc1888 100%)', border: 'none', transition: 'transform 0.2s'}}>
+                    <i className="bi bi-instagram fs-4"></i> 
+                    <span>Síguenos en Instagram</span>
                 </a>
             </div>
             
-            <p className="mt-3 mb-0 text-success fw-bold small">
-                <i className="bi bi-telephone-inbound me-2"></i> +56 9 5854 7236
-            </p>
+            <div className="mt-4 pt-3 border-top border-secondary border-opacity-25">
+                <p className="mb-0 text-white-50 small fw-bold">
+                    <i className="bi bi-telephone-inbound me-2 text-success"></i> +56 9 5854 7236
+                </p>
+            </div>
         </div>
 
-        
-        <div className="col-md-7">
-            <h5 className="fw-bold mb-3 text-secondary border-bottom pb-2">Preguntas Frecuentes</h5>
+        {/* COLUMNA DER: FAQ (ACORDEÓN OSCURO) */}
+        <div className="col-md-7 ps-md-5">
+            <h5 className="fw-bold mb-4 text-white d-flex align-items-center gap-2">
+                <span className="badge bg-dark border border-secondary rounded-pill">?</span> Preguntas Frecuentes
+            </h5>
+            
             <div className="accordion accordion-flush" id="accordionFAQ">
                 
-                <div className="accordion-item">
+                {/* Pregunta 1 */}
+                <div className="accordion-item bg-transparent mb-3 border-0">
                     <h2 className="accordion-header">
-                        <button className="accordion-button collapsed bg-light rounded mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
-                            🧐 ¿Los perfumes son originales?
+                        <button className="accordion-button collapsed rounded-3 text-white fw-semibold shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#faq1"
+                                style={{background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)'}}>
+                            💎 ¿Son originales?
                         </button>
                     </h2>
                     <div id="faq1" className="accordion-collapse collapse" data-bs-parent="#accordionFAQ">
-                        <div className="accordion-body text-muted small">
-                            Sí, absolutamente. Todos nuestros perfumes son 100% originales, vienen en su caja sellada y con celofán intacto (salvo los testers que se indican explícitamente).
+                        <div className="accordion-body text-secondary small pt-2">
+                            Absolutamente. No trabajamos con imitaciones ni testers rellenados. Tu perfume llega en su caja original, sellada y con celofán intacto.
                         </div>
                     </div>
                 </div>
 
-                <div className="accordion-item">
+                {/* Pregunta 2 */}
+                <div className="accordion-item bg-transparent mb-3 border-0">
                     <h2 className="accordion-header">
-                        <button className="accordion-button collapsed bg-light rounded mb-2" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
-                            🚚 ¿Cuánto demora el envío?
+                        <button className="accordion-button collapsed rounded-3 text-white fw-semibold shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#faq2"
+                                style={{background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)'}}>
+                            🚚 ¿Tiempos de envío?
                         </button>
                     </h2>
                     <div id="faq2" className="accordion-collapse collapse" data-bs-parent="#accordionFAQ">
-                        <div className="accordion-body text-muted small">
-                            En Santiago Urbano entregamos al día hábil siguiente de tu compra. Para regiones, los tiempos dependen del courier (usualmente 2 a 5 días hábiles).
+                        <div className="accordion-body text-secondary small pt-2">
+                            Santiago: 24 a 48 horas hábiles. Regiones: Enviamos por Starken o Chilexpress (por pagar o pagado), demorando usualmente de 2 a 5 días según la ciudad.
                         </div>
                     </div>
                 </div>
 
-                <div className="accordion-item">
+                {/* Pregunta 3 (ACTUALIZADA A TRANSFERENCIA) */}
+                <div className="accordion-item bg-transparent mb-3 border-0">
                     <h2 className="accordion-header">
-                        <button className="accordion-button collapsed bg-light rounded" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
-                            💳 ¿Qué medios de pago aceptan?
+                        <button className="accordion-button collapsed rounded-3 text-white fw-semibold shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#faq3"
+                                style={{background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)'}}>
+                            💸 ¿Cómo puedo pagar?
                         </button>
                     </h2>
                     <div id="faq3" className="accordion-collapse collapse" data-bs-parent="#accordionFAQ">
-                        <div className="accordion-body text-muted small">
-                            Aceptamos tarjetas de Crédito y Débito a través de WebPay Plus, y también Transferencia Bancaria Directa.
+                        <div className="accordion-body text-secondary small pt-2">
+                            Actualmente operamos exclusivamente con <strong className="text-white">Transferencia Bancaria</strong>. 
+                            <br/><br/>
+                            Al finalizar tu pedido, te daremos los datos para transferir. Una vez comprobado el pago, preparamos tu envío de inmediato. ¡Pronto habilitaremos WebPay!
                         </div>
                     </div>
                 </div>
@@ -111,6 +163,23 @@ const AboutSection = () => {
         </div>
 
       </div>
+      
+      {/* Estilo extra para el hover de las tarjetas */}
+      <style>{`
+        .hover-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--color-principal) !important;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .accordion-button::after {
+            filter: invert(1); /* Flecha blanca */
+        }
+        .accordion-button:not(.collapsed) {
+            background-color: rgba(0, 153, 112, 0.2) !important;
+            color: white !important;
+            box-shadow: none !important;
+        }
+      `}</style>
     </div>
   );
 };
