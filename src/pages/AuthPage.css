@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css?family=Montserrat:400,800');
 
 /* =========================================
-   ESTILOS DE ESCRITORIO (TU DISEÑO ORIGINAL)
+   CONFIGURACIÓN BASE
    ========================================= */
 .auth-body {
     background: #121212;
@@ -12,9 +12,8 @@
     flex-direction: column;
     font-family: 'Montserrat', sans-serif;
     height: 100vh;
-    margin: 0;
-    /* Ajuste pequeño para evitar bordes blancos */
-    overflow: hidden;
+    margin: -2rem;
+    /* Compensar el padding de App.css si es necesario */
 }
 
 .auth-container {
@@ -28,7 +27,7 @@
     width: 900px;
     max-width: 100%;
     min-height: 550px;
-    /* Sombra de neón sutil con tu color */
+    /* Sombra de neón sutil */
     border: 1px solid #00997040;
     box-shadow: 0 0 20px #00997020;
 }
@@ -38,7 +37,6 @@
     margin: 0;
     color: var(--color-principal);
     /* Título verde */
-    margin-bottom: 10px;
 }
 
 .auth-title-overlay {
@@ -90,7 +88,6 @@
 
 .auth-form input:focus {
     border-color: var(--color-principal);
-    box-shadow: 0 0 5px rgba(0, 153, 112, 0.3);
 }
 
 /* Botón principal */
@@ -133,7 +130,9 @@
     background-color: rgba(255, 255, 255, 0.1);
 }
 
-/* --- LÓGICA DE ANIMACIÓN PC (DESLIZAMIENTO) --- */
+/* =========================================
+   ANIMACIÓN ESCRITORIO (Horizontal)
+   ========================================= */
 
 .form-container {
     position: absolute;
@@ -157,16 +156,14 @@
     z-index: 1;
 }
 
-/* CUANDO SE ACTIVA EL PANEL DERECHO (Modo Registro) */
+/* ACTIVACIÓN PANEL DERECHO (Modo Registro) */
 .auth-container.right-panel-active .sign-in-container {
     transform: translateX(100%);
-    /* Mueve Login a la derecha */
     opacity: 0;
 }
 
 .auth-container.right-panel-active .sign-up-container {
     transform: translateX(100%);
-    /* Mueve Registro a su lugar */
     opacity: 1;
     z-index: 5;
     animation: show 0.6s;
@@ -187,7 +184,7 @@
     }
 }
 
-/* --- EL OVERLAY DESLIZANTE (La parte verde) --- */
+/* OVERLAY DESLIZANTE (Verde) */
 .overlay-container {
     position: absolute;
     top: 0;
@@ -201,11 +198,9 @@
 
 .auth-container.right-panel-active .overlay-container {
     transform: translateX(-100%);
-    /* Mueve el contenedor verde a la izquierda */
 }
 
 .overlay {
-    /* DEGRADADO VERDE CORPORATIVO */
     background: var(--color-principal);
     background: linear-gradient(to right, #006349, var(--color-principal));
     background-repeat: no-repeat;
@@ -222,7 +217,6 @@
 
 .auth-container.right-panel-active .overlay {
     transform: translateX(50%);
-    /* Mueve el contenido del overlay */
 }
 
 .overlay-panel {
@@ -257,117 +251,129 @@
     transform: translateX(20%);
 }
 
-
 /* =========================================
-   AQUÍ ESTÁ EL ARREGLO PARA CELULAR 📱
-   (Reemplaza el diseño roto por uno fijo vertical)
+   RESPONSIVE MÓVIL (Animación Vertical)
    ========================================= */
+
 @media (max-width: 768px) {
-
-    /* 1. Permitir scroll en pantallas muy chicas */
-    .auth-body {
-        height: auto;
-        min-height: 100vh;
-        padding: 20px 0;
-        overflow-y: auto;
-    }
-
-    /* 2. El contenedor se vuelve un bloque vertical simple */
     .auth-container {
-        width: 100%;
-        max-width: 400px;
-        /* Ancho máximo para que no se vea feo */
-        min-height: 750px;
-        /* Suficiente altura para que quepa todo */
-        display: block;
-        position: relative;
+        width: 90%;
+        min-height: 800px;
+        /* Más alto para que quepa todo vertical */
+        flex-direction: column;
+        overflow: hidden;
     }
 
-    /* 3. EL FORMULARIO SIEMPRE ARRIBA (65% del espacio) */
+    /* REAJUSTE DE CONTENEDORES DE FORMULARIO */
     .form-container {
-        width: 100% !important;
-        height: 65% !important;
-        position: absolute;
-        top: 0 !important;
-        left: 0 !important;
-        transform: none !important;
-        /* IMPORTANTE: Anula el movimiento de lado */
-        transition: opacity 0.3s ease-in-out !important;
-        /* Solo desvanece */
+        width: 100%;
+        height: 70%;
+        /* Ocupan el 70% superior */
+        top: 0;
+        left: 0;
+        transition: all 0.6s ease-in-out;
     }
 
-    /* 4. EL PANEL VERDE SIEMPRE ABAJO (35% del espacio) */
-    .overlay-container {
-        width: 100% !important;
-        height: 35% !important;
-        position: absolute;
-        bottom: 0 !important;
-        top: auto !important;
-        left: 0 !important;
-        transform: none !important;
-        /* IMPORTANTE: Anula el movimiento de lado */
-    }
-
-    /* Ajuste del contenido verde */
-    .overlay {
-        width: 100% !important;
-        height: 100% !important;
-        left: 0 !important;
-        transform: none !important;
-    }
-
-    .overlay-panel {
-        width: 100% !important;
-        height: 100% !important;
-        padding: 10px !important;
-        transform: none !important;
-        justify-content: center;
-    }
-
-    /* --- LÓGICA DE APARICIÓN EN MÓVIL (SIN DESLIZAR) --- */
-
-    /* Login Visible */
     .sign-in-container {
-        opacity: 1;
-        z-index: 5;
+        width: 100%;
+        left: 0;
+        z-index: 2;
     }
 
-    .auth-container.right-panel-active .sign-in-container {
-        opacity: 0;
-        z-index: 1;
-    }
-
-    /* Registro Visible */
     .sign-up-container {
+        width: 100%;
+        left: 0;
         opacity: 0;
         z-index: 1;
+    }
+
+    /* ESTADO ACTIVO (REGISTRO): Mover formularios hacia abajo */
+    /* Cálculo: El form ocupa 70%. El overlay ocupa 30%.
+       Para mover el form al hueco de abajo (el 30%), debe bajar un 30% del contenedor padre.
+       30% del padre equivale a ~42.8% de la altura del propio elemento (30/70).
+    */
+    .auth-container.right-panel-active .sign-in-container {
+        transform: translateY(42.8%);
+        opacity: 0;
     }
 
     .auth-container.right-panel-active .sign-up-container {
+        transform: translateY(42.8%);
         opacity: 1;
         z-index: 5;
-        animation: none !important;
-        /* Quitamos keyframes complejos */
+        animation: show 0.6s;
     }
 
-    /* Textos del panel verde */
+    /* REAJUSTE DEL OVERLAY CONTAINER (La parte verde) */
+    .overlay-container {
+        width: 100%;
+        height: 30%;
+        /* Ocupa el 30% inferior */
+        top: 70%;
+        /* Posición inicial abajo */
+        left: 0;
+        right: auto;
+        transform: translate(0);
+        transition: transform 0.6s ease-in-out;
+        z-index: 100;
+    }
+
+    /* ESTADO ACTIVO: El Overlay sube al topo */
+    /* Cálculo: Debe subir un 70% del padre.
+       Como mide 30%, 70 es 2.33 veces 30.
+       Por tanto, translateY(-233%).
+    */
+    .auth-container.right-panel-active .overlay-container {
+        transform: translateY(-233%);
+    }
+
+    /* REAJUSTE DEGRADADO INTERNO */
+    .overlay {
+        width: 100%;
+        height: 200%;
+        /* Doble de alto para deslizar vertical */
+        left: 0;
+        top: -100%;
+        /* Posicionamiento inicial */
+        transform: translateY(0);
+        transition: transform 0.6s ease-in-out;
+    }
+
+    .auth-container.right-panel-active .overlay {
+        transform: translateY(50%);
+        /* Desliza el fondo internamente */
+    }
+
+    /* REAJUSTE PANELES DE TEXTO */
+    .overlay-panel {
+        width: 100%;
+        height: 50%;
+        /* Cada panel es la mitad del overlay */
+        padding: 0 20px;
+        transform: translateY(0);
+        top: auto;
+        left: 0;
+    }
+
+    /* Panel izquierdo (Login) -> Ahora está ARRIBA en el overlay */
     .overlay-left {
-        display: none;
+        top: 0;
+        transform: translateY(-20%);
     }
 
-    /* Ocultamos lo innecesario */
     .auth-container.right-panel-active .overlay-left {
-        display: flex !important;
-        opacity: 1;
-        pointer-events: all;
+        transform: translateY(0);
     }
 
+    /* Panel derecho (Registro) -> Ahora está ABAJO en el overlay */
     .overlay-right {
-        display: flex !important;
-        opacity: 1;
+        bottom: 0;
+        right: 0;
+        top: auto;
+        transform: translateY(0);
     }
 
     .auth-container.right-panel-active .overlay-right {
-        display: none;
+        transform: translateY(20%);
     }
 }
