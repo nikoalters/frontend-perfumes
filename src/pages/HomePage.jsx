@@ -227,10 +227,12 @@ const HomePage = () => {
         busqueda={busqueda} setBusqueda={setBusqueda} carritoCount={carrito.length} user={user} logoutHandler={logoutHandler} setMostrarModal={setMostrarModal} filtrarPorGeneroRapido={filtrarPorGeneroRapido}
       />
 
-      <div className="fade-in-up" style={{marginTop: '0px'}}>
+      {/* CORRECCIÓN: Aumentamos el margen superior para que el Navbar no tape nada */}
+      {/* En móvil (pt-5 mt-5) baja bastante, y en PC (pt-lg-5 mt-lg-5) baja lo justo */}
+      <div className="fade-in-up container-fluid px-0" style={{ paddingTop: '100px' }}>
         
         {/* --- HERO BANNER RENOVADO --- */}
-        <header className="hero-banner mb-5 position-relative">
+        <header className="hero-banner mb-5 position-relative mx-auto" style={{maxWidth: '95%'}}>
           <div className="text-center z-2 position-relative px-3">
              <span className="badge bg-transparent border border-light rounded-pill mb-3 px-3 py-2 text-uppercase letter-spacing-2">✨ Nueva Colección 2026</span>
              <h1 className="display-4 fw-bolder mb-3 text-white" style={{ textShadow: '0 0 30px rgba(0,0,0,0.5)' }}>
