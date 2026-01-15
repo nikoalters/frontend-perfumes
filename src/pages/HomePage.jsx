@@ -7,6 +7,7 @@ import Footer from '../components/Footer';
 import AboutSection from '../components/AboutSection'; 
 import CommentsSection from '../components/CommentsSection';
 import ProductCard from '../components/ProductCard';
+import Hero3D from '../components/Hero3D'; // <--- IMPORTACIÓN DEL 3D
 
 const HomePage = () => {
   // --- ESTADOS ---
@@ -98,7 +99,7 @@ const HomePage = () => {
             title: '🔒 Requiere acceso',
             text: 'Debes iniciar sesión para guardar tus favoritos.',
             icon: 'warning',
-            background: '#1e1e2e', color: '#fff', // Alerta oscura
+            background: '#1e1e2e', color: '#fff', 
             showCancelButton: true,
             confirmButtonColor: '#009970',
             cancelButtonColor: '#d33',
@@ -227,22 +228,38 @@ const HomePage = () => {
         busqueda={busqueda} setBusqueda={setBusqueda} carritoCount={carrito.length} user={user} logoutHandler={logoutHandler} setMostrarModal={setMostrarModal} filtrarPorGeneroRapido={filtrarPorGeneroRapido}
       />
 
-      {/* CORRECCIÓN: Aumentamos el margen superior para que el Navbar no tape nada */}
-      {/* En móvil (pt-5 mt-5) baja bastante, y en PC (pt-lg-5 mt-lg-5) baja lo justo */}
+      {/* Margen para que el Navbar no tape nada */}
       <div className="fade-in-up container-fluid px-0" style={{ paddingTop: '100px' }}>
         
-        {/* --- HERO BANNER RENOVADO --- */}
-        <header className="hero-banner mb-5 position-relative mx-auto" style={{maxWidth: '95%'}}>
-          <div className="text-center z-2 position-relative px-3">
-             <span className="badge bg-transparent border border-light rounded-pill mb-3 px-3 py-2 text-uppercase letter-spacing-2">✨ Nueva Colección 2026</span>
-             <h1 className="display-4 fw-bolder mb-3 text-white" style={{ textShadow: '0 0 30px rgba(0,0,0,0.5)' }}>
+        {/* --- HERO BANNER CON 3D FLOTANTE --- */}
+        <header className="hero-banner mb-5 position-relative mx-auto overflow-hidden" 
+                style={{
+                    maxWidth: '95%', 
+                    background: 'linear-gradient(135deg, rgba(0, 153, 112, 0.2) 0%, rgba(0,0,0,0.8) 100%)', 
+                    borderRadius: '20px',
+                    border: '1px solid rgba(0, 153, 112, 0.3)',
+                    minHeight: '500px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                }}>
+          
+          {/* CRISTAL 3D FLOTANDO AL FONDO */}
+          <Hero3D />
+
+          {/* CONTENIDO DE TEXTO (Encima del 3D) */}
+          <div className="text-center position-relative px-3" style={{ zIndex: 2 }}>
+             <span className="badge bg-transparent border border-light rounded-pill mb-3 px-3 py-2 text-uppercase letter-spacing-2 text-white">
+                ✨ Nueva Colección 2026
+             </span>
+             <h1 className="display-3 fw-bolder mb-3 text-white" style={{ textShadow: '0 0 30px rgba(0,0,0,0.8)' }}>
                LUJO EN CADA GOTA
              </h1>
-             <p className="lead text-light opacity-75 mb-4 mx-auto" style={{maxWidth: '600px'}}>
+             <p className="lead text-light opacity-90 mb-4 mx-auto" style={{maxWidth: '600px', textShadow: '0 0 10px rgba(0,0,0,1)'}}>
                Encuentra tu firma olfativa con hasta 50% OFF en marcas seleccionadas.
              </p>
              <button onClick={() => window.scrollTo(0, 500)} className="btn btn-lg rounded-pill fw-bold px-5 text-white" 
-                     style={{background: 'var(--color-principal)', boxShadow: '0 0 20px rgba(0,153,112,0.4)', border: 'none'}}>
+                     style={{background: 'var(--color-principal)', boxShadow: '0 0 30px rgba(0,153,112,0.6)', border: 'none'}}>
                EXPLORAR CATÁLOGO
              </button>
           </div>
@@ -251,14 +268,13 @@ const HomePage = () => {
         <div className="container-fluid px-lg-5">
           <div className="row">
             
-            {/* --- SIDEBAR OSCURO --- */}
+            {/* SIDEBAR */}
             <aside className="col-lg-3 mb-4">
               <div className="sidebar-filtros p-4 sticky-top" style={{top: '100px', zIndex: 1}}>
                 <h5 className="fw-bold mb-4 d-flex align-items-center gap-2">
                     <span style={{color: 'var(--color-principal)'}}>⚡</span> Filtros
                 </h5>
                 
-                {/* Botón Favoritos */}
                 <button 
                     className={`btn w-100 mb-4 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-2 ${mostrarFavoritos ? 'btn-danger text-white' : 'btn-outline-light'}`}
                     onClick={() => {
@@ -270,7 +286,6 @@ const HomePage = () => {
                     {mostrarFavoritos ? '❌ Ver Todos' : '❤️ Mis Favoritos'}
                 </button>
 
-                {/* Filtros */}
                 <div className="mb-4">
                     <label className="fw-bold mb-2 small text-secondary text-uppercase">Género</label>
                     <div className="form-check"><input className="form-check-input" type="checkbox" name="hombre" checked={filtrosGenero.hombre} onChange={handleGeneroChange} id="checkHombre"/><label className="form-check-label" htmlFor="checkHombre">Hombre</label></div>
@@ -295,7 +310,7 @@ const HomePage = () => {
               </div>
             </aside>
 
-            {/* --- LISTA DE PRODUCTOS --- */}
+            {/* MAIN */}
             <main className="col-lg-9">
               <div className="d-flex justify-content-between align-items-center mb-4 px-2">
                   <h5 className="text-white m-0">Resultados: <strong className="text-success">{perfumesFiltrados.length}</strong> perfumes</h5>
@@ -332,7 +347,7 @@ const HomePage = () => {
         <Footer filtrarPorGeneroRapido={filtrarPorGeneroRapido} />
       </div>
 
-      {/* --- MODAL CARRITO (MODO OSCURO) --- */}
+      {/* MODAL CARRITO */}
       {mostrarModal && (
         <div className="modal d-block fade-in" style={{background: 'rgba(0,0,0,0.8)', zIndex: 1050}}>
           <div className="modal-dialog modal-dialog-centered modal-lg">
@@ -344,7 +359,6 @@ const HomePage = () => {
               
               <div className="modal-body p-4">
                 <div className="row">
-                    {/* LISTA PRODUCTOS */}
                     <div className="col-md-6 mb-4 mb-md-0 border-end border-secondary">
                         <h6 className="fw-bold text-secondary mb-3 text-uppercase small">Resumen</h6>
                         <div style={{maxHeight: '300px', overflowY: 'auto', paddingRight: '10px'}} className="custom-scroll">
@@ -370,7 +384,6 @@ const HomePage = () => {
                         )}
                     </div>
 
-                    {/* FORMULARIO ENVÍO */}
                     <div className="col-md-6">
                         <h6 className="fw-bold text-secondary mb-3 text-uppercase small">Datos de Envío</h6>
                         {carrito.length > 0 ? (
