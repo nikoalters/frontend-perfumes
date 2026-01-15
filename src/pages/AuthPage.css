@@ -1,30 +1,30 @@
 @import url('https://fonts.googleapis.com/css?family=Montserrat:400,600,800');
 
-/* --- VARIABLES DE COLOR (Paleta inspirada en la foto + Tu marca) --- */
+/* --- 1. VARIABLES Y COLORES (Estilo Cyberpunk/Marca) --- */
 :root {
     --color-brand: #009970;
     /* Tu verde corporativo */
     --color-neon-cyan: #00e5ff;
-    /* Cian brillante de la foto */
+    /* Cian brillante */
     --color-neon-pink: #ff2a6d;
-    /* Rosa brillante de la foto */
+    /* Rosa brillante */
     --bg-dark-deep: #0f0c29;
-    /* Azul muy oscuro para el fondo */
+    /* Azul muy oscuro */
     --bg-dark-mid: #302b63;
-    /* Morado oscuro medio */
+    /* Morado oscuro */
     --bg-dark-light: #24243e;
-    /* Gris azulado oscuro */
+    /* Gris azulado */
     --card-bg: rgba(30, 30, 46, 0.75);
-    /* Color de la tarjeta semitransparente */
+    /* Vidrio semitransparente */
 }
 
-/* 1. NUEVO FONDO DE PANTALLA CON DEGRADADO ATMOSFÉRICO */
+/* --- 2. FONDO DE PANTALLA ANIMADO --- */
 .auth-body {
-    /* Degradado diagonal profundo en lugar de negro plano */
+    /* Degradado profundo y elegante */
     background: linear-gradient(135deg, var(--bg-dark-deep), var(--bg-dark-mid), var(--bg-dark-light));
     background-size: 400% 400%;
     animation: gradientBG 15s ease infinite;
-    /* Sutil movimiento del fondo */
+    /* Fondo en movimiento */
 
     display: flex;
     justify-content: center;
@@ -32,15 +32,10 @@
     flex-direction: column;
     font-family: 'Montserrat', sans-serif;
     height: 100vh;
-    /* Aseguramos que cubra todo sin márgenes extraños */
     margin: 0;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
+    overflow: hidden;
 }
 
-/* Animación suave para el fondo */
 @keyframes gradientBG {
     0% {
         background-position: 0% 50%;
@@ -55,73 +50,59 @@
     }
 }
 
-/* 2. LA TARJETA PRINCIPAL ESTILO "NEON GLASS" */
+/* --- 3. TARJETA PRINCIPAL (Efecto Vidrio + Neón) --- */
 .auth-container {
     background-color: var(--card-bg);
-    /* Fondo semitransparente */
-    /* EFECTO VIDRIO BORROSO */
     backdrop-filter: blur(20px);
+    /* Efecto borroso */
     -webkit-backdrop-filter: blur(20px);
-
     border-radius: 25px;
+
     position: relative;
     overflow: hidden;
     width: 950px;
-    max-width: 95%;
+    max-width: 100%;
     min-height: 600px;
 
-    /* Borde sutil brillante */
     border: 1px solid rgba(255, 255, 255, 0.1);
+    /* Borde fino */
 
-    /* DOBLE SOMBRA DE NEÓN (Cian a la izquierda, Rosa a la derecha) */
+    /* DOBLE SOMBRA DE NEÓN */
     box-shadow:
-        -15px -15px 30px rgba(0, 229, 255, 0.15),
-        /* Brillo Cian superior izq */
-        15px 15px 30px rgba(255, 42, 109, 0.15),
-        /* Brillo Rosa inferior der */
-        inset 0 0 20px rgba(255, 255, 255, 0.05);
-    /* Brillo interior sutil */
+        -10px -10px 30px rgba(0, 229, 255, 0.1),
+        10px 10px 30px rgba(255, 42, 109, 0.1),
+        0 20px 50px rgba(0, 0, 0, 0.5);
 }
 
 /* Títulos */
 .auth-title {
     font-weight: 800;
     margin: 0;
-    /* Degradado de texto: Verde a Cian */
+    /* Texto con degradado Verde a Cian */
     background: linear-gradient(to right, var(--color-brand), var(--color-neon-cyan));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    letter-spacing: 1px;
     font-size: 2rem;
+    margin-bottom: 10px;
 }
 
 .auth-title-overlay {
     font-weight: 800;
     margin: 0;
     color: white;
-    font-size: 2.8rem;
+    font-size: 2.5rem;
     text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
 }
 
 .auth-p {
     font-size: 14px;
-    font-weight: 400;
     line-height: 24px;
-    letter-spacing: 0.5px;
-    margin: 25px 0 35px;
+    margin: 20px 0 30px;
     color: #ddd;
-}
-
-.auth-span {
-    font-size: 13px;
-    color: #aaa;
-    margin-bottom: 25px;
-    margin-top: 10px;
 }
 
 .auth-form {
     background-color: transparent;
-    /* El fondo lo da el contenedor padre */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -131,68 +112,51 @@
     text-align: center;
 }
 
-/* 3. INPUTS ESTILO "INCRUSTADO" (Neumorfismo Oscuro) */
+/* Inputs "Incrustados" */
 .auth-form input {
-    background-color: rgba(20, 20, 35, 0.6);
-    /* Más oscuro que la tarjeta */
+    background-color: rgba(15, 15, 25, 0.6);
     border: none;
     padding: 15px 20px;
-    margin: 10px 0;
+    margin: 8px 0;
     width: 100%;
     border-radius: 12px;
     color: white;
     outline: none;
     transition: all 0.3s ease;
-    font-size: 14px;
-    /* Sombra interna para dar profundidad */
-    box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.3), inset -2px -2px 5px rgba(255, 255, 255, 0.05);
-}
-
-.auth-form input::placeholder {
-    color: #666;
+    box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.5);
 }
 
 .auth-form input:focus {
-    /* Al enfocar, brilla con tu verde corporativo */
-    box-shadow: 0 0 15px var(--color-brand), inset 2px 2px 5px rgba(0, 0, 0, 0.5);
-    background-color: rgba(20, 20, 35, 0.9);
-    transform: scale(1.02);
+    box-shadow: 0 0 10px var(--color-brand), inset 2px 2px 5px rgba(0, 0, 0, 0.8);
+    background-color: rgba(15, 15, 25, 0.9);
 }
 
-/* 4. BOTONES CON DEGRADADO Y BRILLO */
+/* Botones */
 .auth-btn {
     border-radius: 50px;
     border: none;
-    /* Degradado vibrante para el botón principal */
     background: linear-gradient(45deg, var(--color-brand), var(--color-neon-cyan));
-    color: #FFFFFF;
+    color: white;
     font-size: 13px;
     font-weight: 800;
     padding: 15px 50px;
     letter-spacing: 2px;
     text-transform: uppercase;
     transition: all 0.3s ease;
-    margin-top: 30px;
+    margin-top: 25px;
     cursor: pointer;
-    /* Sombra de brillo */
-    box-shadow: 0 5px 20px rgba(0, 229, 255, 0.4);
-}
-
-.auth-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(0, 229, 255, 0.6);
+    box-shadow: 0 5px 20px rgba(0, 229, 255, 0.3);
 }
 
 .auth-btn:active {
     transform: scale(0.95);
 }
 
-/* Botón transparente del overlay */
 .ghost-btn {
     border-radius: 50px;
-    border: 2px solid #FFFFFF;
+    border: 2px solid white;
     background-color: transparent;
-    color: #FFFFFF;
+    color: white;
     font-size: 13px;
     font-weight: 800;
     padding: 15px 50px;
@@ -200,53 +164,28 @@
     text-transform: uppercase;
     transition: all 0.3s ease;
     cursor: pointer;
-    margin-top: 30px;
-    position: relative;
-    overflow: hidden;
-    z-index: 1;
-}
-
-/* Efecto de relleno al pasar el mouse sobre el botón fantasma */
-.ghost-btn::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 0%;
-    height: 100%;
-    background-color: white;
-    transition: all 0.3s ease;
-    z-index: -1;
+    margin-top: 25px;
 }
 
 .ghost-btn:hover {
+    background-color: white;
     color: var(--bg-dark-deep);
     box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
 }
 
-.ghost-btn:hover::before {
-    width: 100%;
-}
-
-/* =========================================
-   LÓGICA DE ANIMACIÓN (NO CAMBIA MUCHO)
-   ========================================= */
-
+/* --- 4. ANIMACIÓN PC (Deslizamiento Lateral) --- */
 .form-container {
     position: absolute;
     top: 0;
     height: 100%;
     transition: all 0.7s ease-in-out;
-    /* Un poco más lento para más drama */
 }
-
 
 .sign-in-container {
     left: 0;
     width: 50%;
     z-index: 2;
 }
-
 
 .sign-up-container {
     left: 0;
@@ -255,16 +194,13 @@
     z-index: 1;
 }
 
-
 .auth-container.right-panel-active .sign-in-container {
     transform: translateX(100%);
-
     opacity: 0;
 }
 
 .auth-container.right-panel-active .sign-up-container {
     transform: translateX(100%);
-
     opacity: 1;
     z-index: 5;
     animation: show 0.7s;
@@ -285,7 +221,7 @@
     }
 }
 
-/* 5. EL PANEL DESLIZANTE (Overlay) MEJORADO */
+/* Panel Overlay PC */
 .overlay-container {
     position: absolute;
     top: 0;
@@ -301,20 +237,14 @@
 
 .auth-container.right-panel-active .overlay-container {
     transform: translateX(-100%);
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-    border-top-left-radius: 25px;
-    border-bottom-left-radius: 25px;
+    border-radius: 25px 0 0 25px;
 }
 
 .overlay {
-    /* Degradado complejo que mezcla tu verde con los colores neon */
     background: linear-gradient(135deg, var(--color-brand), var(--color-neon-cyan), var(--color-neon-pink));
     background-size: 300% 300%;
     animation: gradientBG 8s ease infinite;
-    /* El panel también se mueve */
-
-    color: #FFFFFF;
+    color: white;
     position: relative;
     left: -100%;
     height: 100%;
@@ -325,7 +255,6 @@
 
 .auth-container.right-panel-active .overlay {
     transform: translateX(50%);
-
 }
 
 .overlay-panel {
@@ -341,10 +270,7 @@
     width: 50%;
     transform: translateX(0);
     transition: transform 0.7s ease-in-out;
-    /* Textura sutil sobre el panel de color */
-    background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 20.5V18H0v2.5h20zM20 22H0v2.5h20V22zm20-4h-20v2.5h20V18zm0 4h-20v2.5h20V22z' fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
 }
-
 
 .overlay-left {
     transform: translateX(-20%);
@@ -353,7 +279,6 @@
 .auth-container.right-panel-active .overlay-left {
     transform: translateX(0);
 }
-
 
 .overlay-right {
     right: 0;
@@ -364,69 +289,117 @@
     transform: translateX(20%);
 }
 
-/* --- RESPONSIVE (Móviles) --- */
+
+/* =========================================
+   5. MÓVIL (CORRECCIÓN NUCLEAR + ESTILO NEÓN)
+   ========================================= */
 @media (max-width: 768px) {
+    .auth-body {
+        height: auto;
+        min-height: 100vh;
+        padding: 20px 0;
+        overflow-y: auto;
+    }
+
     .auth-container {
-        width: 90%;
-        min-height: 80vh;
-        flex-direction: column;
-        height: auto;
-    }
-
-    .form-container,
-    .overlay-container {
         width: 100%;
-
+        max-width: 400px;
+        min-height: 750px;
+        display: block;
+        /* Importante para el fix */
         position: relative;
-        left: auto !important;
-        transform: none !important;
-        height: auto;
-        padding: 30px 0;
+        flex-direction: column;
+        border-radius: 0;
+        /* Opcional: bordes rectos en móvil */
     }
 
-    .overlay-container {
-        height: 250px;
-        /* Altura fija para el panel de color en móvil */
-        order: 1;
-        border-radius: 25px 25px 0 0 !important;
-    }
-
+    /* FORMULARIO: ARRIBA (65%) */
     .form-container {
-        order: 2;
-        min-height: 400px;
+        width: 100% !important;
+        height: 65% !important;
+        position: absolute;
+        top: 0 !important;
+        left: 0 !important;
+        transform: none !important;
+        padding: 0 !important;
+        transition: opacity 0.3s ease !important;
     }
 
-
-    .sign-up-container {
-        display: none;
+    .auth-form {
+        padding: 0 30px;
+        /* Margen interno en móvil */
     }
 
-    .auth-container.right-panel-active .sign-up-container {
-        display: flex;
-    }
-
-    .auth-container.right-panel-active .sign-in-container {
-        display: none;
+    /* PANEL DE COLOR: ABAJO (35%) */
+    .overlay-container {
+        width: 100% !important;
+        height: 35% !important;
+        position: absolute;
+        bottom: 0 !important;
+        top: auto !important;
+        left: 0 !important;
+        transform: none !important;
+        border-radius: 0 !important;
+        /* Quitamos bordes raros */
     }
 
     .overlay {
-        width: 100%;
-        left: 0;
+        width: 100% !important;
+        height: 100% !important;
+        left: 0 !important;
+        transform: none !important;
     }
 
     .overlay-panel {
-        width: 100%;
+        width: 100% !important;
+        height: 100% !important;
+        padding: 10px !important;
+        transform: none !important;
+    }
+
+    /* LOGICA DE VISIBILIDAD MÓVIL */
+    .sign-in-container {
+        opacity: 1;
+        z-index: 5;
+    }
+
+    .auth-container.right-panel-active .sign-in-container {
+        opacity: 0;
+        z-index: 1;
+    }
+
+    .sign-up-container {
+        opacity: 0;
+        z-index: 1;
+    }
+
+    .auth-container.right-panel-active .sign-up-container {
+        opacity: 1;
+        z-index: 5;
+        animation: none !important;
     }
 
     .overlay-left {
         display: none;
+    }
 
+    .auth-container.right-panel-active .overlay-left {
+        display: flex !important;
+        opacity: 1;
+        pointer-events: all;
+    }
+
+    .overlay-right {
+        display: flex !important;
+        opacity: 1;
     }
 
     .auth-container.right-panel-active .overlay-right {
         display: none;
     }
 
-    .auth-container.right-panel-active .overlay-left {
-        display: flex;
+    /* Ajustes de tamaño de letra para móvil */
+    .auth-title-overlay {
+        font-size: 1.8rem;
     }
+}
