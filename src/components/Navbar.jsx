@@ -3,23 +3,17 @@ import { Link } from 'react-router-dom';
 
 const Navbar = ({ busqueda, setBusqueda, carritoCount, user, logoutHandler, setMostrarModal, filtrarPorGeneroRapido }) => {
   return (
-    // 1. NAVBAR DARK & TRANSPARENTE
-    // Quitamos 'bg-white' y ponemos 'navbar-dark' para que los textos base sean claros
     <nav className="navbar navbar-expand-lg fixed-top py-3 navbar-dark">
-      <div className="container-fluid px-4">
+      <div className="container-fluid px-3 px-lg-4">
         
-        {/* LOGO: El texto ya tiene el degradado gracias al CSS global */}
+        {/* LOGO */}
         <Link className="navbar-brand d-flex align-items-center" to="/">
           <img 
             src="/vite.svg" 
             alt="Logo" 
-            style={{
-                height: '35px', 
-                marginRight: '10px', 
-                filter: 'drop-shadow(0 0 5px rgba(255,255,255,0.5))' // Pequeño brillo al logo
-            }} 
+            style={{ height: '32px', marginRight: '8px', filter: 'drop-shadow(0 0 5px rgba(0,153,112,0.5))' }} 
           />
-          Perfumes Chile
+          <span className="fw-bold">Perfumes</span><span className="fw-bold" style={{color: 'var(--color-principal)'}}>Chile</span>
         </Link>
         
         <button className="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
@@ -28,114 +22,95 @@ const Navbar = ({ busqueda, setBusqueda, carritoCount, user, logoutHandler, setM
 
         <div className="collapse navbar-collapse" id="navbarContent">
            
-           {/* 2. BUSCADOR ESTILO "VIDRIO OSCURO" */}
-           <form className="d-flex me-auto ms-lg-4 my-2 my-lg-0 position-relative" style={{maxWidth: '400px', width: '100%'}} onSubmit={e => e.preventDefault()}>
+           {/* BUSCADOR (Texto blanco forzado) */}
+           <form className="d-flex me-auto ms-lg-4 my-3 my-lg-0 position-relative w-100" style={{maxWidth: '400px'}} onSubmit={e => e.preventDefault()}>
               <div className="input-group">
-                  <span className="input-group-text border-0 text-white" style={{backgroundColor: 'rgba(255,255,255,0.1)'}}>🔍</span>
+                  <span className="input-group-text border-0 text-secondary" style={{backgroundColor: 'rgba(255,255,255,0.05)'}}>🔍</span>
                   <input 
-                    className="form-control border-0 text-white" 
+                    className="form-control border-0" 
                     type="search" 
                     placeholder="Buscar fragancia..." 
                     value={busqueda} 
                     onChange={e => setBusqueda(e.target.value)}
                     style={{
-                        backgroundColor: 'rgba(255,255,255,0.1)', 
-                        color: 'white',
-                        boxShadow: 'none' // Quitamos el borde azul por defecto
+                        backgroundColor: 'rgba(255,255,255,0.05)', 
+                        color: 'white', // Texto blanco al escribir
+                        boxShadow: 'none'
                     }}
                   />
               </div>
           </form>
 
-          <ul className="navbar-nav align-items-center gap-3 mb-2 mb-lg-0">
-              {/* 3. FILTROS RÁPIDOS (Texto claro) */}
-              <li className="nav-item">
-                <button onClick={() => filtrarPorGeneroRapido('hombre')} className="btn nav-link text-white-50 fw-semibold">Hombres</button>
-              </li>
-              <li className="nav-item">
-                <button onClick={() => filtrarPorGeneroRapido('mujer')} className="btn nav-link text-white-50 fw-semibold">Mujeres</button>
-              </li>
-              <li className="nav-item">
-                <button onClick={() => filtrarPorGeneroRapido('unisex')} className="btn nav-link text-white-50 fw-semibold">Unisex</button>
-              </li>
+          <ul className="navbar-nav align-items-center gap-2 gap-lg-3 mb-2 mb-lg-0">
               
-              {/* 4. CARRITO (Borde Neón Verde) */}
-              <li className="nav-item position-relative me-2">
+              {/* FILTROS */}
+              <div className="d-flex gap-2 justify-content-center w-100 w-lg-auto my-2 my-lg-0">
+                <button onClick={() => filtrarPorGeneroRapido('hombre')} className="btn btn-sm text-secondary hover-effect">Hombre</button>
+                <button onClick={() => filtrarPorGeneroRapido('mujer')} className="btn btn-sm text-secondary hover-effect">Mujer</button>
+                <button onClick={() => filtrarPorGeneroRapido('unisex')} className="btn btn-sm text-secondary hover-effect">Unisex</button>
+              </div>
+              
+              {/* CARRITO */}
+              <li className="nav-item position-relative me-lg-2">
                   <button 
-                    className="btn d-flex align-items-center gap-2 rounded-pill px-3 transition-btn" 
+                    className="btn d-flex align-items-center gap-2 rounded-pill px-3 w-100 justify-content-center" 
                     onClick={() => setMostrarModal(true)}
-                    style={{
-                        border: '1px solid var(--color-principal)', 
-                        color: 'white',
-                        background: 'rgba(0,0,0,0.2)'
-                    }}
+                    style={{border: '1px solid var(--color-principal)', color: 'white', background: 'transparent'}}
                   >
-                      🛒 <span className="d-none d-lg-inline">Carrito</span>
-                      <span className="badge rounded-pill position-absolute top-0 start-100 translate-middle" 
-                            style={{backgroundColor: 'var(--color-neon-pink)', boxShadow: '0 0 10px var(--color-neon-pink)'}}>
+                      🛒 <span>Carrito</span>
+                      <span className="badge rounded-pill bg-danger position-absolute top-0 start-100 translate-middle">
                         {carritoCount}
                       </span>
                   </button>
               </li>
 
-              <div className="vr d-none d-lg-block mx-2 bg-secondary opacity-50"></div>
+              <div className="vr d-none d-lg-block mx-2 bg-secondary opacity-25"></div>
 
-              {/* 5. ZONA DE USUARIO */}
+              {/* ZONA DE USUARIO */}
               {user ? (
-              <li className="nav-item d-flex align-items-center gap-3">
-                
-                {/* AVATAR CON DEGRADADO */}
-                <Link to="/profile" className="d-flex flex-column align-items-center text-decoration-none" title="Mi Perfil">
-                    <div className="rounded-circle text-white d-flex align-items-center justify-content-center mb-1 shadow" 
-                         style={{
-                             width: '35px', 
-                             height: '35px', 
-                             fontSize: '16px', 
-                             fontWeight: 'bold',
-                             background: 'linear-gradient(45deg, var(--color-principal), #00e5ff)' // Degradado Verde-Cian
-                         }}>
-                        {user.name.charAt(0).toUpperCase()}
+              <li className="nav-item w-100 w-lg-auto">
+                <div className="d-flex flex-column flex-lg-row align-items-center gap-3 mt-3 mt-lg-0 p-3 p-lg-0 rounded bg-lg-transparent" style={{backgroundColor: 'rgba(255,255,255,0.03)'}}>
+                    
+                    {/* Perfil */}
+                    <Link to="/profile" className="d-flex align-items-center text-decoration-none gap-2" title="Ir a Perfil">
+                        <div className="rounded-circle d-flex align-items-center justify-content-center fw-bold text-white shadow-sm" 
+                             style={{width: '32px', height: '32px', background: 'var(--color-principal)'}}>
+                            {user.name.charAt(0).toUpperCase()}
+                        </div>
+                        <span className="text-white small fw-bold">{user.name.split(' ')[0]}</span>
+                    </Link>
+
+                    {/* Botones de Gestión (CORRECCIÓN MÓVIL: Texto siempre visible) */}
+                    <div className="d-flex flex-wrap gap-2 justify-content-center">
+                        {!user.isAdmin && (
+                            <Link to="/mis-pedidos" className="btn btn-outline-light btn-sm rounded-pill px-3">
+                                📜 Pedidos
+                            </Link>
+                        )}
+
+                        {user.isAdmin && (
+                            <>
+                                <Link to="/admin/productlist" className="btn btn-outline-info btn-sm rounded-pill px-3">
+                                    📦 Productos
+                                </Link>
+                                <Link to="/admin/orderlist" className="btn btn-outline-warning btn-sm rounded-pill px-3">
+                                    💰 Ventas
+                                </Link>
+                            </>
+                        )}
+
+                        <button 
+                            className="btn btn-sm rounded-pill px-3 d-flex align-items-center gap-1 text-danger border-danger bg-transparent" 
+                            onClick={logoutHandler}
+                        >
+                            🚪 Salir
+                        </button>
                     </div>
-                    <span className="fw-bold text-white-50 text-truncate" style={{fontSize: '0.7rem', maxWidth: '70px'}}>
-                        {user.name.split(' ')[0]}
-                    </span>
-                </Link>
-
-                {/* BOTONES DE GESTIÓN (Estilo Outline para no saturar) */}
-                <div className="d-flex gap-2 align-items-center ms-2">
-                    {!user.isAdmin && (
-                        <Link to="/mis-pedidos" className="btn btn-outline-light btn-sm rounded-pill px-3 d-flex align-items-center gap-1">
-                            📜 <span className="d-none d-md-inline">Pedidos</span>
-                        </Link>
-                    )}
-
-                    {user.isAdmin && (
-                        <>
-                            <Link to="/admin/productlist" className="btn btn-sm rounded-pill px-3 d-flex align-items-center gap-1 text-white" 
-                                  style={{border: '1px solid #00e5ff', background: 'rgba(0, 229, 255, 0.1)'}}>
-                                📦 <span className="d-none d-md-inline">Prod</span>
-                            </Link>
-                            <Link to="/admin/orderlist" className="btn btn-sm rounded-pill px-3 d-flex align-items-center gap-1 text-white" 
-                                  style={{border: '1px solid #ffd700', background: 'rgba(255, 215, 0, 0.1)'}}>
-                                💰 <span className="d-none d-md-inline">Ventas</span>
-                            </Link>
-                        </>
-                    )}
-
-                    <button 
-                        className="btn btn-sm rounded-pill px-3 d-flex align-items-center gap-1 text-white" 
-                        onClick={logoutHandler}
-                        style={{border: '1px solid #ff2a6d', background: 'rgba(255, 42, 109, 0.1)'}}
-                        title="Cerrar Sesión"
-                    >
-                        🚪
-                    </button>
                 </div>
               </li>
               ) : (
-              // 6. NO LOGUEADO (Usa estilo Login del CSS)
-              <li className="nav-item">
-                <Link to="/login" className="btn-login fw-bold small px-4 rounded-pill text-decoration-none">
+              <li className="nav-item mt-3 mt-lg-0">
+                <Link to="/login" className="btn fw-bold px-4 rounded-pill text-white w-100" style={{background: 'var(--color-principal)'}}>
                     Ingresar
                 </Link>
               </li>

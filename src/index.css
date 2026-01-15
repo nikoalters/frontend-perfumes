@@ -1,302 +1,220 @@
-@import url('https://fonts.googleapis.com/css?family=Montserrat:400,600,800');
+@import url('https://fonts.googleapis.com/css?family=Montserrat:400,600,700,800');
 
-/* --- 1. DEFINICIÓN DE VARIABLES (Paleta Oscura/Neón) --- */
+/* --- 1. VARIABLES UNIFICADAS (Adiós al carnaval de colores) --- */
 :root {
   --color-principal: #009970;
-  /* Tu verde corporativo */
-  --color-hover: #00c48f;
-  /* Verde más brillante para hovers */
-  --color-neon-glow: rgba(0, 153, 112, 0.5);
-  /* Resplandor verde */
+  /* Tu Verde Marca */
+  --color-principal-dark: #007a5a;
+  /* Verde más oscuro para hover */
+  --color-heart: #ff4757;
+  /* Rojo para corazones/alertas */
 
-  /* Colores de Fondo Oscuro (Mismos del Login) */
+  /* Fondo "Deep Abyss" */
   --bg-dark-deep: #0f0c29;
   --bg-dark-mid: #302b63;
   --bg-dark-light: #24243e;
 
-  --text-primary: #ffffff;
-  --text-secondary: #aaaaaa;
+  /* Vidrio Oscuro (Más opaco para legibilidad) */
+  --glass-bg: rgba(15, 15, 25, 0.85);
+  --glass-border: rgba(255, 255, 255, 0.08);
 
-  --glass-bg: rgba(20, 20, 35, 0.6);
-  /* Color vidrio oscuro */
-  --glass-border: rgba(255, 255, 255, 0.1);
+  --text-primary: #ffffff;
+  --text-secondary: #cccccc;
 }
 
-/* --- 2. CUERPO GLOBAL (Fondo Animado) --- */
+/* --- 2. BASE --- */
 body {
   font-family: 'Montserrat', sans-serif;
-  /* Tipografía más moderna */
   margin: 0;
   padding: 0;
   color: var(--text-primary);
-
-  /* EL DEGRADADO ANIMADO GLOBAL */
-  background: linear-gradient(135deg, var(--bg-dark-deep), var(--bg-dark-mid), var(--bg-dark-light));
-  background-size: 400% 400%;
-  animation: gradientBG 15s ease infinite;
+  /* Degradado más sutil y oscuro para que resalten los productos */
+  background: linear-gradient(135deg, #0b0b15 0%, #1a1a2e 100%);
   min-height: 100vh;
 }
 
-@keyframes gradientBG {
-  0% {
-    background-position: 0% 50%;
-  }
-
-  50% {
-    background-position: 100% 50%;
-  }
-
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
-/* --- 3. NAVBAR DE CRISTAL (Glassmorphism) --- */
+/* --- 3. NAVBAR GLASS --- */
 .navbar {
-  background-color: rgba(10, 10, 15, 0.7) !important;
-  /* Oscuro translúcido */
-  backdrop-filter: blur(15px);
-  /* Efecto borroso */
-  -webkit-backdrop-filter: blur(15px);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+  background-color: rgba(11, 11, 21, 0.9) !important;
+  /* Casi sólido para leer bien */
+  backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--glass-border);
-  transition: all 0.3s ease;
 }
 
-/* Links del Navbar */
 .navbar-brand {
   font-weight: 800;
+  color: white !important;
+  text-transform: uppercase;
   letter-spacing: 1px;
-  /* Texto con degradado verde */
-  background: linear-gradient(to right, white, var(--color-principal));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-shadow: 0 0 20px rgba(0, 153, 112, 0.3);
 }
 
-.nav-link {
-  color: var(--text-secondary) !important;
-  font-weight: 500;
-  transition: 0.3s;
-}
-
-.nav-link:hover,
-.nav-link.active {
-  color: white !important;
-  text-shadow: 0 0 10px var(--color-principal);
-  /* Brillo verde al pasar mouse */
-}
-
-.navbar-toggler {
-  border-color: rgba(255, 255, 255, 0.5);
-  filter: invert(1);
-  /* Hace el icono de hamburguesa blanco */
-}
-
-/* Botón Login en Navbar */
-.btn-login {
-  background: transparent;
-  border: 1px solid var(--color-principal);
+.navbar-brand span {
   color: var(--color-principal);
-  padding: 8px 25px;
-  border-radius: 50px;
-  font-weight: bold;
-  transition: 0.3s;
 }
 
-.btn-login:hover {
-  background: var(--color-principal);
-  color: white;
-  box-shadow: 0 0 15px var(--color-neon-glow);
-}
+/* Solo "Chile" o el logo en verde */
 
-/* --- 4. HERO BANNER (Portada) --- */
-.hero-banner {
-  /* Vidrio brillante en lugar de bloque sólido */
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
-  border: 1px solid var(--glass-border);
-
-  height: 350px;
-  /* Un poco más alto */
-  margin-top: 20px;
-  margin-bottom: 3rem;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  border-radius: 25px;
-  width: 95%;
-  margin-left: auto;
-  margin-right: auto;
-
-  /* Sombra de neón */
-  box-shadow: 0 0 40px rgba(0, 153, 112, 0.15);
-  position: relative;
-  overflow: hidden;
-}
-
-/* Efecto de luz dentro del hero */
-.hero-banner::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(0, 153, 112, 0.2) 0%, transparent 70%);
-  animation: pulseLight 5s infinite alternate;
-}
-
-@keyframes pulseLight {
-  from {
-    transform: scale(1);
-    opacity: 0.5;
-  }
-
-  to {
-    transform: scale(1.2);
-    opacity: 0.8;
-  }
-}
-
-.hero-banner h1 {
-  font-size: 3rem;
-  font-weight: 800;
-  color: white;
-  text-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-  position: relative;
-  z-index: 2;
-}
-
-.hero-banner p {
-  color: #ddd;
-  font-size: 1.2rem;
-  position: relative;
-  z-index: 2;
-}
-
-/* --- 5. SIDEBAR (Filtros Oscuros) --- */
-.sidebar-filtros {
-  background-color: var(--glass-bg) !important;
-  backdrop-filter: blur(10px);
-  border: 1px solid var(--glass-border) !important;
-  /* Quitamos el borde verde sólido */
-  color: white !important;
-  border-radius: 15px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-}
-
-.sidebar-filtros h5,
-.sidebar-filtros .filtro-titulo {
-  color: var(--color-principal) !important;
-  /* Títulos verdes */
-  text-shadow: 0 0 10px rgba(0, 153, 112, 0.4);
-}
-
-.sidebar-filtros label,
-.sidebar-filtros span {
-  color: #ccc !important;
-}
-
-/* Estilo para los Checkboxes en modo oscuro */
-.form-check-input {
-  background-color: rgba(255, 255, 255, 0.1);
-  border-color: #555;
-}
-
-.form-check-input:checked {
-  background-color: var(--color-principal);
-  border-color: var(--color-principal);
-  box-shadow: 0 0 10px var(--color-principal);
-}
-
-/* --- 6. CARDS DE PRODUCTOS (Vidrio Oscuro) --- */
+/* --- 4. CARDS DE PRODUCTOS (Corrección de Visibilidad) --- */
 .card {
   background-color: var(--glass-bg);
+  /* Fondo oscuro */
   border: 1px solid var(--glass-border);
-  color: white;
   border-radius: 15px;
   overflow: hidden;
-  transition: all 0.4s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  /* Clave para posicionar ml y corazón */
 }
 
 .card:hover {
-  transform: translateY(-10px);
-  /* El borde brilla verde al pasar el mouse */
+  transform: translateY(-5px);
   border-color: var(--color-principal);
-  box-shadow: 0 0 25px rgba(0, 153, 112, 0.3);
+  box-shadow: 0 10px 30px rgba(0, 153, 112, 0.2);
+  /* Sombra verde sutil */
 }
 
+/* Imágenes dentro de cards */
 .card-img-top {
-  background-color: transparent;
-  /* Fondo transparente para la imagen */
   padding: 20px;
-  transition: transform 0.5s ease;
-  filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.5));
-  /* Sombra a la botella PNG */
+  /* Si tus imágenes son PNG transparentes, esto ayuda. 
+     Si tienen fondo blanco, considera ponerles un border-radius */
+  border-radius: 15px;
+  transition: transform 0.3s;
 }
 
 .card:hover .card-img-top {
-  transform: scale(1.1) rotate(2deg);
-  /* Efecto zoom y rotación sutil */
+  transform: scale(1.05);
 }
 
-.card-body {
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
-}
-
+/* Títulos y Textos de Cards */
 .card-title {
+  color: white;
   font-weight: 700;
-  letter-spacing: 0.5px;
+  margin-bottom: 0.5rem;
 }
 
 .card-text {
-  color: #ccc;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
 }
 
+.text-muted {
+  color: #888 !important;
+  /* Forzamos que se vea el "antes" en gris */
+}
+
+/* BADGE DE ML (Corrección: Ahora tiene fondo sólido) */
+.badge-ml {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: rgba(0, 0, 0, 0.8);
+  /* Fondo negro semitransparente */
+  border: 1px solid #333;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  z-index: 10;
+}
+
+/* CORAZÓN FAVORITO (Corrección: Color visible) */
+.btn-heart {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s;
+  color: #ccc;
+  /* Gris por defecto */
+  cursor: pointer;
+}
+
+.btn-heart:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: var(--color-heart);
+}
+
+.btn-heart.active {
+  color: var(--color-heart);
+  /* Rojo si es favorito */
+  animation: pulse 0.5s;
+}
+
+/* BOTÓN AGREGAR (Unificado al Verde) */
 .btn-agregar {
-  background: transparent;
-  border: 1px solid var(--color-principal);
+  background-color: transparent;
+  border: 2px solid var(--color-principal);
   color: var(--color-principal);
-  border-radius: 50px;
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  font-size: 0.8rem;
+  width: 100%;
+  padding: 10px;
+  border-radius: 50px;
   transition: 0.3s;
 }
 
 .btn-agregar:hover {
-  background: var(--color-principal);
+  background-color: var(--color-principal);
   color: white;
-  box-shadow: 0 0 15px var(--color-neon-glow);
+  box-shadow: 0 0 15px rgba(0, 153, 112, 0.4);
 }
 
-/* --- 7. FOOTER --- */
+/* --- 5. ANIMACIONES --- */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.2);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Footer limpio */
 .footer-pro {
-  background-color: rgba(0, 0, 0, 0.6);
-  /* Más transparente */
-  backdrop-filter: blur(10px);
-  border-top: 1px solid var(--glass-border);
-  color: #888;
+  background-color: #050505;
+  border-top: 1px solid #222;
+  color: #777;
 }
 
 .footer-pro h5 {
   color: white;
-  text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
 }
 
 .footer-pro a:hover {
   color: var(--color-principal) !important;
-  text-shadow: 0 0 10px var(--color-principal);
+  padding-left: 5px;
 }
 
-/* --- 8. SCROLLBAR --- */
+/* Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
-  background: #0f0c29;
+  background: #0b0b15;
 }
 
 ::-webkit-scrollbar-thumb {
