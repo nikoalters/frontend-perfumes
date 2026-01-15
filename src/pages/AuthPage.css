@@ -1,0 +1,317 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat:400,800');
+
+/* Configuración base para este componente */
+.auth-body {
+    background: #121212;
+    /* Fondo oscuro general */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    font-family: 'Montserrat', sans-serif;
+    height: 100vh;
+    margin: -2rem;
+    /* Compensar el padding de App.css si es necesario */
+}
+
+.auth-container {
+    background-color: #1e1e2e;
+    /* Color de la tarjeta oscura */
+    border-radius: 20px;
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25),
+        0 10px 10px rgba(0, 0, 0, 0.22);
+    position: relative;
+    overflow: hidden;
+    width: 900px;
+    max-width: 100%;
+    min-height: 550px;
+    /* Sombra de neón sutil con tu color */
+    border: 1px solid #00997040;
+    box-shadow: 0 0 20px #00997020;
+}
+
+.auth-title {
+    font-weight: bold;
+    margin: 0;
+    color: var(--color-principal);
+    /* Título verde */
+}
+
+.auth-title-overlay {
+    font-weight: bold;
+    margin: 0;
+    color: white;
+    font-size: 2.5rem;
+}
+
+.auth-p {
+    font-size: 14px;
+    font-weight: 100;
+    line-height: 20px;
+    letter-spacing: 0.5px;
+    margin: 20px 0 30px;
+    color: #eee;
+}
+
+.auth-span {
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 20px;
+}
+
+.auth-form {
+    background-color: #1e1e2e;
+    /* Fondo oscuro del formulario */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 0 50px;
+    height: 100%;
+    text-align: center;
+}
+
+/* Inputs estilo moderno oscuro */
+.auth-form input {
+    background-color: #2a2a3c;
+    border: 1px solid #333;
+    padding: 12px 15px;
+    margin: 8px 0;
+    width: 100%;
+    border-radius: 8px;
+    color: white;
+    outline: none;
+    transition: 0.3s;
+}
+
+.auth-form input:focus {
+    border-color: var(--color-principal);
+}
+
+/* Botón principal */
+.auth-btn {
+    border-radius: 50px;
+    border: 1px solid var(--color-principal);
+    background-color: var(--color-principal);
+    color: #FFFFFF;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 12px 45px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: transform 80ms ease-in;
+    margin-top: 20px;
+    cursor: pointer;
+}
+
+.auth-btn:active {
+    transform: scale(0.95);
+}
+
+/* Botón transparente del overlay */
+.ghost-btn {
+    border-radius: 50px;
+    border: 2px solid #FFFFFF;
+    background-color: transparent;
+    color: #FFFFFF;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 12px 45px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: transform 80ms ease-in;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+.ghost-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* --- LÓGICA DE ANIMACIÓN Y POSICIONAMIENTO --- */
+
+.form-container {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    transition: all 0.6s ease-in-out;
+}
+
+/* Login está a la izquierda por defecto */
+.sign-in-container {
+    left: 0;
+    width: 50%;
+    z-index: 2;
+}
+
+/* Registro está a la derecha, oculto inicialmente */
+.sign-up-container {
+    left: 0;
+    width: 50%;
+    opacity: 0;
+    z-index: 1;
+}
+
+/* CUANDO SE ACTIVA EL PANEL DERECHO (Modo Registro) */
+.auth-container.right-panel-active .sign-in-container {
+    transform: translateX(100%);
+    /* Mueve Login a la derecha */
+    opacity: 0;
+}
+
+.auth-container.right-panel-active .sign-up-container {
+    transform: translateX(100%);
+    /* Mueve Registro a su lugar */
+    opacity: 1;
+    z-index: 5;
+    animation: show 0.6s;
+}
+
+@keyframes show {
+
+    0%,
+    49.99% {
+        opacity: 0;
+        z-index: 1;
+    }
+
+    50%,
+    100% {
+        opacity: 1;
+        z-index: 5;
+    }
+}
+
+/* --- EL OVERLAY DESLIZANTE (La parte verde) --- */
+.overlay-container {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 50%;
+    height: 100%;
+    overflow: hidden;
+    transition: transform 0.6s ease-in-out;
+    z-index: 100;
+}
+
+.auth-container.right-panel-active .overlay-container {
+    transform: translateX(-100%);
+    /* Mueve el contenedor verde a la izquierda */
+}
+
+.overlay {
+    /* DEGRADADO VERDE CORPORATIVO */
+    background: var(--color-principal);
+    background: linear-gradient(to right, #006349, var(--color-principal));
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: 0 0;
+    color: #FFFFFF;
+    position: relative;
+    left: -100%;
+    height: 100%;
+    width: 200%;
+    transform: translateX(0);
+    transition: transform 0.6s ease-in-out;
+}
+
+.auth-container.right-panel-active .overlay {
+    transform: translateX(50%);
+    /* Mueve el contenido del overlay */
+}
+
+.overlay-panel {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 0 40px;
+    text-align: center;
+    top: 0;
+    height: 100%;
+    width: 50%;
+    transform: translateX(0);
+    transition: transform 0.6s ease-in-out;
+}
+
+/* Panel que invita a iniciar sesión (está a la izquierda del overlay grande) */
+.overlay-left {
+    transform: translateX(-20%);
+}
+
+.auth-container.right-panel-active .overlay-left {
+    transform: translateX(0);
+}
+
+/* Panel que invita a registrarse (está a la derecha del overlay grande) */
+.overlay-right {
+    right: 0;
+    transform: translateX(0);
+}
+
+.auth-container.right-panel-active .overlay-right {
+    transform: translateX(20%);
+}
+
+/* Responsive para móviles */
+@media (max-width: 768px) {
+    .auth-container {
+        width: 90%;
+        min-height: 80vh;
+        flex-direction: column;
+    }
+
+    .form-container,
+    .overlay-container {
+        width: 100%;
+        height: 50%;
+        position: relative;
+        left: auto !important;
+        transform: none !important;
+    }
+
+    .overlay-container {
+        order: 1;
+        /* Ponemos el panel verde arriba en móviles */
+    }
+
+    .form-container {
+        order: 2;
+    }
+
+    /* En móviles desactivamos la animación compleja y mostramos uno u otro */
+    .sign-up-container {
+        display: none;
+    }
+
+    .auth-container.right-panel-active .sign-up-container {
+        display: flex;
+    }
+
+    .auth-container.right-panel-active .sign-in-container {
+        display: none;
+    }
+
+    .overlay {
+        width: 100%;
+        left: 0;
+    }
+
+    .overlay-panel {
+        width: 100%;
+    }
+
+    .overlay-left {
+        display: none;
+        /* Simplificamos en móvil */
+    }
+
+    .auth-container.right-panel-active .overlay-right {
+        display: none;
+    }
+
+    .auth-container.right-panel-active .overlay-left {
+        display: flex;
+    }
+}

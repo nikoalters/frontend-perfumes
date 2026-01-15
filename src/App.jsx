@@ -1,7 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
 import HomePage from './pages/HomePage';
-import LoginPage from './pages/LoginPage';
-import RegisterPage from './pages/RegisterPage'; 
+import AuthPage from './pages/AuthPage'; 
 import ProductListPage from './pages/ProductListPage'; 
 import './index.css';
 import OrdersPage from './pages/OrdersPage';
@@ -13,11 +12,9 @@ function App() {
        {/* Ruta Principal */}
        <Route path="/" element={<HomePage />} />
        
-       {/* Ruta de Login */}
-       <Route path="/login" element={<LoginPage />} />
-       
-       {/* Ruta de Registro */}
-       <Route path="/register" element={<RegisterPage />} />
+       <Route path="/login" element={<AuthPage />} />
+       <Route path="/register" element={<AuthPage />} /> 
+
 
        {/* Ruta de Administrador (NUEVA) */}
       <Route path="/admin/productlist" element={<ProductListPage />} />
