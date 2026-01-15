@@ -6,112 +6,116 @@ const Navbar = ({ busqueda, setBusqueda, carritoCount, user, logoutHandler, setM
     <nav className="navbar navbar-expand-lg fixed-top py-3 navbar-dark">
       <div className="container-fluid px-3 px-lg-4">
         
-        {/* LOGO */}
-        <Link className="navbar-brand d-flex align-items-center" to="/">
+        {/* 1. LOGO */}
+        <Link className="navbar-brand d-flex align-items-center gap-2" to="/">
           <img 
             src="/vite.svg" 
             alt="Logo" 
-            style={{ height: '32px', marginRight: '8px', filter: 'drop-shadow(0 0 5px rgba(0,153,112,0.5))' }} 
+            style={{ height: '32px', filter: 'drop-shadow(0 0 5px rgba(0,153,112,0.8))' }} 
           />
-          <span className="fw-bold">Perfumes</span><span className="fw-bold" style={{color: 'var(--color-principal)'}}>Chile</span>
+          <div style={{lineHeight: '1'}}>
+            <span className="fw-bold d-block text-white" style={{fontSize: '1.1rem', letterSpacing: '1px'}}>PERFUMES</span>
+            <span className="fw-bold d-block" style={{fontSize: '0.75rem', color: 'var(--color-principal)', letterSpacing: '2px'}}>CHILE</span>
+          </div>
         </Link>
         
-        <button className="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+        <button className="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
           <span className="navbar-toggler-icon"></span>
         </button>
 
         <div className="collapse navbar-collapse" id="navbarContent">
            
-           {/* BUSCADOR (Texto blanco forzado) */}
-           <form className="d-flex me-auto ms-lg-4 my-3 my-lg-0 position-relative w-100" style={{maxWidth: '400px'}} onSubmit={e => e.preventDefault()}>
-              <div className="input-group">
-                  <span className="input-group-text border-0 text-secondary" style={{backgroundColor: 'rgba(255,255,255,0.05)'}}>🔍</span>
+           {/* 2. BUSCADOR */}
+           <form className="d-flex mx-lg-4 my-3 my-lg-0 flex-grow-1" style={{maxWidth: '500px'}} onSubmit={e => e.preventDefault()}>
+              <div className="input-group rounded-pill overflow-hidden border border-secondary" style={{backgroundColor: 'rgba(255,255,255,0.05)'}}>
+                  <span className="input-group-text border-0 text-secondary bg-transparent ps-3">🔍</span>
                   <input 
-                    className="form-control border-0" 
+                    className="form-control border-0 bg-transparent text-white shadow-none" 
                     type="search" 
                     placeholder="Buscar fragancia..." 
                     value={busqueda} 
                     onChange={e => setBusqueda(e.target.value)}
-                    style={{
-                        backgroundColor: 'rgba(255,255,255,0.05)', 
-                        color: 'white', // Texto blanco al escribir
-                        boxShadow: 'none'
-                    }}
                   />
               </div>
           </form>
 
-          <ul className="navbar-nav align-items-center gap-2 gap-lg-3 mb-2 mb-lg-0">
+          <ul className="navbar-nav align-items-center gap-2 gap-lg-4 mb-2 mb-lg-0 ms-auto">
               
-              {/* FILTROS */}
-              <div className="d-flex gap-2 justify-content-center w-100 w-lg-auto my-2 my-lg-0">
-                <button onClick={() => filtrarPorGeneroRapido('hombre')} className="btn btn-sm text-secondary hover-effect">Hombre</button>
-                <button onClick={() => filtrarPorGeneroRapido('mujer')} className="btn btn-sm text-secondary hover-effect">Mujer</button>
-                <button onClick={() => filtrarPorGeneroRapido('unisex')} className="btn btn-sm text-secondary hover-effect">Unisex</button>
+              {/* 3. FILTROS SIMPLES */}
+              <div className="d-flex gap-3 justify-content-center my-2 my-lg-0">
+                <button onClick={() => filtrarPorGeneroRapido('hombre')} className="btn p-0 text-secondary fw-semibold small hover-white">HOMBRE</button>
+                <button onClick={() => filtrarPorGeneroRapido('mujer')} className="btn p-0 text-secondary fw-semibold small hover-white">MUJER</button>
+                <button onClick={() => filtrarPorGeneroRapido('unisex')} className="btn p-0 text-secondary fw-semibold small hover-white">UNISEX</button>
               </div>
               
-              {/* CARRITO */}
-              <li className="nav-item position-relative me-lg-2">
+              {/* 4. CARRITO */}
+              <li className="nav-item position-relative">
                   <button 
-                    className="btn d-flex align-items-center gap-2 rounded-pill px-3 w-100 justify-content-center" 
+                    className="btn rounded-pill px-3 py-1 d-flex align-items-center gap-2" 
                     onClick={() => setMostrarModal(true)}
-                    style={{border: '1px solid var(--color-principal)', color: 'white', background: 'transparent'}}
+                    style={{border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.05)', color: 'white'}}
                   >
-                      🛒 <span>Carrito</span>
-                      <span className="badge rounded-pill bg-danger position-absolute top-0 start-100 translate-middle">
-                        {carritoCount}
-                      </span>
+                      <span style={{fontSize: '1.2rem'}}>🛒</span>
+                      <span className="d-none d-lg-inline small fw-bold">Carrito</span>
+                      {carritoCount > 0 && (
+                        <span className="badge rounded-circle d-flex align-items-center justify-content-center p-0 position-absolute top-0 start-100 translate-middle" 
+                              style={{width: '20px', height: '20px', backgroundColor: 'var(--color-heart)', fontSize: '0.7rem'}}>
+                          {carritoCount}
+                        </span>
+                      )}
                   </button>
               </li>
 
-              <div className="vr d-none d-lg-block mx-2 bg-secondary opacity-25"></div>
+              <div className="vr d-none d-lg-block mx-1 bg-secondary opacity-25" style={{height: '25px'}}></div>
 
-              {/* ZONA DE USUARIO */}
+              {/* 5. ZONA DE USUARIO (Menú Desplegable Limpio) */}
               {user ? (
-              <li className="nav-item w-100 w-lg-auto">
-                <div className="d-flex flex-column flex-lg-row align-items-center gap-3 mt-3 mt-lg-0 p-3 p-lg-0 rounded bg-lg-transparent" style={{backgroundColor: 'rgba(255,255,255,0.03)'}}>
+              <li className="nav-item dropdown">
+                {/* BOTÓN PRINCIPAL (Solo se ve el nombre y avatar) */}
+                <a className="nav-link dropdown-toggle d-flex align-items-center gap-2 user-pill p-1 pe-3 rounded-pill text-decoration-none" 
+                   href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"
+                   style={{background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', transition: '0.3s'}}>
                     
-                    {/* Perfil */}
-                    <Link to="/profile" className="d-flex align-items-center text-decoration-none gap-2" title="Ir a Perfil">
-                        <div className="rounded-circle d-flex align-items-center justify-content-center fw-bold text-white shadow-sm" 
-                             style={{width: '32px', height: '32px', background: 'var(--color-principal)'}}>
-                            {user.name.charAt(0).toUpperCase()}
-                        </div>
-                        <span className="text-white small fw-bold">{user.name.split(' ')[0]}</span>
-                    </Link>
-
-                    {/* Botones de Gestión (CORRECCIÓN MÓVIL: Texto siempre visible) */}
-                    <div className="d-flex flex-wrap gap-2 justify-content-center">
-                        {!user.isAdmin && (
-                            <Link to="/mis-pedidos" className="btn btn-outline-light btn-sm rounded-pill px-3">
-                                📜 Pedidos
-                            </Link>
-                        )}
-
-                        {user.isAdmin && (
-                            <>
-                                <Link to="/admin/productlist" className="btn btn-outline-info btn-sm rounded-pill px-3">
-                                    📦 Productos
-                                </Link>
-                                <Link to="/admin/orderlist" className="btn btn-outline-warning btn-sm rounded-pill px-3">
-                                    💰 Ventas
-                                </Link>
-                            </>
-                        )}
-
-                        <button 
-                            className="btn btn-sm rounded-pill px-3 d-flex align-items-center gap-1 text-danger border-danger bg-transparent" 
-                            onClick={logoutHandler}
-                        >
-                            🚪 Salir
-                        </button>
+                    <div className="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold shadow-sm" 
+                         style={{width: '32px', height: '32px', background: 'linear-gradient(135deg, var(--color-principal), #00d2ff)'}}>
+                        {user.name.charAt(0).toUpperCase()}
                     </div>
-                </div>
+                    <span className="text-white fw-bold small">{user.name.split(' ')[0]}</span>
+                </a>
+
+                {/* EL MENÚ OCULTO (Se abre al hacer clic) */}
+                <ul className="dropdown-menu dropdown-menu-end p-2 border-0 shadow-lg" 
+                    style={{background: '#1a1a2e', minWidth: '220px', marginTop: '10px', border: '1px solid rgba(255,255,255,0.1)'}}>
+                    
+                    <li><Link className="dropdown-item text-white rounded mb-1 hover-green" to="/profile">👤 Mi Perfil</Link></li>
+                    
+                    {!user.isAdmin && (
+                        <li><Link className="dropdown-item text-white rounded mb-1 hover-green" to="/mis-pedidos">📜 Mis Pedidos</Link></li>
+                    )}
+
+                    {user.isAdmin && (
+                        <>
+                            <li><hr className="dropdown-divider bg-secondary opacity-25"/></li>
+                            <li><small className="text-muted ms-3" style={{fontSize: '0.7rem'}}>PANEL ADMIN</small></li>
+                            <li><Link className="dropdown-item text-info rounded mb-1" to="/admin/productlist">📦 Productos</Link></li>
+                            <li><Link className="dropdown-item text-warning rounded mb-1" to="/admin/orderlist">💰 Ventas</Link></li>
+                        </>
+                    )}
+
+                    <li><hr className="dropdown-divider bg-secondary opacity-25"/></li>
+                    
+                    <li>
+                        <button className="dropdown-item text-danger rounded hover-red fw-bold" onClick={logoutHandler}>
+                            🚪 Cerrar Sesión
+                        </button>
+                    </li>
+                </ul>
               </li>
               ) : (
-              <li className="nav-item mt-3 mt-lg-0">
-                <Link to="/login" className="btn fw-bold px-4 rounded-pill text-white w-100" style={{background: 'var(--color-principal)'}}>
-                    Ingresar
+              <li className="nav-item ms-lg-2">
+                <Link to="/login" className="btn btn-sm fw-bold px-4 py-2 rounded-pill text-white shadow-lg" 
+                      style={{background: 'linear-gradient(90deg, var(--color-principal), #00c48f)', border: 'none'}}>
+                    INGRESAR
                 </Link>
               </li>
               )}
