@@ -1,31 +1,21 @@
 @import url('https://fonts.googleapis.com/css?family=Montserrat:400,600,800');
 
-/* --- 1. VARIABLES Y COLORES (Estilo Cyberpunk/Marca) --- */
+/* --- 1. VARIABLES Y COLORES --- */
 :root {
     --color-brand: #009970;
-    /* Tu verde corporativo */
     --color-neon-cyan: #00e5ff;
-    /* Cian brillante */
     --color-neon-pink: #ff2a6d;
-    /* Rosa brillante */
     --bg-dark-deep: #0f0c29;
-    /* Azul muy oscuro */
     --bg-dark-mid: #302b63;
-    /* Morado oscuro */
     --bg-dark-light: #24243e;
-    /* Gris azulado */
     --card-bg: rgba(30, 30, 46, 0.75);
-    /* Vidrio semitransparente */
 }
 
 /* --- 2. FONDO DE PANTALLA ANIMADO --- */
 .auth-body {
-    /* Degradado profundo y elegante */
     background: linear-gradient(135deg, var(--bg-dark-deep), var(--bg-dark-mid), var(--bg-dark-light));
     background-size: 400% 400%;
     animation: gradientBG 15s ease infinite;
-    /* Fondo en movimiento */
-
     display: flex;
     justify-content: center;
     align-items: center;
@@ -50,48 +40,32 @@
     }
 }
 
-/* --- 3. TARJETA PRINCIPAL (Efecto Vidrio + Neón) --- */
+/* --- 3. TARJETA PRINCIPAL --- */
 .auth-container {
     background-color: var(--card-bg);
     backdrop-filter: blur(20px);
-    /* Efecto borroso */
     -webkit-backdrop-filter: blur(20px);
     border-radius: 25px;
-
     position: relative;
     overflow: hidden;
     width: 950px;
     max-width: 100%;
     min-height: 600px;
-
     border: 1px solid rgba(255, 255, 255, 0.1);
-    /* Borde fino */
-
-    /* DOBLE SOMBRA DE NEÓN */
     box-shadow:
         -10px -10px 30px rgba(0, 229, 255, 0.1),
         10px 10px 30px rgba(255, 42, 109, 0.1),
         0 20px 50px rgba(0, 0, 0, 0.5);
 }
 
-/* Títulos */
+/* --- ESTILOS DEL FORMULARIO --- */
 .auth-title {
     font-weight: 800;
-    margin: 0;
-    /* Texto con degradado Verde a Cian */
+    margin: 0 0 10px 0;
     background: linear-gradient(to right, var(--color-brand), var(--color-neon-cyan));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     font-size: 2rem;
-    margin-bottom: 10px;
-}
-
-.auth-title-overlay {
-    font-weight: 800;
-    margin: 0;
-    color: white;
-    font-size: 2.5rem;
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
 }
 
 .auth-p {
@@ -112,7 +86,6 @@
     text-align: center;
 }
 
-/* Inputs "Incrustados" */
 .auth-form input {
     background-color: rgba(15, 15, 25, 0.6);
     border: none;
@@ -131,7 +104,6 @@
     background-color: rgba(15, 15, 25, 0.9);
 }
 
-/* Botones */
 .auth-btn {
     border-radius: 50px;
     border: none;
@@ -152,28 +124,82 @@
     transform: scale(0.95);
 }
 
-.ghost-btn {
-    border-radius: 50px;
-    border: 2px solid white;
-    background-color: transparent;
-    color: white;
-    font-size: 13px;
-    font-weight: 800;
-    padding: 15px 50px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    transition: all 0.3s ease;
-    cursor: pointer;
-    margin-top: 25px;
+/* =========================================
+   ANIMACIÓN PRO EN PC (CASCADA)
+   ========================================= */
+/* Definimos la animación de entrada */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
-.ghost-btn:hover {
-    background-color: white;
-    color: var(--bg-dark-deep);
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+/* Aplicamos la animación con retraso a los elementos del formulario ACTIVO */
+.sign-in-container .auth-title,
+.sign-in-container input,
+.sign-in-container .auth-btn,
+.sign-in-container .auth-p {
+    animation: fadeInUp 0.6s ease backwards;
 }
 
-/* --- 4. ANIMACIÓN PC (Deslizamiento Lateral) --- */
+/* Retrasos para el efecto cascada en Login */
+.sign-in-container .auth-title {
+    animation-delay: 0.2s;
+}
+
+.sign-in-container input:nth-of-type(1) {
+    animation-delay: 0.3s;
+}
+
+.sign-in-container input:nth-of-type(2) {
+    animation-delay: 0.4s;
+}
+
+.sign-in-container .auth-btn {
+    animation-delay: 0.5s;
+}
+
+.sign-in-container .auth-p {
+    animation-delay: 0.6s;
+}
+
+/* Cuando cambiamos a Registro, animamos sus elementos */
+.auth-container.right-panel-active .sign-up-container .auth-title,
+.auth-container.right-panel-active .sign-up-container input,
+.auth-container.right-panel-active .sign-up-container .auth-btn,
+.auth-container.right-panel-active .sign-up-container .auth-p {
+    animation: fadeInUp 0.6s ease backwards;
+}
+
+/* Retrasos para el efecto cascada en Registro */
+.auth-container.right-panel-active .sign-up-container .auth-title {
+    animation-delay: 0.2s;
+}
+
+.auth-container.right-panel-active .sign-up-container input:nth-of-type(1) {
+    animation-delay: 0.3s;
+}
+
+.auth-container.right-panel-active .sign-up-container input:nth-of-type(2) {
+    animation-delay: 0.4s;
+}
+
+.auth-container.right-panel-active .sign-up-container input:nth-of-type(3) {
+    animation-delay: 0.5s;
+}
+
+.auth-container.right-panel-active .sign-up-container .auth-btn {
+    animation-delay: 0.6s;
+}
+
+
+/* --- LÓGICA BASE DE PC --- */
 .form-container {
     position: absolute;
     top: 0;
@@ -203,25 +229,9 @@
     transform: translateX(100%);
     opacity: 1;
     z-index: 5;
-    animation: show 0.7s;
 }
 
-@keyframes show {
-
-    0%,
-    49.99% {
-        opacity: 0;
-        z-index: 1;
-    }
-
-    50%,
-    100% {
-        opacity: 1;
-        z-index: 5;
-    }
-}
-
-/* Panel Overlay PC */
+/* --- PANEL OVERLAY (PC) --- */
 .overlay-container {
     position: absolute;
     top: 0;
@@ -231,8 +241,7 @@
     overflow: hidden;
     transition: transform 0.7s ease-in-out;
     z-index: 100;
-    border-top-right-radius: 25px;
-    border-bottom-right-radius: 25px;
+    border-radius: 0 25px 25px 0;
 }
 
 .auth-container.right-panel-active .overlay-container {
@@ -289,9 +298,37 @@
     transform: translateX(20%);
 }
 
+.auth-title-overlay {
+    font-weight: 800;
+    margin: 0;
+    color: white;
+    font-size: 2.5rem;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+.ghost-btn {
+    border-radius: 50px;
+    border: 2px solid white;
+    background-color: transparent;
+    color: white;
+    font-size: 13px;
+    font-weight: 800;
+    padding: 15px 50px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    margin-top: 25px;
+}
+
+.ghost-btn:hover {
+    background-color: white;
+    color: var(--bg-dark-deep);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+}
 
 /* =========================================
-   5. MÓVIL (CORRECCIÓN NUCLEAR + ESTILO NEÓN)
+   CORRECCIÓN Y ANIMACIÓN PRO EN MÓVIL
    ========================================= */
 @media (max-width: 768px) {
     .auth-body {
@@ -306,14 +343,34 @@
         max-width: 400px;
         min-height: 750px;
         display: block;
-        /* Importante para el fix */
         position: relative;
-        flex-direction: column;
         border-radius: 0;
-        /* Opcional: bordes rectos en móvil */
     }
 
-    /* FORMULARIO: ARRIBA (65%) */
+    /* --- ARREGLO DEL BUG DE TEXTO --- */
+    /* Ocultamos POR DEFECTO ambos paneles */
+    .overlay-left,
+    .overlay-right {
+        display: none;
+    }
+
+    /* Solo mostramos el panel DERECHO (invitación a registro) en modo Login */
+    .overlay-right {
+        display: flex !important;
+    }
+
+    /* Cuando pasamos a modo Registro... */
+    .auth-container.right-panel-active .overlay-right {
+        display: none !important;
+        /* Ocultamos el derecho */
+    }
+
+    .auth-container.right-panel-active .overlay-left {
+        display: flex !important;
+        /* Mostramos el izquierdo */
+    }
+
+    /* --- ANIMACIÓN PRO MÓVIL (Deslizamiento Vertical) --- */
     .form-container {
         width: 100% !important;
         height: 65% !important;
@@ -322,15 +379,42 @@
         left: 0 !important;
         transform: none !important;
         padding: 0 !important;
-        transition: opacity 0.3s ease !important;
+        /* Animación de entrada/salida suave */
+        transition: all 0.5s ease-in-out !important;
     }
 
+    /* Estado inicial: Login visible, Registro fuera de pantalla (arriba) */
+    .sign-in-container {
+        opacity: 1;
+        z-index: 5;
+        transform: translateY(0) !important;
+    }
+
+    .sign-up-container {
+        opacity: 0;
+        z-index: 1;
+        transform: translateY(-20px) !important;
+        /* Empieza un poco más arriba */
+    }
+
+    /* Al activar Registro: Login sube y desaparece, Registro baja y aparece */
+    .auth-container.right-panel-active .sign-in-container {
+        opacity: 0;
+        z-index: 1;
+        transform: translateY(-20px) !important;
+    }
+
+    .auth-container.right-panel-active .sign-up-container {
+        opacity: 1;
+        z-index: 5;
+        transform: translateY(0) !important;
+    }
+
+    /* --- RESTO DEL CSS MÓVIL --- */
     .auth-form {
         padding: 0 30px;
-        /* Margen interno en móvil */
     }
 
-    /* PANEL DE COLOR: ABAJO (35%) */
     .overlay-container {
         width: 100% !important;
         height: 35% !important;
@@ -340,7 +424,6 @@
         left: 0 !important;
         transform: none !important;
         border-radius: 0 !important;
-        /* Quitamos bordes raros */
     }
 
     .overlay {
@@ -357,49 +440,13 @@
         transform: none !important;
     }
 
-    /* LOGICA DE VISIBILIDAD MÓVIL */
-    .sign-in-container {
-        opacity: 1;
-        z-index: 5;
-    }
-
-    .auth-container.right-panel-active .sign-in-container {
-        opacity: 0;
-        z-index: 1;
-    }
-
-    .sign-up-container {
-        opacity: 0;
-        z-index: 1;
-    }
-
-    .auth-container.right-panel-active .sign-up-container {
-        opacity: 1;
-        z-index: 5;
-        animation: none !important;
-    }
-
-    .overlay-left {
-        display: none;
-    }
-
-    .auth-container.right-panel-active .overlay-left {
-        display: flex !important;
-        opacity: 1;
-        pointer-events: all;
-    }
-
-    .overlay-right {
-        display: flex !important;
-        opacity: 1;
-    }
-
-    .auth-container.right-panel-active .overlay-right {
-        display: none;
-    }
-
-    /* Ajustes de tamaño de letra para móvil */
     .auth-title-overlay {
         font-size: 1.8rem;
+    }
+
+    /* Desactivamos la animación de cascada en móvil para que sea más fluido el slide vertical */
+    .sign-in-container *,
+    .sign-up-container * {
+        animation: none !important;
     }
 }
