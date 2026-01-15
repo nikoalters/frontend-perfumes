@@ -1,92 +1,137 @@
-/* 1. EL FONDO (Background) */
-.glass-bg {
-    /* Imagen de fondo de alta calidad */
-    background-image: url('https://images.unsplash.com/photo-1615634260167-c8cdede054de?q=80&w=2564&auto=format&fit=crop');
-    background-color: #004d38;
-    /* Color verde oscuro por si falla la imagen */
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+/* =========================================
+   TEMA: Dark Mode Gold (VIP Luxury)
+   ========================================= */
 
-    /* Ocupar toda la pantalla y centrar contenido */
-    height: 100vh;
+/* 1. FONDO PRINCIPAL */
+.vip-bg {
+    background-color: #050505;
+    /* Negro casi puro, mate */
+    min-height: 100vh;
     width: 100vw;
     display: flex;
     justify-content: center;
     align-items: center;
     position: fixed;
-    /* Asegura que se quede quieto */
     top: 0;
     left: 0;
-    z-index: 100;
-    /* Asegura que esté por encima de todo */
+    z-index: 999;
 }
 
-/* 2. LA TARJETA (El efecto vidrio) */
-.glass-container {
-    background: rgba(255, 255, 255, 0.1);
-    /* Blanco muy transparente */
-    backdrop-filter: blur(10px);
-    /* EL EFECTO BORROSO */
-    -webkit-backdrop-filter: blur(10px);
-    /* Para Safari */
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    /* Borde sutil */
-
-    padding: 3rem;
-    border-radius: 20px;
-    width: 90%;
-    max-width: 400px;
-    /* Ancho máximo de la tarjeta */
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-}
-
-/* 3. LOS INPUTS (Cajas de texto) */
-.glass-input {
-    background: rgba(255, 255, 255, 0.15);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    padding: 12px 20px;
-    border-radius: 50px;
-    /* Redonditos */
+/* 2. TARJETA CENTRAL */
+.vip-card {
     width: 100%;
-    color: white;
-    /* Texto blanco */
-    outline: none;
-    transition: 0.3s;
+    max-width: 450px;
+    padding: 4rem 3rem;
+    /* Borde dorado muy sutil */
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    background-color: #0a0a0a;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
 }
 
-.glass-input::placeholder {
-    color: rgba(255, 255, 255, 0.8);
-    /* Placeholder clarito */
+/* 3. TIPOGRAFÍA Y TÍTULOS */
+.vip-title {
+    color: #d4af37;
+    /* COLOR DORADO PRINCIPAL */
+    font-weight: 300;
+    /* Letra fina elegante */
+    letter-spacing: 4px;
+    /* Letras separadas */
+    font-size: 1.6rem;
+    margin: 0;
 }
 
-.glass-input:focus {
-    background: rgba(255, 255, 255, 0.25);
-    border-color: white;
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+.vip-divider {
+    height: 1px;
+    width: 60px;
+    background-color: #d4af37;
+    margin: 20px auto;
+    /* Centrado */
 }
 
-/* 4. EL BOTÓN */
-.glass-btn {
-    width: 100%;
-    padding: 12px;
-    border: none;
-    border-radius: 50px;
-    background: white;
-    /* Botón blanco */
-    color: #009970;
-    /* Texto Verde (Tu marca) */
-    font-weight: bold;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: 0.3s;
+.vip-subtitle {
+    color: #666;
+    letter-spacing: 3px;
+    font-size: 0.75rem;
     text-transform: uppercase;
-    letter-spacing: 1px;
 }
 
-.glass-btn:hover {
-    background: #f0f0f0;
-    transform: scale(1.05);
-    /* Crece un poquito */
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+/* 4. INPUTS (Solo línea inferior) */
+.vip-label {
+    color: #d4af37;
+    font-size: 0.7rem;
+    letter-spacing: 1.5px;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.vip-input {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid #333;
+    /* Línea gris inactiva */
+    width: 100%;
+    color: #fff;
+    /* Texto blanco al escribir */
+    padding: 10px 0;
+    outline: none;
+    transition: all 0.4s ease;
+    font-size: 1rem;
+}
+
+.vip-input::placeholder {
+    color: #444;
+}
+
+.vip-input:focus {
+    border-bottom: 1px solid #d4af37;
+    /* SE ILUMINA EN DORADO */
+    box-shadow: 0 1px 0 0 #d4af37;
+}
+
+/* Alert de error personalizado para fondo oscuro */
+.vip-alert {
+    background-color: rgba(220, 53, 69, 0.1);
+    border: 1px solid #dc3545;
+    color: #ff6b6b;
+}
+
+/* 5. BOTÓN DORADO */
+.vip-btn {
+    background: transparent;
+    border: 2px solid #d4af37;
+    color: #d4af37;
+    padding: 15px;
+    letter-spacing: 3px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: all 0.4s ease;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+.vip-btn:hover {
+    background: #d4af37;
+    /* Relleno dorado al pasar el mouse */
+    color: #000;
+    /* Texto negro */
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+    /* Resplandor dorado */
+    transform: translateY(-2px);
+}
+
+/* 6. ENLACES */
+.vip-link {
+    color: #888;
+    text-decoration: none;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    transition: 0.3s;
+    border-bottom: 1px dotted #555;
+    padding-bottom: 2px;
+}
+
+.vip-link:hover {
+    color: #d4af37;
+    border-bottom-color: #d4af37;
 }
