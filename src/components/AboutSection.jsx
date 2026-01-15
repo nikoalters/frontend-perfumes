@@ -3,7 +3,7 @@ import React from 'react';
 const AboutSection = () => {
   return (
     <div className="container my-5 pt-5 border-top">
-      {/* 1. ENCABEZADO */}
+      
       <div className="text-center mb-5">
         <h2 className="fw-bold text-success display-6">¿Quiénes Somos?</h2>
         <p className="lead text-muted mx-auto" style={{ maxWidth: '700px' }}>
@@ -12,7 +12,7 @@ const AboutSection = () => {
         </p>
       </div>
 
-      {/* 2. PILARES DE CONFIANZA (ICONOS) */}
+      
       <div className="row text-center mb-5 g-4">
         <div className="col-md-4">
           <div className="p-4 bg-light rounded-3 shadow-sm h-100 border border-success border-opacity-25">
@@ -37,21 +37,21 @@ const AboutSection = () => {
         </div>
       </div>
 
-      {/* 3. SECCIÓN MIXTA: CONTACTO + FAQ */}
+      
       <div className="row align-items-start bg-white p-4 rounded-3 shadow-sm border">
         
-        {/* LADO IZQUIERDO: CONTACTO (ACTUALIZADO SOLO WSP E INSTAGRAM) */}
+        
         <div className="col-md-5 mb-4 mb-md-0 text-center text-md-start">
             <h3 className="fw-bold mb-3">📱 ¡Hablemos!</h3>
             <p className="text-muted">¿Buscas un aroma específico o necesitas asesoría para un regalo? Escríbenos.</p>
             
             <div className="d-flex flex-wrap gap-2 justify-content-center justify-content-md-start">
-                {/* Botón WhatsApp */}
+               
                 <a href="https://wa.me/56958547236" target="_blank" rel="noreferrer" className="btn btn-success btn-lg fw-bold text-white shadow-sm border-0" style={{backgroundColor: '#25D366'}}>
                     <i className="bi bi-whatsapp me-2"></i> WhatsApp
                 </a>
                 
-                {/* Botón Instagram (Nuevo estilo degradado) */}
+                
                 <a href="https://www.instagram.com/nico_alters?igsh=em9xb2NuN2h6NTc=" target="_blank" rel="noreferrer" className="btn btn-lg fw-bold text-white shadow-sm border-0" 
                    style={{background: 'linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)'}}>
                     <i className="bi bi-instagram me-2"></i> Instagram
@@ -63,7 +63,7 @@ const AboutSection = () => {
             </p>
         </div>
 
-        {/* LADO DERECHO: PREGUNTAS FRECUENTES (Acordeón) */}
+        
         <div className="col-md-7">
             <h5 className="fw-bold mb-3 text-secondary border-bottom pb-2">Preguntas Frecuentes</h5>
             <div className="accordion accordion-flush" id="accordionFAQ">
