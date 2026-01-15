@@ -48,18 +48,31 @@ const Navbar = ({ busqueda, setBusqueda, carritoCount, user, logoutHandler, setM
                 <button onClick={() => filtrarPorGeneroRapido('unisex')} className="btn p-0 text-secondary fw-semibold small hover-white">UNISEX</button>
               </div>
               
-              {/* 4. CARRITO */}
+              {/* 4. CARRITO (CORREGIDO: Vuelve el color verde y el estilo llamativo) */}
               <li className="nav-item position-relative">
                   <button 
-                    className="btn rounded-pill px-3 py-1 d-flex align-items-center gap-2" 
+                    className="btn rounded-pill px-3 py-1 d-flex align-items-center gap-2 transition-btn" 
                     onClick={() => setMostrarModal(true)}
-                    style={{border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.05)', color: 'white'}}
+                    style={{
+                        border: '1px solid var(--color-principal)', 
+                        background: 'rgba(0, 153, 112, 0.1)', 
+                        color: 'white',
+                        boxShadow: '0 0 10px rgba(0, 153, 112, 0.2)'
+                    }}
                   >
                       <span style={{fontSize: '1.2rem'}}>🛒</span>
                       <span className="d-none d-lg-inline small fw-bold">Carrito</span>
+                      
                       {carritoCount > 0 && (
                         <span className="badge rounded-circle d-flex align-items-center justify-content-center p-0 position-absolute top-0 start-100 translate-middle" 
-                              style={{width: '20px', height: '20px', backgroundColor: 'var(--color-heart)', fontSize: '0.7rem'}}>
+                              style={{
+                                  width: '22px', 
+                                  height: '22px', 
+                                  backgroundColor: '#ff4757', 
+                                  color: 'white',
+                                  fontSize: '0.75rem',
+                                  border: '2px solid #1a1a2e' // Borde oscuro para separar del botón
+                              }}>
                           {carritoCount}
                         </span>
                       )}
@@ -68,10 +81,9 @@ const Navbar = ({ busqueda, setBusqueda, carritoCount, user, logoutHandler, setM
 
               <div className="vr d-none d-lg-block mx-1 bg-secondary opacity-25" style={{height: '25px'}}></div>
 
-              {/* 5. ZONA DE USUARIO (Menú Desplegable Limpio) */}
+              {/* 5. ZONA DE USUARIO (Dropdown) */}
               {user ? (
               <li className="nav-item dropdown">
-                {/* BOTÓN PRINCIPAL (Solo se ve el nombre y avatar) */}
                 <a className="nav-link dropdown-toggle d-flex align-items-center gap-2 user-pill p-1 pe-3 rounded-pill text-decoration-none" 
                    href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"
                    style={{background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', transition: '0.3s'}}>
@@ -83,7 +95,6 @@ const Navbar = ({ busqueda, setBusqueda, carritoCount, user, logoutHandler, setM
                     <span className="text-white fw-bold small">{user.name.split(' ')[0]}</span>
                 </a>
 
-                {/* EL MENÚ OCULTO (Se abre al hacer clic) */}
                 <ul className="dropdown-menu dropdown-menu-end p-2 border-0 shadow-lg" 
                     style={{background: '#1a1a2e', minWidth: '220px', marginTop: '10px', border: '1px solid rgba(255,255,255,0.1)'}}>
                     
