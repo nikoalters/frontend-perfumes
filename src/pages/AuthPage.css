@@ -1,46 +1,55 @@
 @import url('https://fonts.googleapis.com/css?family=Montserrat:400,800');
 
 /* =========================================
-   CONFIGURACIÓN BASE
+   1. EL FONDO DEGRADADO (Adiós al negro plano)
    ========================================= */
 .auth-body {
-    background: #121212;
-    /* Fondo oscuro general */
+    /* Aquí está el cambio: Un degradado profundo y elegante */
+    background: linear-gradient(135deg, #232526 0%, #004d38 100%);
+    /* Se siente premium, no es "negro aburrido" */
+
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
     font-family: 'Montserrat', sans-serif;
     height: 100vh;
-    margin: -2rem;
-    /* Compensar el padding de App.css si es necesario */
+    margin: 0;
+    overflow: hidden;
 }
 
+/* =========================================
+   2. LA TARJETA PRINCIPAL (Estilo Neón Sutil)
+   ========================================= */
 .auth-container {
     background-color: #1e1e2e;
-    /* Color de la tarjeta oscura */
+    /* Tarjeta oscura para contraste */
     border-radius: 20px;
-    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25),
+
+    /* Sombra potente para que "flote" sobre el degradado */
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.3),
         0 10px 10px rgba(0, 0, 0, 0.22);
+
     position: relative;
     overflow: hidden;
     width: 900px;
     max-width: 100%;
     min-height: 550px;
-    /* Sombra de neón sutil */
-    border: 1px solid #00997040;
-    box-shadow: 0 0 20px #00997020;
+
+    /* Borde neón sutil */
+    border: 1px solid rgba(0, 153, 112, 0.3);
 }
 
+/* Títulos y textos */
 .auth-title {
     font-weight: bold;
-    margin: 0;
+    margin: 0 0 15px 0;
     color: var(--color-principal);
-    /* Título verde */
+    /* Tu verde corporativo */
 }
 
 .auth-title-overlay {
-    font-weight: bold;
+    font-weight: 800;
     margin: 0;
     color: white;
     font-size: 2.5rem;
@@ -48,7 +57,7 @@
 
 .auth-p {
     font-size: 14px;
-    font-weight: 100;
+    font-weight: 300;
     line-height: 20px;
     letter-spacing: 0.5px;
     margin: 20px 0 30px;
@@ -61,9 +70,9 @@
     margin-bottom: 20px;
 }
 
+/* Formularios */
 .auth-form {
     background-color: #1e1e2e;
-    /* Fondo oscuro del formulario */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -73,7 +82,7 @@
     text-align: center;
 }
 
-/* Inputs estilo moderno oscuro */
+/* Inputs Modernos */
 .auth-form input {
     background-color: #2a2a3c;
     border: 1px solid #333;
@@ -88,29 +97,32 @@
 
 .auth-form input:focus {
     border-color: var(--color-principal);
+    /* Se ilumina verde */
+    box-shadow: 0 0 8px rgba(0, 153, 112, 0.2);
 }
 
-/* Botón principal */
+/* BOTONES */
 .auth-btn {
     border-radius: 50px;
-    border: 1px solid var(--color-principal);
-    background-color: var(--color-principal);
+    border: none;
+    /* Degradado en el botón */
+    background: linear-gradient(to right, #009970, #00bf8f);
     color: #FFFFFF;
     font-size: 12px;
     font-weight: bold;
-    padding: 12px 45px;
+    padding: 15px 45px;
     letter-spacing: 1px;
     text-transform: uppercase;
     transition: transform 80ms ease-in;
     margin-top: 20px;
     cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0, 153, 112, 0.4);
 }
 
 .auth-btn:active {
     transform: scale(0.95);
 }
 
-/* Botón transparente del overlay */
 .ghost-btn {
     border-radius: 50px;
     border: 2px solid #FFFFFF;
@@ -121,19 +133,18 @@
     padding: 12px 45px;
     letter-spacing: 1px;
     text-transform: uppercase;
-    transition: transform 80ms ease-in;
+    transition: transform 80ms ease-in, background 0.3s;
     cursor: pointer;
     margin-top: 20px;
 }
 
 .ghost-btn:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(255, 255, 255, 0.15);
 }
 
 /* =========================================
-   ANIMACIÓN ESCRITORIO (Horizontal)
+   3. ANIMACIÓN DESLIZANTE (PC)
    ========================================= */
-
 .form-container {
     position: absolute;
     top: 0;
@@ -141,14 +152,12 @@
     transition: all 0.6s ease-in-out;
 }
 
-/* Login está a la izquierda por defecto */
 .sign-in-container {
     left: 0;
     width: 50%;
     z-index: 2;
 }
 
-/* Registro está a la derecha, oculto inicialmente */
 .sign-up-container {
     left: 0;
     width: 50%;
@@ -156,7 +165,6 @@
     z-index: 1;
 }
 
-/* ACTIVACIÓN PANEL DERECHO (Modo Registro) */
 .auth-container.right-panel-active .sign-in-container {
     transform: translateX(100%);
     opacity: 0;
@@ -184,7 +192,7 @@
     }
 }
 
-/* OVERLAY DESLIZANTE (Verde) */
+/* EL PANEL VERDE QUE SE MUEVE */
 .overlay-container {
     position: absolute;
     top: 0;
@@ -202,7 +210,8 @@
 
 .overlay {
     background: var(--color-principal);
-    background: linear-gradient(to right, #006349, var(--color-principal));
+    /* Degradado del panel verde */
+    background: linear-gradient(to right, #005841, var(--color-principal), #00bf8f);
     background-repeat: no-repeat;
     background-size: cover;
     background-position: 0 0;
@@ -251,129 +260,103 @@
     transform: translateX(20%);
 }
 
+
 /* =========================================
-   RESPONSIVE MÓVIL (Animación Vertical)
+   4. CORRECCIÓN MÓVIL (Nuclear y Segura)
    ========================================= */
-
 @media (max-width: 768px) {
+    .auth-body {
+        height: auto;
+        min-height: 100vh;
+        padding: 20px 0;
+        overflow-y: auto;
+    }
+
     .auth-container {
-        width: 90%;
-        min-height: 800px;
-        /* Más alto para que quepa todo vertical */
-        flex-direction: column;
-        overflow: hidden;
+        width: 100%;
+        max-width: 400px;
+        min-height: 750px;
+        display: block;
+        /* Bloque simple */
+        position: relative;
     }
 
-    /* REAJUSTE DE CONTENEDORES DE FORMULARIO */
+    /* Formulario arriba */
     .form-container {
-        width: 100%;
-        height: 70%;
-        /* Ocupan el 70% superior */
-        top: 0;
-        left: 0;
-        transition: all 0.6s ease-in-out;
+        width: 100% !important;
+        height: 65% !important;
+        position: absolute;
+        top: 0 !important;
+        left: 0 !important;
+        transform: none !important;
+        /* Sin movimiento lateral */
+        transition: opacity 0.3s ease-in-out !important;
     }
 
+    /* Panel verde abajo */
+    .overlay-container {
+        width: 100% !important;
+        height: 35% !important;
+        position: absolute;
+        bottom: 0 !important;
+        top: auto !important;
+        left: 0 !important;
+        transform: none !important;
+    }
+
+    .overlay {
+        width: 100% !important;
+        height: 100% !important;
+        left: 0 !important;
+        transform: none !important;
+        background: linear-gradient(to bottom, var(--color-principal), #004d38);
+    }
+
+    .overlay-panel {
+        width: 100% !important;
+        height: 100% !important;
+        padding: 10px !important;
+        transform: none !important;
+    }
+
+    /* Aparición/Desaparición simple */
     .sign-in-container {
-        width: 100%;
-        left: 0;
-        z-index: 2;
+        opacity: 1;
+        z-index: 5;
     }
 
-    .sign-up-container {
-        width: 100%;
-        left: 0;
+    .auth-container.right-panel-active .sign-in-container {
         opacity: 0;
         z-index: 1;
     }
 
-    /* ESTADO ACTIVO (REGISTRO): Mover formularios hacia abajo */
-    /* Cálculo: El form ocupa 70%. El overlay ocupa 30%.
-       Para mover el form al hueco de abajo (el 30%), debe bajar un 30% del contenedor padre.
-       30% del padre equivale a ~42.8% de la altura del propio elemento (30/70).
-    */
-    .auth-container.right-panel-active .sign-in-container {
-        transform: translateY(42.8%);
+    .sign-up-container {
         opacity: 0;
+        z-index: 1;
     }
 
     .auth-container.right-panel-active .sign-up-container {
-        transform: translateY(42.8%);
         opacity: 1;
         z-index: 5;
-        animation: show 0.6s;
+        animation: none !important;
     }
 
-    /* REAJUSTE DEL OVERLAY CONTAINER (La parte verde) */
-    .overlay-container {
-        width: 100%;
-        height: 30%;
-        /* Ocupa el 30% inferior */
-        top: 70%;
-        /* Posición inicial abajo */
-        left: 0;
-        right: auto;
-        transform: translate(0);
-        transition: transform 0.6s ease-in-out;
-        z-index: 100;
-    }
-
-    /* ESTADO ACTIVO: El Overlay sube al topo */
-    /* Cálculo: Debe subir un 70% del padre.
-       Como mide 30%, 70 es 2.33 veces 30.
-       Por tanto, translateY(-233%).
-    */
-    .auth-container.right-panel-active .overlay-container {
-        transform: translateY(-233%);
-    }
-
-    /* REAJUSTE DEGRADADO INTERNO */
-    .overlay {
-        width: 100%;
-        height: 200%;
-        /* Doble de alto para deslizar vertical */
-        left: 0;
-        top: -100%;
-        /* Posicionamiento inicial */
-        transform: translateY(0);
-        transition: transform 0.6s ease-in-out;
-    }
-
-    .auth-container.right-panel-active .overlay {
-        transform: translateY(50%);
-        /* Desliza el fondo internamente */
-    }
-
-    /* REAJUSTE PANELES DE TEXTO */
-    .overlay-panel {
-        width: 100%;
-        height: 50%;
-        /* Cada panel es la mitad del overlay */
-        padding: 0 20px;
-        transform: translateY(0);
-        top: auto;
-        left: 0;
-    }
-
-    /* Panel izquierdo (Login) -> Ahora está ARRIBA en el overlay */
     .overlay-left {
-        top: 0;
-        transform: translateY(-20%);
+        display: none;
     }
 
     .auth-container.right-panel-active .overlay-left {
-        transform: translateY(0);
+        display: flex !important;
+        opacity: 1;
+        pointer-events: all;
     }
 
-    /* Panel derecho (Registro) -> Ahora está ABAJO en el overlay */
     .overlay-right {
-        bottom: 0;
-        right: 0;
-        top: auto;
-        transform: translateY(0);
+        display: flex !important;
+        opacity: 1;
     }
 
     .auth-container.right-panel-active .overlay-right {
-        transform: translateY(20%);
+        display: none;
     }
 }
