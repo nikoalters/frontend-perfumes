@@ -2,6 +2,7 @@ import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
+import './LoginPage.css'; // Reutilizamos el mismo CSS elegante
 
 const RegisterPage = () => {
   const [name, setName] = useState('');
@@ -18,106 +19,147 @@ const RegisterPage = () => {
 
     // 1. Validar que las contraseñas coincidan
     if (password !== confirmPassword) {
-        setError("Las contraseñas no coinciden ❌");
+        setError("Las contraseñas no coinciden");
         return;
     }
 
     try {
-      // 2. Enviar datos al Backend (Ruta de Registro)
+      // 2. Enviar datos al Backend
       const { data } = await axios.post('https://api-perfumes-chile.onrender.com/api/users', {
         name,
         email,
         password,
       });
 
-      // 3. Login automático al registrarse
+      // 3. Login automático
       localStorage.setItem('userInfo', JSON.stringify(data));
       
+      // Alerta Limpia y Corporativa
       Swal.fire({
-          title: '¡Bienvenido!',
-          text: `Cuenta creada exitosamente, ${data.name}`,
+          title: '¡Cuenta creada!',
+          text: `Bienvenido a Perfumes Chile, ${data.name.split(' ')[0]}`,
           icon: 'success',
-          timer: 2000
+          confirmButtonColor: '#009970', // Tu verde corporativo
+          timer: 2000,
+          showConfirmButton: false
       });
 
-      navigate('/'); // Redirigir al inicio
+      navigate('/'); 
 
     } catch (error) {
-      // Si el correo ya existe o hay otro error
       setError(error.response && error.response.data.message 
         ? error.response.data.message 
         : error.message);
+        
+      Swal.fire({
+        icon: 'error',
+        title: 'Error de registro',
+        text: 'Por favor verifica tus datos e inténtalo nuevamente.',
+        confirmButtonColor: '#d63031'
+      });
     }
   };
 
   return (
-    <div className="container mt-5 fade-in">
-      <div className="row justify-content-md-center">
-        <div className="col-md-6">
-          <div className="card p-4 shadow-sm">
-            <h2 className="text-center mb-4">Crear Cuenta 🚀</h2>
+    <div className="container-fluid login-container">
+      <div className="row g-0 h-100">
+        
+        {/* LADO IZQUIERDO: IMAGEN (La misma estética del Login) */}
+        <div className="col-md-6 d-none d-md-block p-0">
+          <div className="login-image">
+            <div className="login-overlay">
+              <div className="overlay-content">
+                <h1 className="display-4 fw-bold text-white">Únete a Nosotros</h1>
+                <p className="text-white-50 lead">Descubre fragancias exclusivas y ofertas especiales.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* LADO DERECHO: FORMULARIO */}
+        <div className="col-md-6 bg-white d-flex align-items-center justify-content-center">
+          <div className="login-form-wrapper p-5 fade-in" style={{ width: '100%', maxWidth: '500px' }}>
             
-            {error && <div className="alert alert-danger">{error}</div>}
+            <div className="text-center mb-5">
+              <h2 className="fw-bold" style={{ color: 'var(--color-principal)' }}>CREAR CUENTA</h2>
+              <span className="text-muted">Completa tus datos para comenzar</span>
+            </div>
+
+            {error && <div className="alert alert-danger shadow-sm border-0">{error}</div>}
             
             <form onSubmit={submitHandler}>
-              <div className="mb-3">
-                <label className="form-label">Nombre Completo</label>
+              {/* Nombre */}
+              <div className="mb-4 form-floating">
                 <input
                   type="text"
-                  className="form-control"
-                  placeholder="Ej: Juan Pérez"
+                  className="form-control form-control-clean"
+                  id="floatingName"
+                  placeholder="Ej: Ignacio Benitez"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
                 />
+                <label htmlFor="floatingName">Nombre Completo</label>
               </div>
 
-              <div className="mb-3">
-                <label className="form-label">Correo Electrónico</label>
+              {/* Email */}
+              <div className="mb-4 form-floating">
                 <input
                   type="email"
-                  className="form-control"
+                  className="form-control form-control-clean"
+                  id="floatingEmail"
                   placeholder="ejemplo@correo.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
                 />
+                <label htmlFor="floatingEmail">Correo Electrónico</label>
               </div>
 
-              <div className="mb-3">
-                <label className="form-label">Contraseña</label>
+              {/* Password */}
+              <div className="mb-4 form-floating">
                 <input
                   type="password"
-                  className="form-control"
-                  placeholder="Mínimo 6 caracteres"
+                  className="form-control form-control-clean"
+                  id="floatingPassword"
+                  placeholder="Contraseña"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
                 />
+                <label htmlFor="floatingPassword">Contraseña</label>
               </div>
 
-              <div className="mb-3">
-                <label className="form-label">Confirmar Contraseña</label>
+              {/* Confirmar Password */}
+              <div className="mb-4 form-floating">
                 <input
                   type="password"
-                  className="form-control"
-                  placeholder="Repite tu contraseña"
+                  className="form-control form-control-clean"
+                  id="floatingConfirm"
+                  placeholder="Confirmar Contraseña"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
                 />
+                <label htmlFor="floatingConfirm">Confirmar Contraseña</label>
               </div>
 
-              <button type="submit" className="btn-login w-100 fw-bold">
-                Registrarme
-              </button>
+              <div className="d-grid gap-2 mt-5">
+                <button type="submit" className="btn btn-login-custom py-3 shadow-sm">
+                  REGISTRARME
+                </button>
+              </div>
             </form>
 
-            <div className="row py-3">
-              <div className="col">
-                ¿Ya tienes cuenta? <Link to="/login" className="text-decoration-none fw-bold">Inicia Sesión aquí</Link>
-              </div>
+            <div className="text-center mt-5">
+              <p className="text-muted small">
+                ¿Ya tienes una cuenta? <br />
+                <Link to="/login" className="fw-bold text-decoration-none" style={{ color: 'var(--color-principal)' }}>
+                  INICIAR SESIÓN
+                </Link>
+              </p>
             </div>
+
           </div>
         </div>
       </div>
