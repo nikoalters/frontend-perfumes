@@ -1,11 +1,10 @@
 @import url('https://fonts.googleapis.com/css?family=Montserrat:400,800');
 
 /* =========================================
-   ESTILOS BASE (EL DISEÑO ESPECTACULAR DE PC)
+   1. ESTILOS BASE (PC - DISEÑO NEÓN/GRADIENT)
    ========================================= */
 .auth-body {
     background: #121212;
-    /* Fondo oscuro */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -13,13 +12,11 @@
     font-family: 'Montserrat', sans-serif;
     height: 100vh;
     margin: 0;
-    /* Corregido margen negativo */
     overflow: hidden;
 }
 
 .auth-container {
     background-color: #1e1e2e;
-    /* Tarjeta oscura */
     border-radius: 20px;
     box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25),
         0 10px 10px rgba(0, 0, 0, 0.22);
@@ -27,17 +24,17 @@
     overflow: hidden;
     width: 900px;
     max-width: 100%;
-    min-height: 550px;
-    /* AQUÍ ESTÁ EL NEÓN QUE TE GUSTABA */
-    border: 1px solid #00997040;
-    box-shadow: 0 0 25px #00997030;
+    min-height: 600px;
+    /* Altura base */
+    /* EL NEÓN VERDE */
+    border: 1px solid rgba(0, 153, 112, 0.4);
+    box-shadow: 0 0 25px rgba(0, 153, 112, 0.3);
 }
 
 .auth-title {
     font-weight: bold;
     margin: 0 0 15px 0;
     color: var(--color-principal);
-    /* Título verde */
 }
 
 .auth-title-overlay {
@@ -56,12 +53,6 @@
     color: #eee;
 }
 
-.auth-span {
-    font-size: 12px;
-    color: #888;
-    margin-bottom: 20px;
-}
-
 .auth-form {
     background-color: #1e1e2e;
     display: flex;
@@ -73,7 +64,6 @@
     text-align: center;
 }
 
-/* Inputs modernos */
 .auth-form input {
     background-color: #2a2a3c;
     border: 1px solid #333;
@@ -91,11 +81,9 @@
     box-shadow: 0 0 8px rgba(0, 153, 112, 0.2);
 }
 
-/* Botón Principal con Degradado */
 .auth-btn {
     border-radius: 50px;
     border: none;
-    /* TU DEGRADADO VERDE */
     background: linear-gradient(to right, #009970, #00bf8f);
     color: #FFFFFF;
     font-size: 12px;
@@ -103,17 +91,11 @@
     padding: 15px 45px;
     letter-spacing: 1px;
     text-transform: uppercase;
-    transition: transform 80ms ease-in;
     margin-top: 20px;
     cursor: pointer;
     box-shadow: 0 5px 15px rgba(0, 153, 112, 0.3);
 }
 
-.auth-btn:active {
-    transform: scale(0.95);
-}
-
-/* Botón Transparente */
 .ghost-btn {
     border-radius: 50px;
     border: 2px solid #FFFFFF;
@@ -124,13 +106,8 @@
     padding: 12px 45px;
     letter-spacing: 1px;
     text-transform: uppercase;
-    transition: transform 80ms ease-in, background-color 0.3s;
     cursor: pointer;
     margin-top: 20px;
-}
-
-.ghost-btn:hover {
-    background-color: rgba(255, 255, 255, 0.15);
 }
 
 /* --- ANIMACIÓN PC (DESLIZAMIENTO LATERAL) --- */
@@ -181,7 +158,6 @@
     }
 }
 
-/* --- OVERLAY VERDE CON DEGRADADO --- */
 .overlay-container {
     position: absolute;
     top: 0;
@@ -198,7 +174,6 @@
 }
 
 .overlay {
-    /* EL DEGRADADO BONITO */
     background: linear-gradient(to right, #005841, var(--color-principal), #00bf8f);
     background-repeat: no-repeat;
     background-size: cover;
@@ -249,63 +224,72 @@
 }
 
 
-/* =========================================
-   CORRECCIÓN QUIRÚRGICA PARA MÓVILES 📱
-   (Solo se activa en pantallas pequeñas)
-   ========================================= */
+/* =========================================================
+   2. VERSIÓN MÓVIL FORZADA (Aquí está el arreglo "Nuclear")
+   ========================================================= */
 @media (max-width: 768px) {
+
+    /* Ajuste del cuerpo para permitir scroll si es necesario */
     .auth-body {
         height: auto;
         min-height: 100vh;
-        padding: 20px 0;
+        padding: 10px;
+        overflow-y: auto;
     }
 
     .auth-container {
-        width: 90%;
-        max-width: 400px;
-        min-height: 750px;
-        /* Hacemos la tarjeta más alta */
-        display: flex;
-        flex-direction: column;
+        width: 100%;
+        min-height: 800px;
+        /* Forzamos altura para que quepa todo */
+        position: relative;
+        display: block;
+        /* Quitamos flex raros */
     }
 
-    /* --- REUBICACIÓN VERTICAL --- */
-
-    /* 1. Formularios ARRIBA (Ocupan el 65% superior) */
+    /* --- FORMULARIO SIEMPRE ARRIBA --- */
     .form-container {
-        width: 100%;
-        height: 65%;
-        position: absolute;
-        top: 0;
-        left: 0;
-        /* IMPORTANTE: Desactivamos el movimiento lateral en móvil */
+        width: 100% !important;
+        height: 65% !important;
+        /* 65% de la pantalla para el formulario */
+        top: 0 !important;
+        left: 0 !important;
         transform: none !important;
-        transition: opacity 0.4s ease-in-out;
+        /* ANULAMOS EL MOVIMIENTO LATERAL */
+        transition: opacity 0.3s !important;
     }
 
-    /* 2. Panel Verde ABAJO (Ocupa el 35% inferior) */
+    /* --- PANEL VERDE SIEMPRE ABAJO --- */
     .overlay-container {
-        width: 100%;
-        height: 35%;
-        position: absolute;
-        bottom: 0;
-        /* Pegado al fondo */
-        top: auto;
-        left: 0;
+        width: 100% !important;
+        height: 35% !important;
+        /* 35% de la pantalla abajo para el botón verde */
+        top: auto !important;
+        bottom: 0 !important;
+        left: 0 !important;
         transform: none !important;
+        /* ANULAMOS EL MOVIMIENTO LATERAL */
     }
 
     .overlay {
-        width: 100%;
-        height: 100%;
-        left: 0;
+        width: 100% !important;
+        height: 100% !important;
+        left: 0 !important;
         transform: none !important;
-        /* Mantenemos el degradado, pero ajustado al nuevo tamaño */
-        background: linear-gradient(to bottom, var(--color-principal), #005841);
     }
 
-    /* --- LÓGICA DE CAMBIO EN MÓVIL (Fade In/Out en vez de deslizar) --- */
+    /* --- PANELES DE TEXTO DENTRO DE LO VERDE --- */
+    .overlay-panel {
+        width: 100% !important;
+        height: 100% !important;
+        padding: 10px !important;
+        top: 0 !important;
+        transform: none !important;
+        justify-content: center !important;
+    }
 
+    /* --- LÓGICA DE APARICIÓN EN MÓVIL (SIN DESLIZAR) --- */
+
+    /* Login Visible */
     .sign-in-container {
         opacity: 1;
         z-index: 5;
@@ -316,6 +300,7 @@
         z-index: 1;
     }
 
+    /* Registro Visible */
     .sign-up-container {
         opacity: 0;
         z-index: 1;
@@ -324,50 +309,29 @@
     .auth-container.right-panel-active .sign-up-container {
         opacity: 1;
         z-index: 5;
-        animation: none;
-        /* Sin animación compleja */
+        animation: none !important;
     }
 
-    /* Paneles de texto del overlay */
-    .overlay-panel {
-        width: 100%;
-        height: 100%;
-        padding: 20px;
-        transform: none !important;
-        transition: opacity 0.3s ease;
-    }
-
+    /* Textos del panel verde */
     .overlay-left {
         opacity: 0;
-        pointer-events: none;
+        display: none;
     }
 
+    /* Ocultamos el que no sirve */
     .auth-container.right-panel-active .overlay-left {
         opacity: 1;
+        display: flex !important;
         pointer-events: all;
     }
 
     .overlay-right {
         opacity: 1;
-        pointer-events: all;
+        display: flex !important;
     }
 
     .auth-container.right-panel-active .overlay-right {
         opacity: 0;
-        pointer-events: none;
-    }
-
-    /* Ajustes de texto para que quepan bien */
-    .auth-title-overlay {
-        font-size: 1.8rem;
-    }
-
-    .auth-p {
-        margin: 10px 0 15px;
-    }
-
-    .ghost-btn {
-        margin-top: 10px;
-        padding: 12px 35px;
+        display: none;
     }
 }
