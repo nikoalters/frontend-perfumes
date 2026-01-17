@@ -4,7 +4,7 @@ const Footer = ({ filtrarPorGeneroRapido }) => {
   return (
     <footer className="text-white pt-5 position-relative" style={{ backgroundColor: '#020202' }}>
       
-      {/* LÍNEA DE LUZ SUPERIOR (Sutil) */}
+      
       <div style={{
           position: 'absolute', top: 0, left: 0, right: 0, height: '1px',
           background: 'linear-gradient(90deg, transparent, var(--color-principal), transparent)',
@@ -14,7 +14,7 @@ const Footer = ({ filtrarPorGeneroRapido }) => {
       <div className="container pb-4">
         <div className="row">
           
-          {/* COLUMNA 1: MARCA Y REDES */}
+         
           <div className="col-md-4 mb-4">
             <h5 className="mb-4 text-uppercase fw-bold d-flex align-items-center gap-2" style={{letterSpacing: '1px'}}>
                 <img 
@@ -28,7 +28,7 @@ const Footer = ({ filtrarPorGeneroRapido }) => {
               Redefiniendo el lujo. Tu destino exclusivo para fragancias 100% originales con servicio premium en todo Chile.
             </p>
             
-            {/* REDES SOCIALES ESTILIZADAS */}
+            
             <div className="d-flex gap-3 mt-4">
                 <a href="https://www.instagram.com/nico_alters?igsh=em9xb2NuN2h6NTc=" target="_blank" rel="noopener noreferrer" 
                    className="btn btn-sm border-0 d-flex align-items-center gap-2 rounded-pill px-3"
@@ -46,7 +46,7 @@ const Footer = ({ filtrarPorGeneroRapido }) => {
             </div>
           </div>
 
-          {/* COLUMNA 2: NAVEGACIÓN */}
+          
           <div className="col-md-4 mb-4">
             <h5 className="mb-4 text-uppercase fw-bold text-white-50" style={{fontSize: '0.9rem', letterSpacing: '1px'}}>Explorar</h5>
             <ul className="list-unstyled">
@@ -73,7 +73,7 @@ const Footer = ({ filtrarPorGeneroRapido }) => {
             </ul>
           </div>
 
-          {/* COLUMNA 3: CONTACTO */}
+         
           <div className="col-md-4 mb-4">
             <h5 className="mb-4 text-uppercase fw-bold text-white-50" style={{fontSize: '0.9rem', letterSpacing: '1px'}}>Contacto Directo</h5>
             <ul className="list-unstyled text-secondary small">
@@ -95,17 +95,17 @@ const Footer = ({ filtrarPorGeneroRapido }) => {
         </div>
       </div>
 
-      {/* COPYRIGHT */}
+      
       <div className="text-center py-4" style={{ backgroundColor: '#000', borderTop: '1px solid rgba(255,255,255,0.03)' }}>
         <div className="container d-flex flex-column flex-md-row justify-content-between align-items-center small text-secondary">
             <p className="m-0">&copy; 2026 <strong className="text-white">Perfumes Chile</strong>. Todos los derechos reservados.</p>
             <p className="m-0 mt-2 mt-md-0 d-flex align-items-center gap-1">
-                Desarrollado con <i className="bi bi-lightning-fill text-warning"></i> por <span className="text-white fw-bold">NicoAlters</span>
+                Desarrollado <i className="bi bi-lightning-fill text-warning"></i> por <span className="text-white fw-bold">NicoAlters</span>
             </p>
         </div>
       </div>
 
-      {/* PEQUEÑO ESTILO EXTRA PARA HOVER */}
+      
       <style>{`
         .hover-link:hover {
             color: var(--color-principal) !important;
