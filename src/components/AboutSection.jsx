@@ -4,7 +4,7 @@ const AboutSection = () => {
   return (
     <div className="container my-5 pt-5 border-top border-secondary border-opacity-25">
       
-      {/* 1. TÍTULO */}
+      {/* TÍTULO */}
       <div className="text-center mb-5">
         <h2 className="fw-bolder display-5 mb-3" 
             style={{
@@ -17,72 +17,86 @@ const AboutSection = () => {
         </h2>
         <p className="lead text-secondary mx-auto" style={{ maxWidth: '700px', fontSize: '1.1rem' }}>
           Somos <strong className="text-white">Perfumes Chile</strong>. Nuestra misión es democratizar el lujo, 
-          entregando fragancias <span style={{color: '#00e5ff'}}>100% originales</span> con despacho rápido y la atención que mereces.
+          entregando fragancias <span style={{color: '#00e5ff'}}>100% originales</span>.
         </p>
       </div>
 
       
-      {/* 2. TARJETAS ELÉCTRICAS (Estilo NikoAlters) */}
-      <div className="row text-center mb-5 g-4">
+      {/* --- TARJETAS ELÉCTRICAS (ALWAYS ON) --- */}
+      <div className="row text-center mb-5 g-4 px-2">
         
         {/* Card 1: VERDE */}
-        <div className="col-md-4">
-          <div className="card-feature card-feature-green p-4 h-100 d-flex flex-column justify-content-center align-items-center">
-            {/* La máscara que tapa el centro */}
-            <div className="card-content-mask"></div>
+        <div className="col-md-4" style={{minHeight: '350px'}}>
+          <div className="electric-card card-green p-4">
+            {/* Tapa oscura interna */}
+            <div className="electric-card-content"></div>
             
-            {/* Contenido (encima de la máscara) */}
-            <div className="mb-3 d-inline-block p-3 rounded-circle shadow-lg" style={{background: 'rgba(0, 153, 112, 0.2)', zIndex: 2}}>
-                <i className="bi bi-patch-check-fill" style={{ fontSize: '2.5rem', color: '#009970' }}></i>
+            {/* Contenido (Encima de todo) */}
+            <div className="position-relative z-2">
+                <span className="electric-tag">ORIGINALIDAD</span>
+                
+                <div className="mb-3 d-inline-block p-3 rounded-circle" style={{background: 'rgba(0, 255, 65, 0.1)', boxShadow: '0 0 20px rgba(0,255,65,0.2)'}}>
+                    <i className="bi bi-patch-check-fill" style={{ fontSize: '2.5rem', color: '#00ff41' }}></i>
+                </div>
+                
+                <h4 className="fw-bold text-white mt-2" style={{textShadow: '0 0 10px rgba(0,255,65,0.5)'}}>100% Originales</h4>
+                <p className="text-secondary small mt-3 px-2">
+                    Garantía absoluta de autenticidad. Productos sellados, con celofán y código de lote verificable. Sin imitaciones.
+                </p>
             </div>
-            <h4 className="fw-bold text-white mt-2" style={{zIndex: 2}}>100% Originales</h4>
-            <p className="text-secondary small mt-3 mb-0" style={{zIndex: 2}}>
-                Garantía absoluta de autenticidad. Productos sellados, con celofán y código de lote verificable. Sin imitaciones.
-            </p>
           </div>
         </div>
 
         {/* Card 2: CIAN */}
-        <div className="col-md-4">
-          <div className="card-feature card-feature-cyan p-4 h-100 d-flex flex-column justify-content-center align-items-center">
-             {/* La máscara */}
-            <div className="card-content-mask"></div>
+        <div className="col-md-4" style={{minHeight: '350px'}}>
+          <div className="electric-card card-cyan p-4">
+            <div className="electric-card-content"></div>
 
-            <div className="mb-3 d-inline-block p-3 rounded-circle shadow-lg" style={{background: 'rgba(0, 229, 255, 0.2)', zIndex: 2}}>
-                <i className="bi bi-rocket-takeoff-fill" style={{ fontSize: '2.5rem', color: '#00e5ff' }}></i>
+            <div className="position-relative z-2">
+                <span className="electric-tag">VELOCIDAD</span>
+                
+                <div className="mb-3 d-inline-block p-3 rounded-circle" style={{background: 'rgba(0, 242, 255, 0.1)', boxShadow: '0 0 20px rgba(0,242,255,0.2)'}}>
+                    <i className="bi bi-rocket-takeoff-fill" style={{ fontSize: '2.5rem', color: '#00f2ff' }}></i>
+                </div>
+                
+                <h4 className="fw-bold text-white mt-2" style={{textShadow: '0 0 10px rgba(0,242,255,0.5)'}}>Envíos Flash</h4>
+                <p className="text-secondary small mt-3 px-2">
+                    Santiago Urbano en 24-48hrs. Regiones vía Starken/Chilexpress con seguimiento en tiempo real.
+                </p>
             </div>
-            <h4 className="fw-bold text-white mt-2" style={{zIndex: 2}}>Envíos Flash</h4>
-            <p className="text-secondary small mt-3 mb-0" style={{zIndex: 2}}>
-                Santiago Urbano en 24-48hrs. Regiones vía Starken/Chilexpress con número de seguimiento en tiempo real.
-            </p>
           </div>
         </div>
 
-        {/* Card 3: ROSA/VIOLETA */}
-        <div className="col-md-4">
-          <div className="card-feature card-feature-pink p-4 h-100 d-flex flex-column justify-content-center align-items-center">
-             {/* La máscara */}
-            <div className="card-content-mask"></div>
+        {/* Card 3: ROSA/PURPLE */}
+        <div className="col-md-4" style={{minHeight: '350px'}}>
+          <div className="electric-card card-pink p-4">
+            <div className="electric-card-content"></div>
 
-            <div className="mb-3 d-inline-block p-3 rounded-circle shadow-lg" style={{background: 'rgba(255, 42, 109, 0.2)', zIndex: 2}}>
-                <i className="bi bi-shield-lock-fill" style={{ fontSize: '2.5rem', color: '#ff2a6d' }}></i>
+            <div className="position-relative z-2">
+                <span className="electric-tag">CONFIANZA</span>
+                
+                <div className="mb-3 d-inline-block p-3 rounded-circle" style={{background: 'rgba(188, 19, 254, 0.1)', boxShadow: '0 0 20px rgba(188, 19, 254, 0.2)'}}>
+                    <i className="bi bi-shield-lock-fill" style={{ fontSize: '2.5rem', color: '#bc13fe' }}></i>
+                </div>
+                
+                <h4 className="fw-bold text-white mt-2" style={{textShadow: '0 0 10px rgba(188, 19, 254, 0.5)'}}>Compra Directa</h4>
+                <p className="text-secondary small mt-3 px-2">
+                    Trato directo y personalizado. Paga vía Transferencia Bancaria sin comisiones ocultas y con seguridad.
+                </p>
             </div>
-            <h4 className="fw-bold text-white mt-2" style={{zIndex: 2}}>Compra Directa</h4>
-            <p className="text-secondary small mt-3 mb-0" style={{zIndex: 2}}>
-                Trato directo y personalizado. Paga vía Transferencia Bancaria sin comisiones ocultas y con confirmación inmediata.
-            </p>
           </div>
         </div>
+
       </div>
 
       
-      {/* SECCIÓN CONTACTO Y FAQ (Sin cambios) */}
+      {/* SECCIÓN CONTACTO Y FAQ (Sin cambios mayores) */}
       <div className="row align-items-start p-4 rounded-4 shadow-lg border border-secondary border-opacity-10" 
            style={{background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(10px)'}}>
         <div className="col-md-5 mb-5 mb-md-0 text-center text-md-start">
             <h3 className="fw-bold mb-3 text-white">📱 ¿Necesitas Ayuda?</h3>
             <p className="text-secondary mb-4">
-                ¿Buscas un aroma específico o necesitas asesoría para un regalo especial? Habla directamente con nosotros.
+                ¿Buscas un aroma específico o necesitas asesoría? Habla con nosotros.
             </p>
             <div className="d-flex flex-column gap-3">
                 <a href="https://wa.me/56958547236" target="_blank" rel="noreferrer" 

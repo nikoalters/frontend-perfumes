@@ -274,102 +274,99 @@ body {
   /* LATIDO */
 }
 
-/* --- TARJETAS CON BORDE ELÉCTRICO (Estilo NikoAlters) --- */
+/* --- TARJETAS ELÉCTRICAS (Always On) --- */
 
-/* 1. La estructura base de la tarjeta */
-.card-feature {
+/* 1. Contenedor de la tarjeta */
+.electric-card {
   position: relative;
-  z-index: 1;
+  height: 100%;
+  background: #101010;
+  /* Fondo base */
   border-radius: 20px;
-  background: #111;
-  /* Fondo base oscuro */
-  border: none;
-  /* Quitamos bordes grises viejos */
   overflow: hidden;
-  /* VITAL: Corta el brillo que sobra */
-  transition: transform 0.4s ease, box-shadow 0.4s ease;
-  /* Sombra inicial sutil */
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  /* Corta los excesos */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  /* Efecto rebote suave al hover */
+  z-index: 1;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  /* Sombra base */
 }
 
-/* 2. El Rayo Eléctrico Giratorio (Pseudo-elemento) */
-.card-feature::before {
+/* 2. El Rayo Giratorio (Siempre visible) */
+.electric-card::before {
   content: '';
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 200%;
-  height: 200%;
-  /* Mucho más grande para girar */
-  /* El degradado cónico crea el "haz de luz" */
+  width: 150%;
+  height: 150%;
+  /* El degradado cónico crea el "brazo" de energía girando */
   background: conic-gradient(transparent,
       transparent,
       transparent,
-      var(--color-energia)
-      /* Usamos la variable de color */
-    );
+      var(--color-energia));
   transform: translate(-50%, -50%);
-  animation: rotarBorde 4s linear infinite;
-  /* Animación de giro */
+  animation: rotar 4s linear infinite;
+  /* Gira siempre */
   z-index: -2;
-
-  /* ESTADO INICIAL: APAGADO */
-  opacity: 0;
-  transition: opacity 0.3s ease;
 }
 
-/* 3. Un segundo rayo para más potencia (Opcional, como en tu ejemplo) */
-.card-feature::after {
+/* 3. El Segundo Rayo (Para que el flujo sea continuo) */
+.electric-card::after {
   content: '';
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 200%;
-  height: 200%;
-  background: conic-gradient(transparent, transparent, transparent, var(--color-energia));
+  width: 150%;
+  height: 150%;
+  background: conic-gradient(transparent,
+      transparent,
+      transparent,
+      var(--color-energia));
   transform: translate(-50%, -50%);
-  animation: rotarBorde 4s linear infinite;
+  animation: rotar 4s linear infinite;
   animation-delay: -2s;
-  /* Desfase para continuidad */
+  /* Desfase para completar el círculo */
   z-index: -2;
-  opacity: 0;
-  transition: opacity 0.3s ease;
 }
 
-/* 4. El Contenido Negro Encima (Tapa el centro) */
-/* IMPORTANTE: En React, el contenido ya está dentro. 
-   Usamos una clase interna para hacer la "tapa". */
-.card-content-mask {
+/* 4. La Tapa Oscura (Para que el texto sea legible) */
+.electric-card-content {
   position: absolute;
-  inset: 3px;
-  /* GROSOR DEL BORDE (3px) */
+  inset: 4px;
+  /* Grosor del borde eléctrico (4px) */
   background: #101010;
-  /* Fondo real de la tarjeta */
-  border-radius: 18px;
+  /* Fondo sólido */
+  border-radius: 16px;
   z-index: -1;
-  /* Detrás del texto, sobre el brillo */
+  /* Encima del rayo, debajo del texto */
 }
 
-/* --- VARIABLES DE COLOR (Para cada tarjeta) --- */
-.card-feature-green {
-  --color-energia: #00ff41;
+/* 5. La Etiqueta (Tag) Encendida */
+.electric-tag {
+  display: inline-block;
+  padding: 5px 15px;
+  border-radius: 50px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 20px;
+
+  /* Estilo Neón */
+  color: #fff;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--color-energia);
+  box-shadow: 0 0 10px var(--color-energia), inset 0 0 5px var(--color-energia);
+  text-shadow: 0 0 5px var(--color-energia);
 }
 
-/* Verde Neón */
-.card-feature-cyan {
-  --color-energia: #00f2ff;
-}
-
-/* Cian Eléctrico */
-.card-feature-pink {
-  --color-energia: #bc13fe;
-}
-
-/* Violeta/Rosa */
-
-
-/* --- ANIMACIÓN DE GIRO --- */
-@keyframes rotarBorde {
+/* 6. Animación de Rotación */
+@keyframes rotar {
   0% {
     transform: translate(-50%, -50%) rotate(0deg);
   }
@@ -379,25 +376,23 @@ body {
   }
 }
 
-
-/* --- ACTIVACIÓN AL HOVER (La Magia) --- */
-.card-feature:hover {
-  transform: translateY(-15px) scale(1.03);
-  /* Se acerca y levanta */
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
-  /* Sombra más fuerte */
+/* 7. Variables de Color por tipo */
+.card-green {
+  --color-energia: #00ff41;
 }
 
-/* Encendemos los rayos */
-.card-feature:hover::before,
-.card-feature:hover::after {
-  opacity: 1;
+.card-cyan {
+  --color-energia: #00f2ff;
 }
 
-/* Hacemos brillar el texto e icono al hover */
-.card-feature:hover h4,
-.card-feature:hover i {
-  text-shadow: 0 0 15px var(--color-energia);
-  color: var(--color-energia) !important;
-  transition: 0.3s;
+.card-pink {
+  --color-energia: #bc13fe;
+}
+
+/* 8. EFECTO HOVER (Solo acercamiento) */
+.electric-card:hover {
+  transform: scale(1.05) translateY(-10px);
+  /* Zoom y subir */
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+  /* Sombra más dramática */
 }
