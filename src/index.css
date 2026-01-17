@@ -273,3 +273,116 @@ body {
   animation: heartBeat 0.8s ease-in-out;
   /* LATIDO */
 }
+
+/* --- TARJETAS CON AURA DE ENERGÍA VIVA --- */
+
+.card-feature {
+  position: relative;
+  z-index: 1;
+  border-radius: 20px;
+  background: rgba(20, 20, 30, 0.6);
+  /* Fondo semi-transparente */
+  backdrop-filter: blur(10px);
+  /* Efecto vidrio en la tarjeta misma */
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  overflow: visible;
+  /* VITAL: Permite que el aura se salga de la tarjeta */
+  transition: transform 0.4s ease-out;
+}
+
+/* El Núcleo de Energía (Capa trasera) */
+.card-feature::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  /* Apenas más grande */
+  border-radius: 22px;
+  background-size: 200% 200%;
+  opacity: 0;
+  /* Apagado por defecto */
+  transition: opacity 0.5s ease;
+
+  /* Aquí está el truco del "Aura": Mucho desenfoque */
+  filter: blur(20px);
+}
+
+/* El Borde Fino (Para definir la forma) */
+.card-feature::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  border-radius: 20px;
+  padding: 1px;
+  /* Grosor del borde */
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.1), transparent);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+/* --- COLORES Y ANIMACIONES POR TIPO --- */
+
+/* 1. AURA VERDE (Originales) */
+.card-feature-green::before {
+  /* Un gradiente que mezcla tu verde con tonos brillantes */
+  background: conic-gradient(from 0deg,
+      transparent 0%,
+      var(--color-principal) 20%,
+      #a8ff78 50%,
+      var(--color-principal) 80%,
+      transparent 100%);
+  animation: auraSpin 4s linear infinite;
+}
+
+/* 2. AURA CIAN (Envíos) */
+.card-feature-cyan::before {
+  background: conic-gradient(from 0deg,
+      transparent 0%,
+      #00e5ff 20%,
+      #0077ff 50%,
+      #00e5ff 80%,
+      transparent 100%);
+  animation: auraSpin 4s linear infinite;
+}
+
+/* 3. AURA ROSA (Seguridad) */
+.card-feature-pink::before {
+  background: conic-gradient(from 0deg,
+      transparent 0%,
+      #ff2a6d 20%,
+      #ffc107 50%,
+      #ff2a6d 80%,
+      transparent 100%);
+  animation: auraSpin 4s linear infinite;
+}
+
+/* --- ANIMACIÓN DE GIRO SUAVE --- */
+@keyframes auraSpin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* --- ACTIVACIÓN AL HOVER --- */
+.card-feature:hover {
+  transform: translateY(-10px) scale(1.02);
+  /* Levitación suave */
+  border-color: transparent;
+  /* Quitamos el borde gris para dejar ver la luz */
+}
+
+.card-feature:hover::before {
+  opacity: 0.8;
+  /* Encendemos el aura al 80% de intensidad */
+}

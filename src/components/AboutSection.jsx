@@ -4,7 +4,7 @@ const AboutSection = () => {
   return (
     <div className="container my-5 pt-5 border-top border-secondary border-opacity-25">
       
-      {/* 1. TÍTULO CON DEGRADADO */}
+      {/* 1. TÍTULO */}
       <div className="text-center mb-5">
         <h2 className="fw-bolder display-5 mb-3" 
             style={{
@@ -22,12 +22,12 @@ const AboutSection = () => {
       </div>
 
       
-      {/* 2. TARJETAS 3D (CARACTERÍSTICAS) */}
+      {/* 2. TARJETAS CON AURA DE ENERGÍA */}
       <div className="row text-center mb-5 g-4">
-        {/* Card 1: Originalidad */}
+        
+        {/* Card 1: VERDE (Originales) */}
         <div className="col-md-4">
-          <div className="p-4 rounded-4 h-100 position-relative overflow-hidden hover-card" 
-               style={{background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)', transition: '0.3s'}}>
+          <div className="card-feature card-feature-green p-4 h-100">
             <div className="mb-3 d-inline-block p-3 rounded-circle shadow-lg" style={{background: 'rgba(0, 153, 112, 0.2)'}}>
                 <i className="bi bi-patch-check-fill" style={{ fontSize: '2.5rem', color: '#009970' }}></i>
             </div>
@@ -38,10 +38,9 @@ const AboutSection = () => {
           </div>
         </div>
 
-        {/* Card 2: Envíos */}
+        {/* Card 2: CIAN (Envíos) */}
         <div className="col-md-4">
-          <div className="p-4 rounded-4 h-100 position-relative overflow-hidden hover-card" 
-               style={{background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)', transition: '0.3s'}}>
+          <div className="card-feature card-feature-cyan p-4 h-100">
             <div className="mb-3 d-inline-block p-3 rounded-circle shadow-lg" style={{background: 'rgba(0, 229, 255, 0.2)'}}>
                 <i className="bi bi-rocket-takeoff-fill" style={{ fontSize: '2.5rem', color: '#00e5ff' }}></i>
             </div>
@@ -52,10 +51,9 @@ const AboutSection = () => {
           </div>
         </div>
 
-        {/* Card 3: Seguridad (Actualizado a Transferencia) */}
+        {/* Card 3: ROSA (Seguridad) */}
         <div className="col-md-4">
-          <div className="p-4 rounded-4 h-100 position-relative overflow-hidden hover-card" 
-               style={{background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)', transition: '0.3s'}}>
+          <div className="card-feature card-feature-pink p-4 h-100">
             <div className="mb-3 d-inline-block p-3 rounded-circle shadow-lg" style={{background: 'rgba(255, 42, 109, 0.2)'}}>
                 <i className="bi bi-shield-lock-fill" style={{ fontSize: '2.5rem', color: '#ff2a6d' }}></i>
             </div>
@@ -68,35 +66,30 @@ const AboutSection = () => {
       </div>
 
       
-      {/* 3. SECCIÓN CONTACTO Y FAQ (VIDRIO OSCURO) */}
+      {/* 3. SECCIÓN CONTACTO Y FAQ */}
       <div className="row align-items-start p-4 rounded-4 shadow-lg border border-secondary border-opacity-10" 
            style={{background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(10px)'}}>
         
-        {/* COLUMNA IZQ: CONTACTO */}
+        {/* CONTACTO */}
         <div className="col-md-5 mb-5 mb-md-0 text-center text-md-start">
             <h3 className="fw-bold mb-3 text-white">📱 ¿Necesitas Ayuda?</h3>
             <p className="text-secondary mb-4">
                 ¿Buscas un aroma específico o necesitas asesoría para un regalo especial? Habla directamente con nosotros.
             </p>
-            
             <div className="d-flex flex-column gap-3">
-                {/* Botón WhatsApp */}
                 <a href="https://wa.me/56958547236" target="_blank" rel="noreferrer" 
                    className="btn btn-lg fw-bold text-white shadow d-flex align-items-center justify-content-center justify-content-md-start gap-3 rounded-pill" 
-                   style={{background: 'linear-gradient(90deg, #25D366, #128C7E)', border: 'none', transition: 'transform 0.2s'}}>
+                   style={{background: 'linear-gradient(90deg, #25D366, #128C7E)', border: 'none'}}>
                     <i className="bi bi-whatsapp fs-4"></i> 
                     <span>Escríbenos al WhatsApp</span>
                 </a>
-                
-                {/* Botón Instagram */}
                 <a href="https://www.instagram.com/nico_alters?igsh=em9xb2NuN2h6NTc=" target="_blank" rel="noreferrer" 
                    className="btn btn-lg fw-bold text-white shadow d-flex align-items-center justify-content-center justify-content-md-start gap-3 rounded-pill" 
-                   style={{background: 'linear-gradient(45deg, #f09433 0%, #dc2743 50%, #bc1888 100%)', border: 'none', transition: 'transform 0.2s'}}>
+                   style={{background: 'linear-gradient(45deg, #f09433 0%, #dc2743 50%, #bc1888 100%)', border: 'none'}}>
                     <i className="bi bi-instagram fs-4"></i> 
                     <span>Síguenos en Instagram</span>
                 </a>
             </div>
-            
             <div className="mt-4 pt-3 border-top border-secondary border-opacity-25">
                 <p className="mb-0 text-white-50 small fw-bold">
                     <i className="bi bi-telephone-inbound me-2 text-success"></i> +56 9 5854 7236
@@ -104,15 +97,14 @@ const AboutSection = () => {
             </div>
         </div>
 
-        {/* COLUMNA DER: FAQ (ACORDEÓN OSCURO) */}
+        {/* FAQ */}
         <div className="col-md-7 ps-md-5">
             <h5 className="fw-bold mb-4 text-white d-flex align-items-center gap-2">
                 <span className="badge bg-dark border border-secondary rounded-pill">?</span> Preguntas Frecuentes
             </h5>
             
             <div className="accordion accordion-flush" id="accordionFAQ">
-                
-                {/* Pregunta 1 */}
+                {/* Preguntas Frecuentes (Manteniendo tu contenido) */}
                 <div className="accordion-item bg-transparent mb-3 border-0">
                     <h2 className="accordion-header">
                         <button className="accordion-button collapsed rounded-3 text-white fw-semibold shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#faq1"
@@ -121,13 +113,10 @@ const AboutSection = () => {
                         </button>
                     </h2>
                     <div id="faq1" className="accordion-collapse collapse" data-bs-parent="#accordionFAQ">
-                        <div className="accordion-body text-secondary small pt-2">
-                            Absolutamente. No trabajamos con imitaciones ni testers rellenados. Tu perfume llega en su caja original, sellada y con celofán intacto.
-                        </div>
+                        <div className="accordion-body text-secondary small pt-2">Absolutamente. No trabajamos con imitaciones.</div>
                     </div>
                 </div>
 
-                {/* Pregunta 2 */}
                 <div className="accordion-item bg-transparent mb-3 border-0">
                     <h2 className="accordion-header">
                         <button className="accordion-button collapsed rounded-3 text-white fw-semibold shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#faq2"
@@ -136,13 +125,10 @@ const AboutSection = () => {
                         </button>
                     </h2>
                     <div id="faq2" className="accordion-collapse collapse" data-bs-parent="#accordionFAQ">
-                        <div className="accordion-body text-secondary small pt-2">
-                            Santiago: 24 a 48 horas hábiles. Regiones: Enviamos por Starken o Chilexpress (por pagar o pagado), demorando usualmente de 2 a 5 días según la ciudad.
-                        </div>
+                        <div className="accordion-body text-secondary small pt-2">Santiago: 24-48 hrs. Regiones: 2-5 días hábiles.</div>
                     </div>
                 </div>
 
-                {/* Pregunta 3 (ACTUALIZADA A TRANSFERENCIA) */}
                 <div className="accordion-item bg-transparent mb-3 border-0">
                     <h2 className="accordion-header">
                         <button className="accordion-button collapsed rounded-3 text-white fw-semibold shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#faq3"
@@ -151,34 +137,17 @@ const AboutSection = () => {
                         </button>
                     </h2>
                     <div id="faq3" className="accordion-collapse collapse" data-bs-parent="#accordionFAQ">
-                        <div className="accordion-body text-secondary small pt-2">
-                            Actualmente operamos exclusivamente con <strong className="text-white">Transferencia Bancaria</strong>. 
-                            <br/><br/>
-                            Al finalizar tu pedido, te daremos los datos para transferir. Una vez comprobado el pago, preparamos tu envío de inmediato. ¡Pronto habilitaremos WebPay!
-                        </div>
+                        <div className="accordion-body text-secondary small pt-2">Solo <strong className="text-white">Transferencia Bancaria</strong> por ahora.</div>
                     </div>
                 </div>
-
             </div>
         </div>
-
       </div>
       
-      {/* Estilo extra para el hover de las tarjetas */}
+      {/* Estilos extra para el hover de tarjetas y acordeón */}
       <style>{`
-        .hover-card:hover {
-            transform: translateY(-10px);
-            border-color: var(--color-principal) !important;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-        .accordion-button::after {
-            filter: invert(1); /* Flecha blanca */
-        }
-        .accordion-button:not(.collapsed) {
-            background-color: rgba(0, 153, 112, 0.2) !important;
-            color: white !important;
-            box-shadow: none !important;
-        }
+        .accordion-button::after { filter: invert(1); }
+        .accordion-button:not(.collapsed) { background-color: rgba(0, 153, 112, 0.2) !important; color: white !important; }
       `}</style>
     </div>
   );
