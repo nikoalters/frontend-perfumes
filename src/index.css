@@ -274,115 +274,130 @@ body {
   /* LATIDO */
 }
 
-/* --- TARJETAS CON AURA DE ENERGÍA VIVA --- */
+/* --- TARJETAS CON BORDE ELÉCTRICO (Estilo NikoAlters) --- */
 
+/* 1. La estructura base de la tarjeta */
 .card-feature {
   position: relative;
   z-index: 1;
   border-radius: 20px;
-  background: rgba(20, 20, 30, 0.6);
-  /* Fondo semi-transparente */
-  backdrop-filter: blur(10px);
-  /* Efecto vidrio en la tarjeta misma */
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  overflow: visible;
-  /* VITAL: Permite que el aura se salga de la tarjeta */
-  transition: transform 0.4s ease-out;
+  background: #111;
+  /* Fondo base oscuro */
+  border: none;
+  /* Quitamos bordes grises viejos */
+  overflow: hidden;
+  /* VITAL: Corta el brillo que sobra */
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  /* Sombra inicial sutil */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
-/* El Núcleo de Energía (Capa trasera) */
+/* 2. El Rayo Eléctrico Giratorio (Pseudo-elemento) */
 .card-feature::before {
-  content: "";
+  content: '';
   position: absolute;
-  z-index: -1;
-  top: -2px;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
-  /* Apenas más grande */
-  border-radius: 22px;
-  background-size: 200% 200%;
+  top: 50%;
+  left: 50%;
+  width: 200%;
+  height: 200%;
+  /* Mucho más grande para girar */
+  /* El degradado cónico crea el "haz de luz" */
+  background: conic-gradient(transparent,
+      transparent,
+      transparent,
+      var(--color-energia)
+      /* Usamos la variable de color */
+    );
+  transform: translate(-50%, -50%);
+  animation: rotarBorde 4s linear infinite;
+  /* Animación de giro */
+  z-index: -2;
+
+  /* ESTADO INICIAL: APAGADO */
   opacity: 0;
-  /* Apagado por defecto */
-  transition: opacity 0.5s ease;
-
-  /* Aquí está el truco del "Aura": Mucho desenfoque */
-  filter: blur(20px);
+  transition: opacity 0.3s ease;
 }
 
-/* El Borde Fino (Para definir la forma) */
+/* 3. Un segundo rayo para más potencia (Opcional, como en tu ejemplo) */
 .card-feature::after {
-  content: "";
+  content: '';
   position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 200%;
+  height: 200%;
+  background: conic-gradient(transparent, transparent, transparent, var(--color-energia));
+  transform: translate(-50%, -50%);
+  animation: rotarBorde 4s linear infinite;
+  animation-delay: -2s;
+  /* Desfase para continuidad */
+  z-index: -2;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* 4. El Contenido Negro Encima (Tapa el centro) */
+/* IMPORTANTE: En React, el contenido ya está dentro. 
+   Usamos una clase interna para hacer la "tapa". */
+.card-content-mask {
+  position: absolute;
+  inset: 3px;
+  /* GROSOR DEL BORDE (3px) */
+  background: #101010;
+  /* Fondo real de la tarjeta */
+  border-radius: 18px;
   z-index: -1;
-  inset: 0;
-  border-radius: 20px;
-  padding: 1px;
-  /* Grosor del borde */
-  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.1), transparent);
-  -webkit-mask:
-    linear-gradient(#fff 0 0) content-box,
-    linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
+  /* Detrás del texto, sobre el brillo */
 }
 
-/* --- COLORES Y ANIMACIONES POR TIPO --- */
-
-/* 1. AURA VERDE (Originales) */
-.card-feature-green::before {
-  /* Un gradiente que mezcla tu verde con tonos brillantes */
-  background: conic-gradient(from 0deg,
-      transparent 0%,
-      var(--color-principal) 20%,
-      #a8ff78 50%,
-      var(--color-principal) 80%,
-      transparent 100%);
-  animation: auraSpin 4s linear infinite;
+/* --- VARIABLES DE COLOR (Para cada tarjeta) --- */
+.card-feature-green {
+  --color-energia: #00ff41;
 }
 
-/* 2. AURA CIAN (Envíos) */
-.card-feature-cyan::before {
-  background: conic-gradient(from 0deg,
-      transparent 0%,
-      #00e5ff 20%,
-      #0077ff 50%,
-      #00e5ff 80%,
-      transparent 100%);
-  animation: auraSpin 4s linear infinite;
+/* Verde Neón */
+.card-feature-cyan {
+  --color-energia: #00f2ff;
 }
 
-/* 3. AURA ROSA (Seguridad) */
-.card-feature-pink::before {
-  background: conic-gradient(from 0deg,
-      transparent 0%,
-      #ff2a6d 20%,
-      #ffc107 50%,
-      #ff2a6d 80%,
-      transparent 100%);
-  animation: auraSpin 4s linear infinite;
+/* Cian Eléctrico */
+.card-feature-pink {
+  --color-energia: #bc13fe;
 }
 
-/* --- ANIMACIÓN DE GIRO SUAVE --- */
-@keyframes auraSpin {
+/* Violeta/Rosa */
+
+
+/* --- ANIMACIÓN DE GIRO --- */
+@keyframes rotarBorde {
   0% {
-    transform: rotate(0deg);
+    transform: translate(-50%, -50%) rotate(0deg);
   }
 
   100% {
-    transform: rotate(360deg);
+    transform: translate(-50%, -50%) rotate(360deg);
   }
 }
 
-/* --- ACTIVACIÓN AL HOVER --- */
+
+/* --- ACTIVACIÓN AL HOVER (La Magia) --- */
 .card-feature:hover {
-  transform: translateY(-10px) scale(1.02);
-  /* Levitación suave */
-  border-color: transparent;
-  /* Quitamos el borde gris para dejar ver la luz */
+  transform: translateY(-15px) scale(1.03);
+  /* Se acerca y levanta */
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
+  /* Sombra más fuerte */
 }
 
-.card-feature:hover::before {
-  opacity: 0.8;
-  /* Encendemos el aura al 80% de intensidad */
+/* Encendemos los rayos */
+.card-feature:hover::before,
+.card-feature:hover::after {
+  opacity: 1;
+}
+
+/* Hacemos brillar el texto e icono al hover */
+.card-feature:hover h4,
+.card-feature:hover i {
+  text-shadow: 0 0 15px var(--color-energia);
+  color: var(--color-energia) !important;
+  transition: 0.3s;
 }
