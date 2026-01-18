@@ -396,3 +396,110 @@ body {
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
   /* Sombra más dramática */
 }
+
+/* --- TABLA HOLOGRÁFICA (Mis Pedidos) --- */
+
+/* El contenedor de vidrio principal */
+.holo-container {
+  background: rgba(15, 20, 30, 0.6);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+
+/* Encabezados de la tabla */
+.tech-table thead th {
+  background: rgba(0, 229, 255, 0.05);
+  /* Cian muy suave */
+  color: #00e5ff;
+  /* Texto Cian Neón */
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  border-bottom: 1px solid rgba(0, 229, 255, 0.2);
+  padding: 20px;
+  font-size: 0.85rem;
+}
+
+/* Filas de datos */
+.tech-table tbody tr {
+  transition: all 0.3s ease;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.tech-table tbody td {
+  color: #ccc;
+  vertical-align: middle;
+  padding: 20px;
+  font-size: 0.95rem;
+}
+
+/* Efecto Hover en las filas */
+.tech-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.03);
+  transform: scale(1.005);
+  /* Se agranda imperceptiblemente */
+  box-shadow: inset 2px 0 0 var(--color-principal);
+  /* Línea verde a la izquierda */
+}
+
+.tech-table tbody tr:hover td {
+  color: white;
+  /* El texto se ilumina */
+}
+
+/* --- BADGES DE ESTADO (Cápsulas de Neón) --- */
+.neon-badge {
+  padding: 6px 15px;
+  border-radius: 50px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border: 1px solid currentColor;
+  box-shadow: 0 0 5px currentColor;
+}
+
+.status-pagado {
+  color: #00ff41;
+  background: rgba(0, 255, 65, 0.1);
+}
+
+.status-enviado {
+  color: #00e5ff;
+  background: rgba(0, 229, 255, 0.1);
+}
+
+.status-cancelado {
+  color: #ff2a6d;
+  background: rgba(255, 42, 109, 0.1);
+}
+
+.status-pendiente {
+  color: #ffc107;
+  background: rgba(255, 193, 7, 0.1);
+}
+
+/* Botón Ver Detalles (Ojo Tecnológico) */
+.btn-eye {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.3s;
+}
+
+.btn-eye:hover {
+  background: var(--color-principal);
+  border-color: var(--color-principal);
+  box-shadow: 0 0 15px var(--color-principal);
+  transform: rotate(90deg);
+  /* Pequeño giro divertido */
+}
