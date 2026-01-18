@@ -1,22 +1,30 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 const OrdersPage = () => {
-  const [orders, setOrders] = useState([]);
+  const [pedidos, setPedidos] = useState([]);
   const [loading, setLoading] = useState(true);
   const user = JSON.parse(localStorage.getItem('userInfo'));
+  const navigate = useNavigate();
 
-  
   useEffect(() => {
-    const fetchOrders = async () => {
+    const obtenerPedidos = async () => {
       try {
+        if (!user) {
+          navigate('/login');
+          return;
+        }
+
         const res = await fetch('https://api-perfumes-chile.onrender.com/api/orders/myorders', {
-          headers: { 'Authorization': `Bearer ${user.token}` }
+          headers: { Authorization: `Bearer ${user.token}` }
         });
+
         const data = await res.json();
-        // Ordenar por fecha descendente
-        if(Array.isArray(data)) {
-            setOrders(data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
+        
+        // Ordenar: Más recientes primero
+        if(Array.isArray(data)){
+             setPedidos(data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
         }
         setLoading(false);
       } catch (error) {
@@ -24,14 +32,14 @@ const OrdersPage = () => {
         setLoading(false);
       }
     };
-    if (user) fetchOrders();
-  }, [user]);
+    obtenerPedidos();
+  }, [user, navigate]);
 
-  // Configuración de Badges
-  const getStatusConfig = (order) => {
-    if (order.isCancelled) return { class: 'status-cancelado', text: 'Cancelado' };
-    if (order.isDelivered) return { class: 'status-enviado', text: 'Enviado' };
-    if (order.isPaid) return { class: 'status-pagado', text: 'Pagado' };
+  // Configuración visual según estado
+  const getStatusConfig = (pedido) => {
+    if (pedido.isCancelled) return { class: 'status-cancelado', text: 'Cancelado' };
+    if (pedido.isDelivered) return { class: 'status-enviado', text: 'Enviado' };
+    if (pedido.isPaid) return { class: 'status-pagado', text: 'Pagado' };
     return { class: 'status-pendiente', text: 'Pendiente' };
   };
 
@@ -42,23 +50,29 @@ const OrdersPage = () => {
         {/* ENCABEZADO */}
         <div className="d-flex justify-content-between align-items-center mb-5">
           <div>
-            <h2 className="fw-bold text-white mb-0" style={{ letterSpacing: '1px' }}>MIS PEDIDOS</h2>
-            <p className="text-secondary small">Historial de transacciones</p>
+            <h2 className="fw-bold text-white mb-0" style={{ letterSpacing: '1px', textShadow: '0 0 10px rgba(255,255,255,0.2)' }}>
+              MIS PEDIDOS
+            </h2>
+            <p className="text-secondary small mb-0">Historial de transacciones</p>
           </div>
-          <Link to="/" className="btn btn-outline-light rounded-pill px-4 d-flex align-items-center gap-2" style={{borderColor: 'rgba(255,255,255,0.2)'}}>
-            <i className="bi bi-arrow-left"></i> Tienda
+          <Link to="/" className="btn btn-outline-light rounded-pill px-4 d-flex align-items-center gap-2" 
+                style={{borderColor: 'rgba(255,255,255,0.2)', color: 'white'}}>
+            <i className="bi bi-arrow-left"></i> Volver a la Tienda
           </Link>
         </div>
 
-        {/* TABLA */}
+        {/* CONTENEDOR HOLOGRÁFICO */}
         <div className="holo-container">
           {loading ? (
-             <div className="p-5 text-center text-white">Cargando...</div>
-          ) : orders.length === 0 ? (
-             <div className="p-5 text-center text-white-50">No tienes pedidos aún.</div>
+             <div className="p-5 text-center text-white">Cargando sistema...</div>
+          ) : pedidos.length === 0 ? (
+             <div className="p-5 text-center text-white-50">
+                <h4>No hay registros.</h4>
+                <p>Aún no has realizado compras.</p>
+             </div>
           ) : (
             <div className="table-responsive">
-              <table className="table tech-table align-middle">
+              <table className="table tech-table mb-0 align-middle">
                 <thead>
                   <tr>
                     <th>ID RASTREO</th>
@@ -69,21 +83,23 @@ const OrdersPage = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {orders.map((order) => {
-                    const status = getStatusConfig(order);
+                  {pedidos.map((pedido) => {
+                    const status = getStatusConfig(pedido);
                     return (
-                      <tr key={order._id}>
-                        {/* ID en Cian Brillante */}
+                      <tr key={pedido._id}>
+                        {/* ID */}
                         <td style={{fontFamily: 'monospace', color: '#00e5ff', fontWeight: 'bold'}}>
-                          #{order._id.slice(-6).toUpperCase()}
+                          #{pedido._id.slice(-6).toUpperCase()}
                         </td>
                         
                         {/* Fecha */}
-                        <td>{new Date(order.createdAt).toLocaleDateString()}</td>
+                        <td className="text-light">
+                            {new Date(pedido.createdAt).toLocaleDateString()}
+                        </td>
                         
                         {/* Total */}
                         <td className="fw-bold text-white">
-                          ${order.totalPrice.toLocaleString('es-CL')}
+                          ${pedido.totalPrice.toLocaleString('es-CL')}
                         </td>
                         
                         {/* Estado */}
@@ -93,12 +109,37 @@ const OrdersPage = () => {
                           </span>
                         </td>
                         
-                        {/* BOTÓN VER (EL OJO) */}
+                        {/* BOTÓN OJO (Aquí está la magia) */}
                         <td className="text-center">
                           <div className="d-flex justify-content-center">
-                              <Link to={`/order/${order._id}`} className="btn-eye" title="Ver detalle">
+                              {/* Usamos 'button' para el SweetAlert */}
+                              <button 
+                                className="btn-eye" 
+                                title="Ver Detalles"
+                                onClick={() => {
+                                    // HTML para el SweetAlert oscuro
+                                    let htmlList = '<div style="text-align: left; margin-top: 10px;">';
+                                    pedido.orderItems.forEach(item => {
+                                        htmlList += `
+                                          <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #444; padding: 10px 0;">
+                                            <span style="color: #fff;">${item.nombre}</span>
+                                            <span style="color: #00ff41; font-weight: bold;">x${item.qty}</span>
+                                          </div>`;
+                                    });
+                                    htmlList += '</div>';
+
+                                    Swal.fire({
+                                        title: '📦 Detalle del Pedido',
+                                        html: htmlList,
+                                        background: '#1e1e2e',
+                                        color: '#fff',
+                                        confirmButtonColor: '#009970',
+                                        confirmButtonText: 'Cerrar'
+                                    });
+                                }}
+                              >
                                 <i className="bi bi-eye-fill"></i>
-                              </Link>
+                              </button>
                           </div>
                         </td>
                       </tr>
