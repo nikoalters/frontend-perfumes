@@ -22,7 +22,6 @@ const OrdersPage = () => {
 
         const data = await res.json();
         
-        // Ordenar: Más recientes primero
         if(Array.isArray(data)){
              setPedidos(data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
         }
@@ -35,7 +34,6 @@ const OrdersPage = () => {
     obtenerPedidos();
   }, [user, navigate]);
 
-  // Configuración visual según estado
   const getStatusConfig = (pedido) => {
     if (pedido.isCancelled) return { class: 'status-cancelado', text: 'Cancelado' };
     if (pedido.isDelivered) return { class: 'status-enviado', text: 'Enviado' };
@@ -44,35 +42,30 @@ const OrdersPage = () => {
   };
 
   return (
-    <div className="min-vh-100 py-5" style={{ background: '#050505', paddingTop: '120px' }}>
+    <div className="min-vh-100 py-5 text-white" style={{ backgroundColor: '#050505', paddingTop: '120px' }}>
       <div className="container mt-5">
         
-        {/* ENCABEZADO */}
+        {/* HEADER */}
         <div className="d-flex justify-content-between align-items-center mb-5">
           <div>
-            <h2 className="fw-bold text-white mb-0" style={{ letterSpacing: '1px', textShadow: '0 0 10px rgba(255,255,255,0.2)' }}>
-              MIS PEDIDOS
-            </h2>
-            <p className="text-secondary small mb-0">Historial de transacciones</p>
+            <h2 className="fw-bold text-white mb-0">MIS PEDIDOS</h2>
+            <p className="text-secondary small">Historial de transacciones</p>
           </div>
-          <Link to="/" className="btn btn-outline-light rounded-pill px-4 d-flex align-items-center gap-2" 
-                style={{borderColor: 'rgba(255,255,255,0.2)', color: 'white'}}>
-            <i className="bi bi-arrow-left"></i> Volver a la Tienda
+          <Link to="/" className="btn btn-outline-light rounded-pill px-4">
+            <i className="bi bi-arrow-left me-2"></i> Volver
           </Link>
         </div>
 
         {/* CONTENEDOR HOLOGRÁFICO */}
-        <div className="holo-container">
+        <div className="holo-container p-1">
           {loading ? (
              <div className="p-5 text-center text-white">Cargando sistema...</div>
           ) : pedidos.length === 0 ? (
-             <div className="p-5 text-center text-white-50">
-                <h4>No hay registros.</h4>
-                <p>Aún no has realizado compras.</p>
-             </div>
+             <div className="p-5 text-center text-white-50">No hay registros aún.</div>
           ) : (
             <div className="table-responsive">
-              <table className="table tech-table mb-0 align-middle">
+              {/* Agregué 'table-dark' para asegurar texto blanco si falla el CSS custom */}
+              <table className="table table-dark tech-table align-middle mb-0">
                 <thead>
                   <tr>
                     <th>ID RASTREO</th>
@@ -87,37 +80,26 @@ const OrdersPage = () => {
                     const status = getStatusConfig(pedido);
                     return (
                       <tr key={pedido._id}>
-                        {/* ID */}
-                        <td style={{fontFamily: 'monospace', color: '#00e5ff', fontWeight: 'bold'}}>
+                        <td style={{color: '#00e5ff', fontFamily: 'monospace', fontWeight: 'bold'}}>
                           #{pedido._id.slice(-6).toUpperCase()}
                         </td>
-                        
-                        {/* Fecha */}
-                        <td className="text-light">
+                        <td className="text-white">
                             {new Date(pedido.createdAt).toLocaleDateString()}
                         </td>
-                        
-                        {/* Total */}
                         <td className="fw-bold text-white">
                           ${pedido.totalPrice.toLocaleString('es-CL')}
                         </td>
-                        
-                        {/* Estado */}
                         <td className="text-center">
                           <span className={`neon-badge ${status.class}`}>
                             {status.text}
                           </span>
                         </td>
-                        
-                        {/* BOTÓN OJO (Aquí está la magia) */}
                         <td className="text-center">
                           <div className="d-flex justify-content-center">
-                              {/* Usamos 'button' para el SweetAlert */}
                               <button 
                                 className="btn-eye" 
-                                title="Ver Detalles"
                                 onClick={() => {
-                                    // HTML para el SweetAlert oscuro
+                                    // HTML para el SweetAlert
                                     let htmlList = '<div style="text-align: left; margin-top: 10px;">';
                                     pedido.orderItems.forEach(item => {
                                         htmlList += `
@@ -129,7 +111,7 @@ const OrdersPage = () => {
                                     htmlList += '</div>';
 
                                     Swal.fire({
-                                        title: '📦 Detalle del Pedido',
+                                        title: '📦 Detalle',
                                         html: htmlList,
                                         background: '#1e1e2e',
                                         color: '#fff',
