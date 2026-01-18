@@ -1,18 +1,17 @@
 @import url('https://fonts.googleapis.com/css?family=Montserrat:400,600,700,800');
 
-/* --- 1. VARIABLES UNIFICADAS --- */
+
 :root {
   --color-principal: #009970;
-  /* Tu Verde Marca */
+
   --color-principal-dark: #007a5a;
   --color-heart: #ff4757;
 
-  /* Fondo "Deep Abyss" */
+
   --bg-dark-deep: #0f0c29;
   --bg-dark-mid: #302b63;
   --bg-dark-light: #24243e;
 
-  /* Vidrio Oscuro */
   --glass-bg: rgba(15, 15, 25, 0.85);
   --glass-border: rgba(255, 255, 255, 0.08);
 
@@ -20,7 +19,6 @@
   --text-secondary: #cccccc;
 }
 
-/* --- 2. BASE --- */
 body {
   font-family: 'Montserrat', sans-serif;
   margin: 0;
@@ -30,7 +28,6 @@ body {
   min-height: 100vh;
 }
 
-/* --- 3. NAVBAR GLASS --- */
 .navbar {
   background-color: rgba(11, 11, 21, 0.9) !important;
   backdrop-filter: blur(10px);
@@ -48,7 +45,6 @@ body {
   color: var(--color-principal);
 }
 
-/* --- 4. CARDS DE PRODUCTOS --- */
 .card {
   background-color: var(--glass-bg);
   border: 1px solid var(--glass-border);
@@ -89,7 +85,6 @@ body {
   color: #888 !important;
 }
 
-/* BADGE DE ML */
 .badge-ml {
   position: absolute;
   top: 10px;
@@ -104,7 +99,6 @@ body {
   z-index: 10;
 }
 
-/* CORAZÓN FAVORITO */
 .btn-heart {
   background: rgba(255, 255, 255, 0.1);
   border: none;
@@ -129,7 +123,6 @@ body {
   animation: pulse 0.5s;
 }
 
-/* BOTÓN AGREGAR */
 .btn-agregar {
   background-color: transparent;
   border: 2px solid var(--color-principal);
@@ -147,7 +140,6 @@ body {
   box-shadow: 0 0 15px rgba(0, 153, 112, 0.4);
 }
 
-/* --- 5. ANIMACIONES --- */
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -218,7 +210,6 @@ body {
   animation: heartBeat 0.8s ease-in-out;
 }
 
-/* Footer */
 .footer-pro {
   background-color: #050505;
   border-top: 1px solid #222;
@@ -234,7 +225,6 @@ body {
   padding-left: 5px;
 }
 
-/* Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
   background: #0b0b15;
@@ -249,7 +239,6 @@ body {
   background: var(--color-principal);
 }
 
-/* --- TARJETAS ELÉCTRICAS (AboutSection) --- */
 .electric-card {
   position: relative;
   height: 100%;
@@ -343,49 +332,42 @@ body {
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
 }
 
-
-/* ==========================================================================
-   --- TABLA HOLOGRÁFICA (CORRECCIÓN NUCLEAR) ---
-   ========================================================================== */
-
-/* 1. El Contenedor de Vidrio */
 .holo-container {
   background: rgba(20, 20, 30, 0.9) !important;
-  /* Fondo oscuro sólido */
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 15px;
   overflow: hidden;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
 
-  /* ESTA LÍNEA ES LA QUE ARREGLA EL TEXTO INVISIBLE */
+  
   color: white !important;
 }
 
-/* 2. Reseteo total de la tabla */
+
 .tech-table {
   width: 100%;
   border-collapse: collapse;
   margin-bottom: 0;
 
-  /* ESTAS LÍNEAS MATAN AL BLANCO DE BOOTSTRAP */
+  
   --bs-table-bg: transparent !important;
   --bs-table-color: white !important;
   color: white !important;
 }
 
-/* 3. Celdas y Filas */
+
 .tech-table th,
 .tech-table td {
   background: transparent !important;
-  /* Fondo transparente */
+ 
   border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
   padding: 1rem !important;
   vertical-align: middle;
   color: rgba(255, 255, 255, 0.9) !important;
-  /* Texto blanco */
+
 }
 
-/* 4. Encabezados (Header) */
+
 .tech-table thead th {
   background-color: rgba(0, 229, 255, 0.1) !important;
   color: #00e5ff !important;
@@ -395,14 +377,14 @@ body {
   border-bottom: 2px solid rgba(0, 229, 255, 0.3) !important;
 }
 
-/* 5. Efecto Hover en Fila */
+
 .tech-table tbody tr:hover td {
   background-color: rgba(255, 255, 255, 0.05) !important;
   color: white !important;
   text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
 }
 
-/* --- BADGES Y BOTONES --- */
+
 .neon-badge {
   padding: 8px 15px;
   border-radius: 30px;
@@ -439,7 +421,7 @@ body {
   color: #ffc107;
 }
 
-/* Botón Ojo */
+
 .btn-eye {
   width: 40px;
   height: 40px;

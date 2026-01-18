@@ -9,14 +9,14 @@ import ProfilePage from './pages/ProfilePage';
 function App() {
   return (
     <Routes>
-       {/* Ruta Principal */}
+      
        <Route path="/" element={<HomePage />} />
        
        <Route path="/login" element={<AuthPage />} />
        <Route path="/register" element={<AuthPage />} /> 
 
 
-       {/* Ruta de Administrador (NUEVA) */}
+      
       <Route path="/admin/productlist" element={<ProductListPage />} />
       <Route path="/mis-pedidos" element={<OrdersPage />} />
       <Route path="/admin/orderlist" element={<OrderListPage />} />
